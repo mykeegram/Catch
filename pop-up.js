@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const container = popup.querySelector('.story-box-container');
             if (!container) return;
             
-            container.style.transition = 'transform 0.4s ease';
+            container.style.transition = 'transform 0.6s ease-out';
             
             // Close on vertical drag down only
             if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 100) {
@@ -119,8 +119,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Snap back to current position (no auto-rotation)
-            container.style.transform = `rotateY(${rotationY}deg)`;
+            // Check if dragged enough to go to next/previous story
+            const dragThreshold = 100;
+            
+            if (Math.abs(deltaX) > dragThreshold) {
+                if (deltaX > 0) {
+                    // Dragged right - go to previous story
+                    currentStoryIndex = (currentStoryIndex - 1 + allStories.length) % allStories.length;
+                    rotationY += 90;
+                } else {
+                    // Dragged left - go to next story
+                    currentStoryIndex = (currentStoryIndex + 1) % allStories.length;
+                    rotationY -= 90;
+                }
+                renderStoryBox();
+            } else {
+                // Didn't drag far enough - snap back
+                container.style.transform = `rotateY(${rotationY}deg)`;
+            }
         });
     }
 });
