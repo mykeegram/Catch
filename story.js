@@ -27,6 +27,11 @@ function renderStories() {
     stories.forEach(story => {
         const storyItem = document.createElement('div');
         storyItem.className = 'story-item';
+        
+        // Add click event to open popup
+        storyItem.addEventListener('click', function() {
+            openStoryPopup(story);
+        });
 
         const storyAvatar = document.createElement('div');
         storyAvatar.className = 'story-avatar';
