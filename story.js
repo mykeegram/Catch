@@ -36,7 +36,7 @@ function renderStories() {
             storyAvatar.style.position = 'relative';
             // Only show gradient border if there's a story
             if (story.hasStory) {
-                storyAvatar.style.background = 'linear-gradient(135deg, #54D079, #3FB963)';
+                storyAvatar.style.background = 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)';
             } else {
                 storyAvatar.style.background = 'transparent';
             }
