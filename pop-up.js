@@ -1,4 +1,4 @@
-   // Global variables for story navigation
+// Global variables for story navigation
 let currentStoryIndex = 0;
 let allStories = [];
 let rotationY = 0;
@@ -104,12 +104,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const deltaX = currentX - startX;
             const deltaY = currentY - startY;
             
-            // Show preview rotation while dragging
-            const container = popup.querySelector('.story-box-container');
-            if (container) {
-                const previewRotation = (deltaX / 10);
-                container.style.transition = 'none';
-                container.style.transform = `rotateY(${rotationY - previewRotation}deg)`;
+            // Only preview rotation if horizontal swipe is more dominant
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                const container = popup.querySelector('.story-box-container');
+                if (container) {
+                    const previewRotation = (deltaX / 10);
+                    container.style.transition = 'none';
+                    container.style.transform = `rotateY(${rotationY - previewRotation}deg)`;
+                }
             }
         });
         
@@ -138,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Rotate on horizontal swipe
             const threshold = 80;
             if (Math.abs(deltaX) > threshold || velocity > 0.3) {
-                if (deltaX < 0) {
+                if (deltaX > 0) {
                     nextStory();
                 } else {
                     prevStory();
