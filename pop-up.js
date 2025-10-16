@@ -124,15 +124,28 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (Math.abs(deltaX) > dragThreshold) {
                 if (deltaX > 0) {
-                    // Dragged right - go to previous story
-                    currentStoryIndex = (currentStoryIndex - 1 + allStories.length) % allStories.length;
-                    rotationY += 90;
+                    // Dragged right - go to previous story (only if not at "Your story")
+                    if (currentStoryIndex > 0) {
+                        currentStoryIndex = (currentStoryIndex - 1 + allStories.length) % allStories.length;
+                        rotationY += 90;
+                        renderStoryBox();
+                    } else {
+                        // At "Your story" - close popup
+                        container.style.transition = 'transform 0.3s ease';
+                        closeStoryPopup();
+                    }
                 } else {
-                    // Dragged left - go to next story
-                    currentStoryIndex = (currentStoryIndex + 1) % allStories.length;
-                    rotationY -= 90;
+                    // Dragged left - go to next story (only if not at last story)
+                    if (currentStoryIndex < allStories.length - 1) {
+                        currentStoryIndex = (currentStoryIndex + 1) % allStories.length;
+                        rotationY -= 90;
+                        renderStoryBox();
+                    } else {
+                        // At last story - close popup
+                        container.style.transition = 'transform 0.3s ease';
+                        closeStoryPopup();
+                    }
                 }
-                renderStoryBox();
             } else {
                 // Didn't drag far enough - snap back
                 container.style.transform = `rotateY(${rotationY}deg)`;
