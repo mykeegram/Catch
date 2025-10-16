@@ -1,4 +1,4 @@
-// Global variables for story navigation
+   // Global variables for story navigation
 let currentStoryIndex = 0;
 let allStories = [];
 let rotationY = 0;
@@ -136,12 +136,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Rotate on horizontal swipe
-            const threshold = 50;
-            if (Math.abs(deltaX) > threshold || velocity > 0.5) {
-                if (deltaX > 0) {
-                    prevStory();
-                } else {
+            const threshold = 80;
+            if (Math.abs(deltaX) > threshold || velocity > 0.3) {
+                if (deltaX < 0) {
                     nextStory();
+                } else {
+                    prevStory();
                 }
             } else {
                 // Snap back
