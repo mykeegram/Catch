@@ -32,7 +32,7 @@
             margin: 0 auto;
         }
 
-        @media (min-width: 400px) {
+                    @media (min-width: 400px) {
             .header {
                 padding: 14px 20px;
             }
@@ -45,6 +45,11 @@
                 width: 60px;
                 height: 60px;
                 font-size: 26px;
+            }
+
+            .avatar img {
+                width: 60px;
+                height: 60px;
             }
 
             .conversation-name {
@@ -115,6 +120,13 @@
             color: white;
             margin-right: 12px;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .conversation-content {
@@ -235,6 +247,22 @@
         <div class="right-section">
             <span class="conversation-time">Wed</span>
             <div class="badge">1</div>
+        </div>
+    </div>
+
+    <div class="conversation-item">
+        <div class="avatar">
+            <img src="https://i.ibb.co/C5b875C6/Screenshot-20250904-050841.jpg" alt="VaVia">
+        </div>
+        <div class="conversation-content">
+            <div class="conversation-header">
+                <span class="conversation-name">VaVia</span>
+            </div>
+            <div class="conversation-message">Hey there! How are you?</div>
+        </div>
+        <div class="right-section">
+            <span class="conversation-time">Tue</span>
+            <div class="badge">2</div>
         </div>
     </div>
 
