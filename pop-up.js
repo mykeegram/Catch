@@ -59,20 +59,6 @@ function renderStoryBox() {
     content.appendChild(container);
 }
 
-// Function to rotate to next story
-function nextStory() {
-    currentStoryIndex = (currentStoryIndex + 1) % allStories.length;
-    rotationY -= 90;
-    renderStoryBox();
-}
-
-// Function to rotate to previous story
-function prevStory() {
-    currentStoryIndex = (currentStoryIndex - 1 + allStories.length) % allStories.length;
-    rotationY += 90;
-    renderStoryBox();
-}
-
 // Function to close story popup
 function closeStoryPopup() {
     const popup = document.getElementById('story-popup');
@@ -80,20 +66,18 @@ function closeStoryPopup() {
     document.body.classList.remove('popup-open');
 }
 
-// Touch/drag functionality
+// Pure dragging functionality (no swiping)
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('story-popup');
     let startX = 0;
     let startY = 0;
     let isDragging = false;
-    let dragStartTime = 0;
     
     if (popup) {
         popup.addEventListener('touchstart', function(e) {
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
             isDragging = true;
-            dragStartTime = Date.now();
         });
         
         popup.addEventListener('touchmove', function(e) {
@@ -104,14 +88,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const deltaX = currentX - startX;
             const deltaY = currentY - startY;
             
-            // Only preview rotation if horizontal swipe is more dominant
+            const container = popup.querySelector('.story-box-container');
+            if (!container) return;
+            
+            // Only rotate if horizontal drag is more dominant
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                const container = popup.querySelector('.story-box-container');
-                if (container) {
-                    const previewRotation = (deltaX / 10);
-                    container.style.transition = 'none';
-                    container.style.transform = `rotateY(${rotationY + previewRotation}deg)`;
-                }
+                const dragRotation = (deltaX / 5);
+                container.style.transition = 'none';
+                container.style.transform = `rotateY(${rotationY + dragRotation}deg)`;
             }
         });
         
@@ -123,35 +107,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentY = e.changedTouches[0].clientY;
             const deltaX = currentX - startX;
             const deltaY = currentY - startY;
-            const dragDuration = Date.now() - dragStartTime;
-            const velocity = Math.abs(deltaX) / dragDuration;
             
             const container = popup.querySelector('.story-box-container');
-            if (container) {
-                container.style.transition = 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-            }
+            if (!container) return;
             
-            // Close on vertical swipe
+            container.style.transition = 'transform 0.4s ease';
+            
+            // Close on vertical drag down only
             if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 100) {
                 closeStoryPopup();
                 return;
             }
             
-            // Rotate on horizontal swipe
-            const threshold = 40;
-            if (Math.abs(deltaX) > threshold || velocity > 0.2) {
-                if (deltaX < 0) {
-                    nextStory();
-                } else {
-                    prevStory();
-                }
-            } else {
-                // Snap back
-                const container = popup.querySelector('.story-box-container');
-                if (container) {
-                    container.style.transform = `rotateY(${rotationY}deg)`;
-                }
-            }
+            // Snap back to current position (no auto-rotation)
+            container.style.transform = `rotateY(${rotationY}deg)`;
         });
     }
 });
