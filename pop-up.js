@@ -38,20 +38,14 @@ function renderStoryBox() {
     const stories_order = [
         allStories[currentStoryIndex],
         allStories[(currentStoryIndex + 1) % allStories.length],
-        allStories[(currentStoryIndex + 2) % allStories.length],
-        allStories[(currentStoryIndex + 3) % allStories.length]
+        allStories[(currentStoryIndex + 2) % allStories.length]
     ];
     
     // Create cube faces
-    const faces = ['front', 'right', 'back', 'left', 'top', 'bottom'];
+    const faces = ['front', 'right', 'back'];
     faces.forEach((face, index) => {
         const faceEl = document.createElement('div');
         faceEl.className = `story-box-face story-box-${face}`;
-        
-        if (index < 4) {
-            faceEl.textContent = stories_order[index].username;
-        }
-        
         container.appendChild(faceEl);
     });
     
