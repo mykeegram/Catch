@@ -1,4 +1,4 @@
-     // Global variables for story navigation
+// Global variables for story navigation
 let currentStoryIndex = 0;
 let allStories = [];
 let rotationY = 0;
