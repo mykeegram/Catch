@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (container) {
                     const previewRotation = (deltaX / 10);
                     container.style.transition = 'none';
-                    container.style.transform = `rotateY(${rotationY - previewRotation}deg)`;
+                    container.style.transform = `rotateY(${rotationY + previewRotation}deg)`;
                 }
             }
         });
@@ -138,9 +138,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Rotate on horizontal swipe
-            const threshold = 80;
-            if (Math.abs(deltaX) > threshold || velocity > 0.3) {
-                if (deltaX > 0) {
+            const threshold = 40;
+            if (Math.abs(deltaX) > threshold || velocity > 0.2) {
+                if (deltaX < 0) {
                     nextStory();
                 } else {
                     prevStory();
