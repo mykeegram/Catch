@@ -1,7 +1,6 @@
 // Global variables for story navigation
 let currentStoryIndex = 0;
 let allStories = [];
-let rotationY = 0;
 
 // Function to open story popup
 function openStoryPopup(storyData) {
@@ -12,7 +11,6 @@ function openStoryPopup(storyData) {
     // Find the index of the clicked story
     currentStoryIndex = stories.findIndex(s => s.username === storyData.username);
     allStories = stories;
-    rotationY = 0;
     
     // Create content container if it doesn't exist
     let content = popup.querySelector('#story-popup-content');
@@ -22,44 +20,65 @@ function openStoryPopup(storyData) {
         popup.appendChild(content);
     }
     
-    // Render the 3D box
-    renderStoryBox();
+    // Render the story pages
+    renderStoryPages();
 }
 
-// Function to render 3D story box
-function renderStoryBox() {
+// Function to render story pages
+function renderStoryPages() {
     const content = document.getElementById('story-popup-content');
     content.innerHTML = '';
     
-    const container = document.createElement('div');
-    container.className = 'story-box-container';
-    
-    // Get stories in circular order
-    const stories_order = [
-        allStories[currentStoryIndex],
-        allStories[(currentStoryIndex + 1) % allStories.length],
-        allStories[(currentStoryIndex + 2) % allStories.length]
-    ];
-    
-    // Create cube faces
-    const faces = ['front', 'right'];
-    faces.forEach((face, index) => {
-        const faceEl = document.createElement('div');
-        faceEl.className = `story-box-face story-box-${face}`;
+    // Create story pages for current, previous, and next
+    for (let i = 0; i < allStories.length; i++) {
+        const page = document.createElement('div');
+        page.className = 'story-page';
+        page.dataset.index = i;
         
-        // Add reply input for right face (Chizaram and VaVia)
-        if (face === 'right') {
-            const replyInput = document.createElement('div');
-            replyInput.className = 'reply-input';
-            replyInput.textContent = 'Reply privately...';
-            faceEl.appendChild(replyInput);
+        // Set page state
+        if (i === currentStoryIndex) {
+            page.classList.add('current');
+        } else if (i === currentStoryIndex + 1 || (currentStoryIndex === allStories.length - 1 && i === 0)) {
+            page.classList.add('next');
+        } else {
+            page.classList.add('prev');
         }
         
-        container.appendChild(faceEl);
+        // Style based on story
+        const story = allStories[i];
+        if (story.username === "Your story") {
+            page.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        } else if (story.username === "Chizaram") {
+            page.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+        } else if (story.username === "VaVia") {
+            page.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+        }
+        
+        page.textContent = story.username;
+        content.appendChild(page);
+    }
+}
+
+// Function to switch to a specific story
+function switchToStory(newIndex) {
+    if (newIndex < 0 || newIndex >= allStories.length) return;
+    
+    const pages = document.querySelectorAll('.story-page');
+    
+    pages.forEach(page => {
+        const pageIndex = parseInt(page.dataset.index);
+        page.classList.remove('current', 'next', 'prev');
+        
+        if (pageIndex === newIndex) {
+            page.classList.add('current');
+        } else if (pageIndex === newIndex + 1 || (newIndex === allStories.length - 1 && pageIndex === 0)) {
+            page.classList.add('next');
+        } else {
+            page.classList.add('prev');
+        }
     });
     
-    container.style.transform = `rotateY(${rotationY}deg)`;
-    content.appendChild(container);
+    currentStoryIndex = newIndex;
 }
 
 // Function to close story popup
@@ -69,99 +88,124 @@ function closeStoryPopup() {
     document.body.classList.remove('popup-open');
 }
 
-// Pure dragging functionality (no swiping)
+// 3D flip drag functionality
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('story-popup');
     let startX = 0;
     let startY = 0;
+    let currentX = 0;
+    let currentY = 0;
     let isDragging = false;
+    let popupContent = null;
+    let dragStartTime = 0;
     
     if (popup) {
         popup.addEventListener('touchstart', function(e) {
+            popupContent = popup.querySelector('#story-popup-content');
+            if (!popupContent) return;
+            
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
+            currentX = startX;
+            currentY = startY;
             isDragging = true;
+            dragStartTime = Date.now();
         });
         
         popup.addEventListener('touchmove', function(e) {
-            if (!isDragging) return;
+            if (!isDragging || !popupContent) return;
             
-            const currentX = e.touches[0].clientX;
-            const currentY = e.touches[0].clientY;
+            currentX = e.touches[0].clientX;
+            currentY = e.touches[0].clientY;
             const deltaX = currentX - startX;
             const deltaY = currentY - startY;
             
-            const container = popup.querySelector('.story-box-container');
-            if (!container) return;
+            // Calculate rotation based on horizontal drag
+            const pages = popupContent.querySelectorAll('.story-page');
+            const maxRotation = 90;
+            const dragThreshold = window.innerWidth / 3;
+            const rotation = (deltaX / dragThreshold) * maxRotation;
             
-            // Only rotate if horizontal drag is more dominant
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                // Don't allow preview rotation at boundaries
-                if ((deltaX > 0 && currentStoryIndex === 0) || (deltaX < 0 && currentStoryIndex === allStories.length - 1)) {
-                    // At boundary - don't rotate
-                    container.style.transition = 'none';
-                    container.style.transform = `rotateY(${rotationY}deg)`;
-                    return;
-                }
+            pages.forEach(page => {
+                const pageIndex = parseInt(page.dataset.index);
                 
-                const dragRotation = (deltaX / 5);
-                container.style.transition = 'none';
-                container.style.transform = `rotateY(${rotationY + dragRotation}deg)`;
+                if (pageIndex === currentStoryIndex) {
+                    // Current page rotates out
+                    page.style.transition = 'none';
+                    page.style.transform = `rotateY(${rotation}deg)`;
+                } else if (deltaX < 0 && pageIndex === currentStoryIndex + 1) {
+                    // Next page (swipe left)
+                    page.style.transition = 'none';
+                    page.style.transform = `rotateY(${90 + rotation}deg)`;
+                } else if (deltaX > 0 && pageIndex === currentStoryIndex - 1) {
+                    // Previous page (swipe right)
+                    page.style.transition = 'none';
+                    page.style.transform = `rotateY(${-90 + rotation}deg)`;
+                }
+            });
+            
+            // Handle vertical drag for close
+            if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 0) {
+                popupContent.style.transform = `translateY(${deltaY}px)`;
             }
         });
         
         popup.addEventListener('touchend', function(e) {
-            if (!isDragging) return;
-            isDragging = false;
+            if (!isDragging || !popupContent) return;
             
-            const currentX = e.changedTouches[0].clientX;
-            const currentY = e.changedTouches[0].clientY;
             const deltaX = currentX - startX;
             const deltaY = currentY - startY;
+            const dragDuration = Date.now() - dragStartTime;
+            const velocity = Math.abs(deltaX) / dragDuration;
             
-            const container = popup.querySelector('.story-box-container');
-            if (!container) return;
+            const pages = popupContent.querySelectorAll('.story-page');
             
-            container.style.transition = 'transform 0.6s ease-out';
+            // Reset transitions
+            pages.forEach(page => {
+                page.style.transition = 'transform 0.6s';
+            });
             
-            // Close on vertical drag down only
-            if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 100) {
-                closeStoryPopup();
+            // Determine if vertical close
+            if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 150) {
+                popupContent.style.transition = 'transform 0.3s ease';
+                popupContent.style.transform = 'translateY(100%)';
+                setTimeout(() => {
+                    closeStoryPopup();
+                    popupContent.style.transform = 'translateY(0)';
+                }, 300);
+                isDragging = false;
                 return;
             }
             
-            // Check if dragged enough to go to next/previous story
-            const dragThreshold = 100;
+            // Determine if horizontal switch
+            const threshold = window.innerWidth / 4;
+            const shouldSwitch = Math.abs(deltaX) > threshold || velocity > 0.5;
             
-            if (Math.abs(deltaX) > dragThreshold) {
-                if (deltaX > 0) {
-                    // Dragged right - go to previous story (only if not at "Your story")
-                    if (currentStoryIndex > 0) {
-                        currentStoryIndex = (currentStoryIndex - 1 + allStories.length) % allStories.length;
-                        rotationY += 90;
-                        renderStoryBox();
-                    } else {
-                        // At "Your story" - close popup
-                        container.style.transition = 'none';
-                        closeStoryPopup();
-                    }
+            if (shouldSwitch) {
+                if (deltaX < 0 && currentStoryIndex < allStories.length - 1) {
+                    // Swipe left - next story
+                    switchToStory(currentStoryIndex + 1);
+                } else if (deltaX > 0 && currentStoryIndex > 0) {
+                    // Swipe right - previous story
+                    switchToStory(currentStoryIndex - 1);
                 } else {
-                    // Dragged left - go to next story (only if not at last story)
-                    if (currentStoryIndex < allStories.length - 1) {
-                        currentStoryIndex = (currentStoryIndex + 1) % allStories.length;
-                        rotationY -= 90;
-                        renderStoryBox();
-                    } else {
-                        // At last story - close popup
-                        container.style.transition = 'none';
-                        closeStoryPopup();
-                    }
+                    // Reset if at boundaries
+                    switchToStory(currentStoryIndex);
                 }
             } else {
-                // Didn't drag far enough - snap back
-                container.style.transition = 'transform 0.4s ease';
-                container.style.transform = `rotateY(${rotationY}deg)`;
+                // Reset to current position
+                switchToStory(currentStoryIndex);
             }
+            
+            // Reset vertical transform
+            popupContent.style.transition = 'transform 0.3s ease';
+            popupContent.style.transform = 'translateY(0)';
+            
+            isDragging = false;
+            startX = 0;
+            startY = 0;
+            currentX = 0;
+            currentY = 0;
         });
     }
 });
