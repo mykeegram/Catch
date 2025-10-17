@@ -122,10 +122,14 @@ function openChat(conversation) {
 function closeChat() {
     const chatContainer = document.getElementById('chat-container');
     chatContainer.classList.remove('open');
-    chatContainer.innerHTML = ''; // Clear content to ensure it’s hidden
     document.getElementById('conversations-container').classList.remove('slide-left');
     document.querySelector('.header').classList.remove('slide-left');
     document.querySelector('.floating-button').classList.remove('hidden');
+
+    // Clear content after animation completes (300ms matches transition duration)
+    setTimeout(() => {
+        chatContainer.innerHTML = '';
+    }, 300);
 }
 
 // Add click event listeners to conversation items
