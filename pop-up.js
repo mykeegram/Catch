@@ -96,6 +96,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Only rotate if horizontal drag is more dominant
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Don't allow preview rotation at boundaries
+                if ((deltaX > 0 && currentStoryIndex === 0) || (deltaX < 0 && currentStoryIndex === allStories.length - 1)) {
+                    // At boundary - don't rotate
+                    container.style.transition = 'none';
+                    container.style.transform = `rotateY(${rotationY}deg)`;
+                    return;
+                }
+                
                 const dragRotation = (deltaX / 5);
                 container.style.transition = 'none';
                 container.style.transform = `rotateY(${rotationY + dragRotation}deg)`;
