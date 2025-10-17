@@ -1,6 +1,10 @@
-// Global variables for story navigation
+// Global variables for story navigation and likes
 let currentStoryIndex = 0;
 let allStories = [];
+let likes = {
+    "Chizaram": false,
+    "VaVia": false
+};
 
 // Function to open story popup
 function openStoryPopup(story) {
@@ -46,17 +50,48 @@ function renderStoryCube() {
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
         // Apply black background for all cube faces
-        face.style.background = '#000000'; // Changed to black
+        face.style.background = '#000000';
         face.style.fontSize = '48px';
         face.style.fontWeight = 'bold';
-        face.style.color = '#ffffff'; // White text for contrast
+        face.style.color = '#ffffff';
         face.textContent = story.username;
         
         // Add reply box to each face if not "Your story"
         if (story.username !== "Your story") {
             const replyBox = document.createElement('div');
             replyBox.className = 'reply-box';
-            replyBox.innerHTML = `<span class="reply-placeholder">Reply to ${story.username}'s Story</span>`;
+            
+            // Reply placeholder span
+            const replySpan = document.createElement('span');
+            replySpan.className = 'reply-placeholder';
+            replySpan.textContent = `Reply to ${story.username}'s Story`;
+            replyBox.appendChild(replySpan);
+            
+            // Heart icon SVG
+            if (story.username === "Chizaram" || story.username === "VaVia") {
+                const heartSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                heartSvg.setAttribute("viewBox", "0 0 24 24");
+                heartSvg.setAttribute("fill", "none");
+                heartSvg.className = `heart-icon ${likes[story.username] ? 'liked' : ''}`;
+                heartSvg.innerHTML = `
+                    <path d="M15.7 4C18.87 4 21 6.98 21 9.76C21 15.39 12.16 20 12 20C11.84 20 3 15.39 3 9.76C3 6.98 5.13 4 8.3 4C10.12 4 11.31 4.91 12 5.71C12.69 4.91 13.88 4 15.7 4Z" 
+                          stroke="#000000" 
+                          stroke-width="2" 
+                          stroke-linecap="round" 
+                          stroke-linejoin="round" 
+                          ${likes[story.username] ? 'fill="#ff69b4"' : ''}/>
+                `;
+                
+                // Click event for heart
+                heartSvg.addEventListener('click', () => {
+                    likes[story.username] = !likes[story.username];
+                    heartSvg.classList.toggle('liked');
+                    heartSvg.querySelector('path').setAttribute('fill', likes[story.username] ? '#ff69b4' : 'none');
+                });
+                
+                replyBox.appendChild(heartSvg);
+            }
+            
             face.appendChild(replyBox);
         }
         
