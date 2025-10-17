@@ -1,11 +1,17 @@
-// Function to open story popup
-function openStoryPopup() {
+        // Function to open story popup
+function openStoryPopup(story) {
     const popup = document.getElementById('story-popup');
     popup.classList.add('active');
     document.body.classList.add('popup-open');
     
-    // Create reply box if it doesn't exist
-    if (!popup.querySelector('.reply-box')) {
+    // Remove existing reply box
+    const existingReplyBox = popup.querySelector('.reply-box');
+    if (existingReplyBox) {
+        existingReplyBox.remove();
+    }
+    
+    // Only show reply box if it's NOT "Your story"
+    if (story.username !== "Your story") {
         const replyBox = document.createElement('div');
         replyBox.className = 'reply-box';
         replyBox.innerHTML = '<span class="reply-placeholder">Reply privately...</span>';
