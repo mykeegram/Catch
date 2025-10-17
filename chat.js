@@ -95,15 +95,6 @@ function openChat(conversation) {
             <div class="chat-title">${conversation.name}</div>
         </div>
         <div class="chat-content" id="chat-content"></div>
-        <div class="chat-input-container">
-            <input type="text" class="chat-input" placeholder="Type a message...">
-            <button class="chat-send-button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 2L11 13" />
-                    <path d="M22 2l-7 20-4-9-9-4 20-7z" />
-                </svg>
-            </button>
-        </div>
     `;
 
     // Render messages
@@ -125,14 +116,6 @@ function openChat(conversation) {
     // Add event listener for back button
     const backButton = chatContainer.querySelector('.back-button');
     backButton.addEventListener('click', closeChat);
-
-    // Add event listener for send button
-    const sendButton = chatContainer.querySelector('.chat-send-button');
-    const input = chatContainer.querySelector('.chat-input');
-    sendButton.addEventListener('click', () => sendMessage(conversation.name, input));
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage(conversation.name, input);
-    });
 }
 
 // Function to close chat
@@ -143,29 +126,6 @@ function closeChat() {
     document.getElementById('conversations-container').classList.remove('slide-left');
     document.querySelector('.header').classList.remove('slide-left');
     document.querySelector('.floating-button').classList.remove('hidden');
-}
-
-// Function to send a new message
-function sendMessage(conversationName, input) {
-    const text = input.value.trim();
-    if (!text) return;
-
-    const chatContent = document.querySelector('#chat-content');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'chat-message sent';
-    messageDiv.textContent = text;
-    chatContent.appendChild(messageDiv);
-    chatContent.scrollTop = chatContent.scrollHeight; // Scroll to bottom
-
-    // Add to chatMessages
-    if (!chatMessages[conversationName]) chatMessages[conversationName] = [];
-    chatMessages[conversationName].push({
-        text,
-        sender: 'sent',
-        time: new Date().toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: 'numeric' })
-    });
-
-    input.value = ''; // Clear input
 }
 
 // Add click event listeners to conversation items
