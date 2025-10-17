@@ -55,10 +55,10 @@
 
 .reply-box {
     position: absolute;
-    bottom: 0;
+    bottom: -80px; /* Push reply box closer to viewport bottom */
     left: 0;
     right: 0;
-    padding: 20px;
+    padding: 10px; /* Reduced padding for tighter fit */
     display: flex;
     justify-content: center;
     z-index: 10;
@@ -80,4 +80,11 @@ body.popup-open {
     overflow: hidden;
     position: fixed;
     width: 100%;
+}
+
+/* Ensure reply box is closer on smaller screens */
+@media screen and (max-height: 700px) {
+    .reply-box {
+        bottom: -20px; /* Adjust for smaller screens */
+    }
 }
