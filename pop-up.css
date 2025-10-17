@@ -47,20 +47,12 @@
     background-position: center;
 }
 
-.story-cube-face.front {
-    transform: translateZ(200px);
+.story-cube-face.vavia-face {
+    height: 500px; /* Reduced height for VaVia's image */
 }
 
-.story-cube-face.right {
-    transform: rotateY(90deg) translateZ(200px);
-}
-
-.story-cube-face.back {
-    transform: rotateY(180deg) translateZ(200px);
-}
-
-.story-cube-face.left {
-    transform: rotateY(-90deg) translateZ(200px);
+.story-cube-face.chizaram-face {
+    height: 500px; /* Reduced height for Chizaram's gradient */
 }
 
 .reply-box {
