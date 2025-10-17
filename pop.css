@@ -1,0 +1,150 @@
+#story-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000; /* Dark background */
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: none;
+}
+
+#story-popup.active {
+    display: flex;
+}
+
+#story-popup-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 600px; /* Subtle 3D depth */
+}
+
+.story-cube-container {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease; /* Instagram-like cube rotation */
+}
+
+.story-cube-face {
+    position: absolute;
+    width: 100%;
+    height: 100%; /* Full height for all faces */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+}
+
+.story-image-container {
+    width: 100%;
+    height: calc(100% - 80px); /* Leave space for reply box at bottom */
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+}
+
+/* ===============================
+   REPLY BOX (BOTTOM INPUT LOOK)
+================================= */
+.reply-box {
+    position: absolute;
+    bottom: -80px; /* Default distance from bottom */
+    left: 0;
+    right: 0;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    z-index: 10;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+}
+
+.reply-placeholder {
+    width: 69%;
+    padding: 10px 16px;
+    background-color: #1c1c1c; /* Deep dark gray */
+    color: #b3b3b3; /* Soft gray text */
+    border-radius: 24px; /* Smooth oval shape */
+    font-size: 15px;
+    font-weight: 400;
+    text-align: left;
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.05);
+    border: none;
+    outline: none;
+    pointer-events: none; /* Keeps it non-interactive like a placeholder */
+}
+
+.heart-icon {
+    width: 24px;
+    height: 24px;
+    margin-left: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: flex-end;
+}
+
+.heart-icon:hover {
+    transform: scale(1.1);
+}
+
+.heart-icon svg {
+    width: 100%;
+    height: 100%;
+    transform: translateY(-6px);
+}
+
+.heart-icon.liked svg path {
+    fill: #ff1493;
+    stroke: #ff1493;
+}
+
+/* ===============================
+   BODY LOCK WHEN POPUP OPEN
+================================= */
+body.popup-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* ===============================
+   RESPONSIVENESS
+================================= */
+@media screen and (max-width: 480px) {
+    .story-cube-container {
+        width: 100%;
+        height: 100%;
+    }
+    .reply-placeholder {
+        font-size: 14px;
+    }
+    .heart-icon {
+        width: 24px;
+        height: 24px;
+    }
+    .heart-icon svg {
+    width: 100%;
+    height: 100%;
+    transform: translateY(-6px);
+}
+}
+
+/* Closer on short screens */
+@media screen and (max-height: 700px) {
+    .reply-box {
+        bottom: 70px; /* Updated per your request */
+    }
+}
