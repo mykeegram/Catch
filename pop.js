@@ -64,15 +64,17 @@ function renderStoryCube() {
         
         // Apply black background for all cube faces
         face.style.background = '#000000'; // Changed to black
-        
-        // Create story image container with gradient
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'story-image-container';
-        
-        face.appendChild(imageContainer);
+        face.style.fontSize = '48px';
+        face.style.fontWeight = 'bold';
+        face.style.color = '#ffffff'; // White text for contrast
+        face.textContent = story.username;
         
         // Add reply box to each face if not "Your story"
         if (story.username !== "Your story") {
+            const contentBg = document.createElement('div');
+            contentBg.className = 'story-content-bg';
+            face.appendChild(contentBg);
+            
             const replyBox = document.createElement('div');
             replyBox.className = 'reply-box';
             
