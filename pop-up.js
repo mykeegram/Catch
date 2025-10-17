@@ -29,7 +29,7 @@ function renderStoryPages() {
     const content = document.getElementById('story-popup-content');
     content.innerHTML = '';
     
-    // Create story pages for current, previous, and next
+    // Create story pages
     for (let i = 0; i < allStories.length; i++) {
         const page = document.createElement('div');
         page.className = 'story-page';
@@ -38,10 +38,6 @@ function renderStoryPages() {
         // Set page state
         if (i === currentStoryIndex) {
             page.classList.add('current');
-        } else if (i === currentStoryIndex + 1 || (currentStoryIndex === allStories.length - 1 && i === 0)) {
-            page.classList.add('next');
-        } else {
-            page.classList.add('prev');
         }
         
         // Style based on story
@@ -59,28 +55,6 @@ function renderStoryPages() {
     }
 }
 
-// Function to switch to a specific story
-function switchToStory(newIndex) {
-    if (newIndex < 0 || newIndex >= allStories.length) return;
-    
-    const pages = document.querySelectorAll('.story-page');
-    
-    pages.forEach(page => {
-        const pageIndex = parseInt(page.dataset.index);
-        page.classList.remove('current', 'next', 'prev');
-        
-        if (pageIndex === newIndex) {
-            page.classList.add('current');
-        } else if (pageIndex === newIndex + 1 || (newIndex === allStories.length - 1 && pageIndex === 0)) {
-            page.classList.add('next');
-        } else {
-            page.classList.add('prev');
-        }
-    });
-    
-    currentStoryIndex = newIndex;
-}
-
 // Function to close story popup
 function closeStoryPopup() {
     const popup = document.getElementById('story-popup');
@@ -88,124 +62,15 @@ function closeStoryPopup() {
     document.body.classList.remove('popup-open');
 }
 
-// 3D flip drag functionality
+// Close popup on touch
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('story-popup');
-    let startX = 0;
-    let startY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let isDragging = false;
-    let popupContent = null;
-    let dragStartTime = 0;
     
     if (popup) {
-        popup.addEventListener('touchstart', function(e) {
-            popupContent = popup.querySelector('#story-popup-content');
-            if (!popupContent) return;
-            
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            currentX = startX;
-            currentY = startY;
-            isDragging = true;
-            dragStartTime = Date.now();
-        });
-        
-        popup.addEventListener('touchmove', function(e) {
-            if (!isDragging || !popupContent) return;
-            
-            currentX = e.touches[0].clientX;
-            currentY = e.touches[0].clientY;
-            const deltaX = currentX - startX;
-            const deltaY = currentY - startY;
-            
-            // Calculate rotation based on horizontal drag
-            const pages = popupContent.querySelectorAll('.story-page');
-            const maxRotation = 90;
-            const dragThreshold = window.innerWidth / 3;
-            const rotation = (deltaX / dragThreshold) * maxRotation;
-            
-            pages.forEach(page => {
-                const pageIndex = parseInt(page.dataset.index);
-                
-                if (pageIndex === currentStoryIndex) {
-                    // Current page rotates out
-                    page.style.transition = 'none';
-                    page.style.transform = `rotateY(${rotation}deg)`;
-                } else if (deltaX < 0 && pageIndex === currentStoryIndex + 1) {
-                    // Next page (swipe left)
-                    page.style.transition = 'none';
-                    page.style.transform = `rotateY(${90 + rotation}deg)`;
-                } else if (deltaX > 0 && pageIndex === currentStoryIndex - 1) {
-                    // Previous page (swipe right)
-                    page.style.transition = 'none';
-                    page.style.transform = `rotateY(${-90 + rotation}deg)`;
-                }
-            });
-            
-            // Handle vertical drag for close
-            if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 0) {
-                popupContent.style.transform = `translateY(${deltaY}px)`;
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                closeStoryPopup();
             }
-        });
-        
-        popup.addEventListener('touchend', function(e) {
-            if (!isDragging || !popupContent) return;
-            
-            const deltaX = currentX - startX;
-            const deltaY = currentY - startY;
-            const dragDuration = Date.now() - dragStartTime;
-            const velocity = Math.abs(deltaX) / dragDuration;
-            
-            const pages = popupContent.querySelectorAll('.story-page');
-            
-            // Reset transitions
-            pages.forEach(page => {
-                page.style.transition = 'transform 0.6s';
-            });
-            
-            // Determine if vertical close
-            if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 150) {
-                popupContent.style.transition = 'transform 0.3s ease';
-                popupContent.style.transform = 'translateY(100%)';
-                setTimeout(() => {
-                    closeStoryPopup();
-                    popupContent.style.transform = 'translateY(0)';
-                }, 300);
-                isDragging = false;
-                return;
-            }
-            
-            // Determine if horizontal switch
-            const threshold = window.innerWidth / 4;
-            const shouldSwitch = Math.abs(deltaX) > threshold || velocity > 0.5;
-            
-            if (shouldSwitch) {
-                if (deltaX < 0 && currentStoryIndex < allStories.length - 1) {
-                    // Swipe left - next story
-                    switchToStory(currentStoryIndex + 1);
-                } else if (deltaX > 0 && currentStoryIndex > 0) {
-                    // Swipe right - previous story
-                    switchToStory(currentStoryIndex - 1);
-                } else {
-                    // Reset if at boundaries
-                    switchToStory(currentStoryIndex);
-                }
-            } else {
-                // Reset to current position
-                switchToStory(currentStoryIndex);
-            }
-            
-            // Reset vertical transform
-            popupContent.style.transition = 'transform 0.3s ease';
-            popupContent.style.transform = 'translateY(0)';
-            
-            isDragging = false;
-            startX = 0;
-            startY = 0;
-            currentX = 0;
-            currentY = 0;
         });
     }
 });
