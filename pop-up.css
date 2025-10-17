@@ -62,8 +62,10 @@
 }
 
 .reply-placeholder {
-    width: 75%; /* Reduced from 85% to make space for heart */
-    max-width: 320px; /* Adjusted to maintain proportionality */
+    width: 85%; /* Restored to original */
+    max-width: 360px; /* Restored to original */
+    margin-left: 8px; /* Shift slightly to the left */
+    margin-right: auto; /* Ensure left alignment */
     padding: 10px 16px;
     background-color: #1c1c1c; /* Deep dark gray */
     color: #b3b3b3; /* Soft gray text */
@@ -79,8 +81,8 @@
 
 /* Heart icon styles */
 .heart-icon {
-    width: 24px;
-    height: 24px;
+    width: 18px; /* Reduced size */
+    height: 18px;
     margin-left: 10px; /* Space between reply span and heart */
     cursor: pointer;
     transition: fill 0.3s ease; /* Smooth color transition */
@@ -108,25 +110,25 @@ body.popup-open {
         height: 100%;
     }
     .reply-placeholder {
-        width: 65%; /* Further reduced for smaller screens */
+        width: 77%; /* Restored to original */
         font-size: 14px;
     }
     .heart-icon {
-        width: 20px; /* Slightly smaller for mobile */
-        height: 20px;
+        width: 16px; /* Further reduced for mobile */
+        height: 16px;
     }
 }
 
 /* Closer on short screens */
 @media screen and (max-height: 700px) {
     .reply-box {
-        bottom: 70px; /* Updated per your request */
+        bottom: 70px; /* Updated per previous request */
     }
     .reply-placeholder {
-        width: 67%; /* Adjusted for short screens */
+        width: 77%; /* Restored to original */
     }
     .heart-icon {
-        width: 20px; /* Consistent with mobile */
-        height: 20px;
+        width: 16px; /* Consistent with mobile */
+        height: 16px;
     }
 }
