@@ -1,4 +1,4 @@
-        // Function to open story popup
+// Function to open story popup
 function openStoryPopup(story) {
     const popup = document.getElementById('story-popup');
     popup.classList.add('active');
@@ -14,7 +14,7 @@ function openStoryPopup(story) {
     if (story.username !== "Your story") {
         const replyBox = document.createElement('div');
         replyBox.className = 'reply-box';
-        replyBox.innerHTML = '<span class="reply-placeholder">Reply privately...</span>';
+        replyBox.innerHTML = `<span class="reply-placeholder">Reply to ${story.username}'s Story</span>`;
         popup.appendChild(replyBox);
     }
 }
