@@ -1,10 +1,13 @@
+/* ===============================
+   STORY POPUP CORE STYLES
+================================= */
 #story-popup {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000; /* Changed from #1a1a1a to #000 */
+    background-color: #000; /* Dark background */
     z-index: 9999;
     display: none;
     align-items: center;
@@ -23,7 +26,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    perspective: 600px; /* Kept for tighter 3D effect */
+    perspective: 600px; /* Subtle 3D depth */
 }
 
 .story-cube-container {
@@ -31,7 +34,7 @@
     width: 400px;
     height: 600px;
     transform-style: preserve-3d;
-    transition: transform 0.4s ease; /* Kept for Instagram-like feel */
+    transition: transform 0.4s ease; /* Instagram-like cube rotation */
 }
 
 .story-cube-face {
@@ -45,12 +48,15 @@
     backface-visibility: hidden;
 }
 
+/* ===============================
+   REPLY BOX (BOTTOM INPUT LOOK)
+================================= */
 .reply-box {
     position: absolute;
-    bottom: -80px; /* Kept for default closeness to mobile device bottom */
+    bottom: -80px; /* Default distance from bottom */
     left: 0;
     right: 0;
-    padding: 8px; /* Kept for slim container */
+    padding: 8px;
     display: flex;
     justify-content: center;
     z-index: 10;
@@ -58,25 +64,47 @@
 }
 
 .reply-placeholder {
-    width: 85%; /* Kept for compact container */
-    max-width: 360px; /* Kept for compactness */
-    padding: 8px 12px; /* Kept for slim look */
-    background-color: rgba(51, 51, 51, 0.9);
-    color: #999;
-    border-radius: 16px; /* Kept for subtler curve */
-    font-size: 14px; /* Kept for small Instagram-like text */
+    width: 85%;
+    max-width: 360px;
+    padding: 10px 16px;
+    background-color: #1c1c1c; /* Deep dark gray */
+    color: #b3b3b3; /* Soft gray text */
+    border-radius: 24px; /* Smooth oval shape */
+    font-size: 15px;
+    font-weight: 400;
     text-align: left;
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.05);
+    border: none;
+    outline: none;
+    pointer-events: none; /* Keeps it non-interactive like a placeholder */
 }
 
+/* ===============================
+   BODY LOCK WHEN POPUP OPEN
+================================= */
 body.popup-open {
     overflow: hidden;
     position: fixed;
     width: 100%;
 }
 
-/* Ensure reply box is closer on smaller screens */
+/* ===============================
+   RESPONSIVENESS
+================================= */
+@media screen and (max-width: 480px) {
+    .story-cube-container {
+        width: 100%;
+        height: 100%;
+    }
+    .reply-placeholder {
+        width: 90%;
+        font-size: 14px;
+    }
+}
+
+/* Keep reply box closer on short screens */
 @media screen and (max-height: 700px) {
     .reply-box {
-        bottom: 20px; /* Kept from previous request */
+        bottom: 20px;
     }
 }
