@@ -1,4 +1,24 @@
 // chat.js
+// Conversations data
+const conversations = [
+    {
+        name: "Chizaram",
+        message: "Yo! Chizaram's in",
+        time: "Wed",
+        badge: 1,
+        avatar: "C",
+        isImage: false
+    },
+    {
+        name: "VaVia",
+        message: "Hey there! How are you?",
+        time: "Tue",
+        badge: 2,
+        avatar: "https://i.ibb.co/C5b875C6/Screenshot-20250904-050841.jpg",
+        isImage: true
+    }
+];
+
 // Sample chat messages for demonstration
 const chatMessages = {
     'Chizaram': [
@@ -10,6 +30,54 @@ const chatMessages = {
         { text: 'I\'m good, you?', sender: 'sent', time: 'Tue 3:16 PM' }
     ]
 };
+
+// Function to render conversations
+function renderConversations() {
+    const container = document.getElementById('conversations-container');
+    container.innerHTML = '';
+
+    conversations.forEach(conv => {
+        const conversationItem = document.createElement('div');
+        conversationItem.className = 'conversation-item';
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'avatar';
+        
+        if (conv.isImage) {
+            const img = document.createElement('img');
+            img.src = conv.avatar;
+            img.alt = conv.name;
+            avatarDiv.appendChild(img);
+        } else {
+            avatarDiv.textContent = conv.avatar;
+        }
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'conversation-content';
+        contentDiv.innerHTML = `
+            <div class="conversation-header">
+                <span class="conversation-name">${conv.name}</span>
+            </div>
+            <div class="conversation-message">${conv.message}</div>
+        `;
+
+        const rightSection = document.createElement('div');
+        rightSection.className = 'right-section';
+        rightSection.innerHTML = `
+            <span class="conversation-time">${conv.time}</span>
+            <div class="badge">${conv.badge}</div>
+        `;
+
+        conversationItem.appendChild(avatarDiv);
+        conversationItem.appendChild(contentDiv);
+        conversationItem.appendChild(rightSection);
+
+        container.appendChild(conversationItem);
+    });
+
+    // Add click event listeners after rendering
+    addConversationListeners();
+}
 
 // Function to create and render chat interface
 function openChat(conversation) {
@@ -115,12 +183,7 @@ function addConversationListeners() {
     });
 }
 
-// Override renderConversations to add click listeners
-const originalRenderConversations = renderConversations;
-renderConversations = () => {
-    originalRenderConversations();
-    addConversationListeners();
-};
-
 // Call renderConversations on page load
-renderConversations();
+document.addEventListener('DOMContentLoaded', () => {
+    renderConversations();
+});
