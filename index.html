@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch-up Messenger</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pop.css">
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+    <div class="header">
+        <div class="menu-icon">
+            <svg
+                class="icon messages-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                style="color: #749cbf; fill: #749cbf;"
+            >
+                <path
+                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+            </svg>
+        </div>
+        <div class="header-title">Messages</div>
+    </div>
+
+    <div class="stories-container" id="stories-container"></div>
+
+    <div id="conversations-container"></div>
+
+    <button class="floating-button"></button>
+
+    <div id="story-popup"></div>
+
+    <script src="story.js"></script>
+    <script src="pop.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>
