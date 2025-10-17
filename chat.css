@@ -72,6 +72,16 @@
     background-color: #f4f4f5;
 }
 
+@media (min-width: 768px) {
+    .chat-content {
+        background-image: url("https://i.ibb.co/HfvQJj50/Screenshot-20250730-222749.jpg");
+        background-repeat: no-repeat;
+        background-position: center top;
+        background-size: cover;
+        background-color: transparent;
+    }
+}
+
 .chat-message {
     margin-bottom: 12px;
     padding: 10px 14px;
@@ -93,38 +103,4 @@
     color: #000000;
     margin-right: auto;
     border-bottom-left-radius: 4px;
-}
-
-.chat-input-container {
-    display: flex;
-    padding: 12px 16px;
-    background-color: #ffffff;
-    border-top: 1px solid #e5e5ea;
-}
-
-.chat-input {
-    flex: 1;
-    padding: 10px 16px;
-    border: 1px solid #e5e5ea;
-    border-radius: 20px;
-    font-size: 15px;
-    margin-right: 8px;
-}
-
-.chat-send-button {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #749cbf;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: none;
-}
-
-.chat-send-button svg {
-    width: 20px;
-    height: 20px;
-    color: white;
 }
