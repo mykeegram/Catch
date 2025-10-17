@@ -43,16 +43,14 @@
     align-items: center;
     justify-content: center;
     backface-visibility: hidden;
-    background-size: cover;
-    background-position: center;
 }
 
 .story-cube-face.vavia-face {
-    height: 500px; /* Reduced height for VaVia's image */
+    height: 500px; /* Reduced height for VaVia */
 }
 
 .story-cube-face.chizaram-face {
-    height: 500px; /* Reduced height for Chizaram's gradient */
+    height: 500px; /* Reduced height for Chizaram */
 }
 
 .reply-box {
