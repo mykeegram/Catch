@@ -79,7 +79,7 @@
 }
 
 .reply-placeholder {
-    width: 69%;
+    width: 73%;
     padding: 10px 16px;
     background-color: #1c1c1c; /* Deep dark gray */
     color: #b3b3b3; /* Soft gray text */
@@ -156,13 +156,13 @@ body.popup-open {
         height: 500px;
     }
     .reply-box {
-        bottom: 15px;
+        bottom: 63px;
     }
 }
 
 @media screen and (max-width: 480px) {
     .story-content-div {
         width: calc(100% - 40px);
-        height: calc(100% - 160px);
+        height: calc(100% - 194px);
     }
 }
