@@ -42,19 +42,20 @@ function renderStoryCube() {
         const anglePerFace = 360 / allStories.length;
         const rotationAngle = (i - currentStoryIndex) * anglePerFace;
         
-        face.style.transform = `rotateY(${rotationAngle}deg) translateZ(200px)`;
+        // Reduced translateZ for closer cube faces
+        face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`; // Changed from 200px to 100px
         
         // Customize for VaVia and Chizaram
         if (story.username === "VaVia") {
             face.classList.add('vavia-face');
-            face.style.background = '#ffffff'; // Plain white background, no image
+            face.style.background = '#ffffff'; // Plain white background
             face.style.fontSize = '48px';
             face.style.fontWeight = 'bold';
             face.style.color = '#000000';
             face.textContent = story.username;
         } else if (story.username === "Chizaram") {
             face.classList.add('chizaram-face');
-            face.style.background = '#ffffff'; // Plain white background, no gradient
+            face.style.background = '#ffffff'; // Plain white background
             face.style.fontSize = '48px';
             face.style.fontWeight = 'bold';
             face.style.color = '#000000';
@@ -128,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (container) {
                     // Rotate cube based on drag distance, reduced sensitivity
                     const anglePerFace = 360 / allStories.length;
-                    const dragRotation = (deltaX / 200) * anglePerFace; // Increased divisor for less sensitivity
+                    const dragRotation = (deltaX / 200) * anglePerFace; // Kept reduced sensitivity
                     container.style.transition = 'none';
                     container.style.transform = `rotateY(${dragRotation}deg)`;
                 }
@@ -153,11 +154,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Swipe left - next story
-            if (deltaX < -100) { // Increased threshold for less sensitivity
+            if (deltaX < -100) {
                 switchToStory((currentStoryIndex + 1) % allStories.length);
             }
             // Swipe right - previous story
-            else if (deltaX > 100) { // Increased threshold for less sensitivity
+            else if (deltaX > 100) {
                 switchToStory((currentStoryIndex - 1 + allStories.length) % allStories.length);
             }
             
