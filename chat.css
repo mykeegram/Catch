@@ -39,6 +39,7 @@
     padding: 12px 16px;
     background-color: #ffffff;
     border-bottom: 1px solid #e5e5ea;
+    transition: transform 0.3s ease-in-out; /* Explicit transition to match .chat-container */
 }
 
 .back-button {
