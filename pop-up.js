@@ -45,23 +45,25 @@ function renderStoryCube() {
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(200px)`;
         
         // Customize for VaVia and Chizaram
-        if (story.username === "VaVia" && story.isImage) {
+        if (story.username === "VaVia") {
             face.classList.add('vavia-face');
-            face.style.backgroundImage = `url(${story.avatar})`;
-        } else if (story.username === "Chizaram" && !story.isImage) {
-            face.classList.add('chizaram-face');
-            face.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%)'; // Reduced opacity
+            face.style.background = '#ffffff'; // Plain white background, no image
             face.style.fontSize = '48px';
             face.style.fontWeight = 'bold';
-            face.style.color = 'white';
+            face.style.color = '#000000';
             face.textContent = story.username;
-        } else if (story.isImage) {
-            face.style.backgroundImage = `url(${story.avatar})`;
-        } else {
-            face.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        } else if (story.username === "Chizaram") {
+            face.classList.add('chizaram-face');
+            face.style.background = '#ffffff'; // Plain white background, no gradient
             face.style.fontSize = '48px';
             face.style.fontWeight = 'bold';
-            face.style.color = 'white';
+            face.style.color = '#000000';
+            face.textContent = story.username;
+        } else {
+            face.style.background = '#ffffff'; // Plain white background for all
+            face.style.fontSize = '48px';
+            face.style.fontWeight = 'bold';
+            face.style.color = '#000000';
             face.textContent = story.username;
         }
         
@@ -124,9 +126,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 const container = popup.querySelector('.story-cube-container');
                 if (container) {
-                    // Rotate cube based on drag distance
+                    // Rotate cube based on drag distance, reduced sensitivity
                     const anglePerFace = 360 / allStories.length;
-                    const dragRotation = (deltaX / 100) * anglePerFace;
+                    const dragRotation = (deltaX / 200) * anglePerFace; // Increased divisor for less sensitivity
                     container.style.transition = 'none';
                     container.style.transform = `rotateY(${dragRotation}deg)`;
                 }
@@ -151,11 +153,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Swipe left - next story
-            if (deltaX < -50) {
+            if (deltaX < -100) { // Increased threshold for less sensitivity
                 switchToStory((currentStoryIndex + 1) % allStories.length);
             }
             // Swipe right - previous story
-            else if (deltaX > 50) {
+            else if (deltaX > 100) { // Increased threshold for less sensitivity
                 switchToStory((currentStoryIndex - 1 + allStories.length) % allStories.length);
             }
             
