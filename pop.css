@@ -164,5 +164,6 @@ body.popup-open {
     .story-content-div {
         width: calc(100% - 40px);
         height: calc(100% - 194px);
+        margin-top: -25px;
     }
 }
