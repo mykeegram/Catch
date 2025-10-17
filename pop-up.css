@@ -23,7 +23,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    perspective: 600px; /* Reduced from 1200px for tighter 3D effect */
+    perspective: 600px; /* Kept for tighter 3D effect */
 }
 
 .story-cube-container {
@@ -31,26 +31,18 @@
     width: 400px;
     height: 600px;
     transform-style: preserve-3d;
-    transition: transform 0.4s ease; /* Slightly faster transition for Instagram-like feel */
+    transition: transform 0.4s ease; /* Kept for Instagram-like feel */
 }
 
 .story-cube-face {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 100%; /* Full height for all faces, including VaVia and Chizaram */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     backface-visibility: hidden;
-}
-
-.story-cube-face.vavia-face {
-    height: 500px; /* Reduced height for VaVia */
-}
-
-.story-cube-face.chizaram-face {
-    height: 500px; /* Reduced height for Chizaram */
 }
 
 .reply-box {
