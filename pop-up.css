@@ -97,14 +97,16 @@ body.popup-open {
         height: 100%;
     }
     .reply-placeholder {
-        width: 90%;
         font-size: 14px;
     }
 }
 
-/* Keep reply box closer on short screens */
+/* Closer on short screens */
 @media screen and (max-height: 700px) {
     .reply-box {
-        bottom: 20px;
+        bottom: 70px; /* Updated per your request */
+    }
+    .reply-placeholder {
+        width: 90%; /* Updated per your request */
     }
 }
