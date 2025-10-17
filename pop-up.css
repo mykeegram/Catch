@@ -63,7 +63,7 @@
 }
 
 .reply-placeholder {
-    width: 60%;
+    width: 69%;
     padding: 10px 16px;
     background-color: #1c1c1c; /* Deep dark gray */
     color: #b3b3b3; /* Soft gray text */
@@ -126,6 +126,11 @@ body.popup-open {
         width: 24px;
         height: 24px;
     }
+    .heart-icon svg {
+    width: 100%;
+    height: 100%;
+    transform: translateY(-4px);
+}
 }
 
 /* Closer on short screens */
