@@ -23,7 +23,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    perspective: 1200px;
+    perspective: 600px; /* Reduced from 1200px for tighter 3D effect */
 }
 
 .story-cube-container {
@@ -31,7 +31,7 @@
     width: 400px;
     height: 600px;
     transform-style: preserve-3d;
-    transition: transform 0.6s ease;
+    transition: transform 0.4s ease; /* Slightly faster transition for Instagram-like feel */
 }
 
 .story-cube-face {
@@ -55,10 +55,10 @@
 
 .reply-box {
     position: absolute;
-    bottom: -80px; /* Push reply box closer to viewport bottom */
+    bottom: -80px; /* Kept for closeness to mobile device bottom */
     left: 0;
     right: 0;
-    padding: 10px; /* Reduced padding for tighter fit */
+    padding: 10px;
     display: flex;
     justify-content: center;
     z-index: 10;
@@ -85,6 +85,6 @@ body.popup-open {
 /* Ensure reply box is closer on smaller screens */
 @media screen and (max-height: 700px) {
     .reply-box {
-        bottom: -20px; /* Adjust for smaller screens */
+        bottom: -20px; /* Adjusted for smaller screens */
     }
 }
