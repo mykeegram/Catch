@@ -10,6 +10,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    transition: none;
 }
 
 #story-popup.active {
