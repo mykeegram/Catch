@@ -71,7 +71,6 @@
     padding: 16px;
     overflow-y: auto;
     background-color: #f4f4f5;
-    border: 1px solid transparent; /* Debug border for visibility */
 }
 
 @media (max-width: 768px) {
@@ -82,7 +81,6 @@
         background-position: center top;
         background-size: cover;
         background-color: transparent;
-        border: 1px solid red; /* Debug border to confirm media query applies */
     }
     .chat-message.sent {
         background-color: rgba(116, 156, 191, 0.9); /* Slightly transparent for readability */
