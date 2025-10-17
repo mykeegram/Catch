@@ -43,30 +43,14 @@ function renderStoryCube() {
         const rotationAngle = (i - currentStoryIndex) * anglePerFace;
         
         // Reduced translateZ for closer cube faces
-        face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`; // Changed from 200px to 100px
+        face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
-        // Customize for VaVia and Chizaram
-        if (story.username === "VaVia") {
-            face.classList.add('vavia-face');
-            face.style.background = '#ffffff'; // Plain white background
-            face.style.fontSize = '48px';
-            face.style.fontWeight = 'bold';
-            face.style.color = '#000000';
-            face.textContent = story.username;
-        } else if (story.username === "Chizaram") {
-            face.classList.add('chizaram-face');
-            face.style.background = '#ffffff'; // Plain white background
-            face.style.fontSize = '48px';
-            face.style.fontWeight = 'bold';
-            face.style.color = '#000000';
-            face.textContent = story.username;
-        } else {
-            face.style.background = '#ffffff'; // Plain white background for all
-            face.style.fontSize = '48px';
-            face.style.fontWeight = 'bold';
-            face.style.color = '#000000';
-            face.textContent = story.username;
-        }
+        // Apply black background for all cube faces
+        face.style.background = '#000000'; // Changed to black
+        face.style.fontSize = '48px';
+        face.style.fontWeight = 'bold';
+        face.style.color = '#ffffff'; // White text for contrast
+        face.textContent = story.username;
         
         // Add reply box to each face if not "Your story"
         if (story.username !== "Your story") {
@@ -129,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (container) {
                     // Rotate cube based on drag distance, reduced sensitivity
                     const anglePerFace = 360 / allStories.length;
-                    const dragRotation = (deltaX / 200) * anglePerFace; // Kept reduced sensitivity
+                    const dragRotation = (deltaX / 200) * anglePerFace;
                     container.style.transition = 'none';
                     container.style.transform = `rotateY(${dragRotation}deg)`;
                 }
@@ -149,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const container = popup.querySelector('.story-cube-container');
             if (container) {
-                container.style.transition = 'transform 0.6s ease';
+                container.style.transition = 'transform 0.4s ease';
                 container.style.transform = 'rotateY(0deg)';
             }
             
