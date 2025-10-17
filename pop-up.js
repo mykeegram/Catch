@@ -1,5 +1,5 @@
 // Function to open story popup
-function openStoryPopup(storyData) {
+function openStoryPopup() {
     const popup = document.getElementById('story-popup');
     popup.classList.add('active');
     document.body.classList.add('popup-open');
@@ -12,13 +12,27 @@ function closeStoryPopup() {
     document.body.classList.remove('popup-open');
 }
 
-// Close popup on click outside
+// Swipe down to close popup
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('story-popup');
+    let startY = 0;
+    let currentY = 0;
     
     if (popup) {
-        popup.addEventListener('click', function(e) {
-            if (e.target === popup) {
+        popup.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+            currentY = startY;
+        });
+        
+        popup.addEventListener('touchmove', function(e) {
+            currentY = e.touches[0].clientY;
+        });
+        
+        popup.addEventListener('touchend', function(e) {
+            const deltaY = currentY - startY;
+            
+            // Swipe down to close
+            if (deltaY > 100) {
                 closeStoryPopup();
             }
         });
