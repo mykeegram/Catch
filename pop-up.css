@@ -4,7 +4,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #1a1a1a;
+    background-color: #000; /* Changed from #1a1a1a to #000 */
     z-index: 9999;
     display: none;
     align-items: center;
@@ -37,7 +37,7 @@
 .story-cube-face {
     position: absolute;
     width: 100%;
-    height: 100%; /* Full height for all faces, including VaVia and Chizaram */
+    height: 100%; /* Full height for all faces */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,10 +47,10 @@
 
 .reply-box {
     position: absolute;
-    bottom: -80px; /* Kept for closeness to mobile device bottom */
+    bottom: -80px; /* Kept for default closeness to mobile device bottom */
     left: 0;
     right: 0;
-    padding: 10px;
+    padding: 8px; /* Kept for slim container */
     display: flex;
     justify-content: center;
     z-index: 10;
@@ -58,13 +58,13 @@
 }
 
 .reply-placeholder {
-    width: 90%;
-    max-width: 400px;
-    padding: 12px 16px;
+    width: 85%; /* Kept for compact container */
+    max-width: 360px; /* Kept for compactness */
+    padding: 8px 12px; /* Kept for slim look */
     background-color: rgba(51, 51, 51, 0.9);
     color: #999;
-    border-radius: 20px;
-    font-size: 16px;
+    border-radius: 16px; /* Kept for subtler curve */
+    font-size: 14px; /* Kept for small Instagram-like text */
     text-align: left;
 }
 
@@ -77,6 +77,6 @@ body.popup-open {
 /* Ensure reply box is closer on smaller screens */
 @media screen and (max-height: 700px) {
     .reply-box {
-        bottom: -20px; /* Adjusted for smaller screens */
+        bottom: 20px; /* Kept from previous request */
     }
 }
