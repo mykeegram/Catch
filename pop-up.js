@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         renderStoryBox();
                     } else {
                         // At "Your story" - close popup
-                        container.style.transition = 'transform 0.3s ease';
+                        container.style.transition = 'none';
                         closeStoryPopup();
                     }
                 } else {
@@ -145,12 +145,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         renderStoryBox();
                     } else {
                         // At last story - close popup
-                        container.style.transition = 'transform 0.3s ease';
+                        container.style.transition = 'none';
                         closeStoryPopup();
                     }
                 }
             } else {
                 // Didn't drag far enough - snap back
+                container.style.transition = 'transform 0.4s ease';
                 container.style.transform = `rotateY(${rotationY}deg)`;
             }
         });
