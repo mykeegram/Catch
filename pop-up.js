@@ -1,10 +1,22 @@
-// Global variables for story navigation and likes
+// Global variables for story navigation
 let currentStoryIndex = 0;
 let allStories = [];
-let likes = {
-    "Chizaram": false,
-    "VaVia": false
+let likedStories = {
+    'Chizaram': false,
+    'VaVia': false
 };
+
+// Load liked stories from memory on startup
+function loadLikedStories() {
+    if (typeof likedStories === 'object') {
+        // Initialize liked state for each story
+        allStories.forEach(story => {
+            if (story.username !== "Your story" && !(story.username in likedStories)) {
+                likedStories[story.username] = false;
+            }
+        });
+    }
+}
 
 // Function to open story popup
 function openStoryPopup(story) {
@@ -15,6 +27,7 @@ function openStoryPopup(story) {
     // Find the index of the clicked story
     currentStoryIndex = stories.findIndex(s => s.username === story.username);
     allStories = stories;
+    loadLikedStories();
     
     // Create content container if it doesn't exist
     let content = popup.querySelector('#story-popup-content');
@@ -50,10 +63,10 @@ function renderStoryCube() {
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
         // Apply black background for all cube faces
-        face.style.background = '#000000';
+        face.style.background = '#000000'; // Changed to black
         face.style.fontSize = '48px';
         face.style.fontWeight = 'bold';
-        face.style.color = '#ffffff';
+        face.style.color = '#ffffff'; // White text for contrast
         face.textContent = story.username;
         
         // Add reply box to each face if not "Your story"
@@ -61,37 +74,28 @@ function renderStoryCube() {
             const replyBox = document.createElement('div');
             replyBox.className = 'reply-box';
             
-            // Reply placeholder span
             const replySpan = document.createElement('span');
             replySpan.className = 'reply-placeholder';
             replySpan.textContent = `Reply to ${story.username}'s Story`;
-            replyBox.appendChild(replySpan);
             
-            // Heart icon SVG
-            if (story.username === "Chizaram" || story.username === "VaVia") {
-                const heartSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                heartSvg.setAttribute("viewBox", "0 0 24 24");
-                heartSvg.setAttribute("fill", "none");
-                heartSvg.className = `heart-icon ${likes[story.username] ? 'liked' : ''}`;
-                heartSvg.innerHTML = `
-                    <path d="M15.7 4C18.87 4 21 6.98 21 9.76C21 15.39 12.16 20 12 20C11.84 20 3 15.39 3 9.76C3 6.98 5.13 4 8.3 4C10.12 4 11.31 4.91 12 5.71C12.69 4.91 13.88 4 15.7 4Z" 
-                          stroke="#ffffff" 
-                          stroke-width="2" 
-                          stroke-linecap="round" 
-                          stroke-linejoin="round" 
-                          ${likes[story.username] ? 'fill="#ff69b4"' : ''}/>
-                `;
-                
-                // Click event for heart
-                heartSvg.addEventListener('click', () => {
-                    likes[story.username] = !likes[story.username];
-                    heartSvg.classList.toggle('liked');
-                    heartSvg.querySelector('path').setAttribute('fill', likes[story.username] ? '#ff69b4' : 'none');
-                });
-                
-                replyBox.appendChild(heartSvg);
+            const heartIcon = document.createElement('div');
+            heartIcon.className = 'heart-icon';
+            heartIcon.dataset.username = story.username;
+            
+            // Check if this story is liked
+            if (likedStories[story.username]) {
+                heartIcon.classList.add('liked');
             }
             
+            heartIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.7 4C18.87 4 21 6.98 21 9.76C21 15.39 12.16 20 12 20C11.84 20 3 15.39 3 9.76C3 6.98 5.13 4 8.3 4C10.12 4 11.31 4.91 12 5.71C12.69 4.91 13.88 4 15.7 4Z" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`;
+            
+            heartIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleLike(story.username, heartIcon);
+            });
+            
+            replyBox.appendChild(replySpan);
+            replyBox.appendChild(heartIcon);
             face.appendChild(replyBox);
         }
         
@@ -99,6 +103,17 @@ function renderStoryCube() {
     }
     
     content.appendChild(container);
+}
+
+// Function to toggle like
+function toggleLike(username, heartElement) {
+    likedStories[username] = !likedStories[username];
+    
+    if (likedStories[username]) {
+        heartElement.classList.add('liked');
+    } else {
+        heartElement.classList.remove('liked');
+    }
 }
 
 // Function to switch to a specific story
@@ -185,3 +200,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+         
