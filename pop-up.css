@@ -55,16 +55,15 @@
     right: 0;
     padding: 8px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
     z-index: 10;
     background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-    padding-left: 16px;
-    padding-right: 16px;
 }
 
 .reply-placeholder {
-    width: 77%;
+    width: 60%;
     padding: 10px 16px;
     background-color: #1c1c1c; /* Deep dark gray */
     color: #b3b3b3; /* Soft gray text */
@@ -79,9 +78,9 @@
 }
 
 .heart-icon {
-    width: 28px;
-    height: 28px;
-    margin-left: 12px;
+    width: 24px;
+    height: 24px;
+    margin-left: 0;
     cursor: pointer;
     flex-shrink: 0;
     transition: transform 0.2s ease;
