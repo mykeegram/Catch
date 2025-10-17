@@ -62,19 +62,14 @@ function renderStoryCube() {
         // Reduced translateZ for closer cube faces
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
-        // Apply black background for all cube faces
-        face.style.background = '#000000'; // Changed to black
-        face.style.fontSize = '48px';
-        face.style.fontWeight = 'bold';
-        face.style.color = '#ffffff'; // White text for contrast
-        face.textContent = story.username;
+        // Create ash-white content div
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'story-content-div';
+        
+        face.appendChild(contentDiv);
         
         // Add reply box to each face if not "Your story"
         if (story.username !== "Your story") {
-            const contentBg = document.createElement('div');
-            contentBg.className = 'story-content-bg';
-            face.appendChild(contentBg);
-            
             const replyBox = document.createElement('div');
             replyBox.className = 'reply-box';
             
