@@ -46,6 +46,21 @@
 }
 
 /* ===============================
+   STORY CONTENT BACKGROUND
+================================= */
+.story-content-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 100px;
+    background-color: #f3f4f6;
+    border-radius: 16px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ===============================
    REPLY BOX (BOTTOM INPUT LOOK)
 ================================= */
 .reply-box {
