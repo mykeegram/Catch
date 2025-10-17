@@ -56,13 +56,14 @@
     padding: 8px;
     display: flex;
     justify-content: center;
+    align-items: center; /* Ensure vertical alignment */
     z-index: 10;
     background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
 }
 
 .reply-placeholder {
-    width: 85%;
-    max-width: 360px;
+    width: 75%; /* Reduced from 85% to make space for heart */
+    max-width: 320px; /* Adjusted to maintain proportionality */
     padding: 10px 16px;
     background-color: #1c1c1c; /* Deep dark gray */
     color: #b3b3b3; /* Soft gray text */
@@ -74,6 +75,19 @@
     border: none;
     outline: none;
     pointer-events: none; /* Keeps it non-interactive like a placeholder */
+}
+
+/* Heart icon styles */
+.heart-icon {
+    width: 24px;
+    height: 24px;
+    margin-left: 10px; /* Space between reply span and heart */
+    cursor: pointer;
+    transition: fill 0.3s ease; /* Smooth color transition */
+}
+
+.heart-icon.liked {
+    fill: #ff69b4; /* Pink when liked */
 }
 
 /* ===============================
@@ -94,7 +108,12 @@ body.popup-open {
         height: 100%;
     }
     .reply-placeholder {
+        width: 65%; /* Further reduced for smaller screens */
         font-size: 14px;
+    }
+    .heart-icon {
+        width: 20px; /* Slightly smaller for mobile */
+        height: 20px;
     }
 }
 
@@ -104,6 +123,10 @@ body.popup-open {
         bottom: 70px; /* Updated per your request */
     }
     .reply-placeholder {
-        width: 77%; /* Updated per your request */
+        width: 67%; /* Adjusted for short screens */
+    }
+    .heart-icon {
+        width: 20px; /* Consistent with mobile */
+        height: 20px;
     }
 }
