@@ -81,14 +81,8 @@ function renderConversations() {
 
 // Function to create and render chat interface
 function openChat(conversation) {
-    // Create chat container if it doesn't exist
-    let chatContainer = document.getElementById('chat-container');
-    if (!chatContainer) {
-        chatContainer = document.createElement('div');
-        chatContainer.id = 'chat-container';
-        chatContainer.className = 'chat-container';
-        document.body.appendChild(chatContainer);
-    }
+    // Use existing chat container
+    const chatContainer = document.getElementById('chat-container');
 
     // Render chat content
     chatContainer.innerHTML = `
@@ -145,6 +139,7 @@ function openChat(conversation) {
 function closeChat() {
     const chatContainer = document.getElementById('chat-container');
     chatContainer.classList.remove('open');
+    chatContainer.innerHTML = ''; // Clear content to ensure it’s hidden
     document.getElementById('conversations-container').classList.remove('slide-left');
     document.querySelector('.header').classList.remove('slide-left');
     document.querySelector('.floating-button').classList.remove('hidden');
