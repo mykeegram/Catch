@@ -11,10 +11,33 @@
     justify-content: center;
     overflow: hidden;
     transition: none;
+    flex-direction: column;
 }
 
 #story-popup.active {
     display: flex;
+}
+
+.reply-box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.reply-placeholder {
+    width: 90%;
+    max-width: 400px;
+    padding: 12px 16px;
+    background-color: #333;
+    color: #999;
+    border-radius: 20px;
+    font-size: 16px;
+    text-align: left;
 }
 
 body.popup-open {
