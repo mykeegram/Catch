@@ -64,7 +64,7 @@
 }
 
 .reply-placeholder {
-    flex: 1;
+    width: 77%;
     padding: 10px 16px;
     background-color: #1c1c1c; /* Deep dark gray */
     color: #b3b3b3; /* Soft gray text */
@@ -85,6 +85,8 @@
     cursor: pointer;
     flex-shrink: 0;
     transition: transform 0.2s ease;
+    display: flex;
+    align-items: flex-end;
 }
 
 .heart-icon:hover {
