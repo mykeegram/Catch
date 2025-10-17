@@ -3,6 +3,14 @@ function openStoryPopup() {
     const popup = document.getElementById('story-popup');
     popup.classList.add('active');
     document.body.classList.add('popup-open');
+    
+    // Create reply box if it doesn't exist
+    if (!popup.querySelector('.reply-box')) {
+        const replyBox = document.createElement('div');
+        replyBox.className = 'reply-box';
+        replyBox.innerHTML = '<span class="reply-placeholder">Reply privately...</span>';
+        popup.appendChild(replyBox);
+    }
 }
 
 // Function to close story popup
