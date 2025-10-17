@@ -41,23 +41,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     backface-visibility: hidden;
+    background: #000; /* Black background for cube faces */
 }
 
 /* ===============================
-   STORY CONTENT BACKGROUND
+   ASH-WHITE CONTENT DIV
 ================================= */
-.story-content-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 100px;
-    background-color: #f3f4f6;
-    border-radius: 16px;
-    z-index: 1;
-    pointer-events: none;
+.story-content-div {
+    width: calc(100% - 32px); /* Leave gaps on left and right */
+    height: calc(100% - 160px); /* Shorter height - stops before top and bottom */
+    background-color: #f3f4f6; /* Ash-white background */
+    border-radius: 16px; /* Soft rounded corners */
+    margin-bottom: 12px; /* Small gap before reply box */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* ===============================
@@ -65,16 +63,15 @@
 ================================= */
 .reply-box {
     position: absolute;
-    bottom: -80px; /* Default distance from bottom */
+    bottom: 20px; /* Positioned below the content div */
     left: 0;
     right: 0;
-    padding: 8px;
+    padding: 8px 16px;
     display: flex;
     justify-content: center;
     align-items: flex-end;
     gap: 8px;
     z-index: 10;
-    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
 }
 
 .reply-placeholder {
@@ -143,15 +140,18 @@ body.popup-open {
         height: 24px;
     }
     .heart-icon svg {
-    width: 100%;
-    height: 100%;
-    transform: translateY(-6px);
-}
+        width: 100%;
+        height: 100%;
+        transform: translateY(-6px);
+    }
 }
 
 /* Closer on short screens */
 @media screen and (max-height: 700px) {
+    .story-content-div {
+        height: calc(100% - 140px);
+    }
     .reply-box {
-        bottom: 70px; /* Updated per your request */
+        bottom: 15px;
     }
 }
