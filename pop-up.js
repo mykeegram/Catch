@@ -44,8 +44,18 @@ function renderStoryCube() {
         
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(200px)`;
         
-        // Set background image or color
-        if (story.isImage) {
+        // Customize for VaVia and Chizaram
+        if (story.username === "VaVia" && story.isImage) {
+            face.classList.add('vavia-face');
+            face.style.backgroundImage = `url(${story.avatar})`;
+        } else if (story.username === "Chizaram" && !story.isImage) {
+            face.classList.add('chizaram-face');
+            face.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%)'; // Reduced opacity
+            face.style.fontSize = '48px';
+            face.style.fontWeight = 'bold';
+            face.style.color = 'white';
+            face.textContent = story.username;
+        } else if (story.isImage) {
             face.style.backgroundImage = `url(${story.avatar})`;
         } else {
             face.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
@@ -55,19 +65,18 @@ function renderStoryCube() {
             face.textContent = story.username;
         }
         
+        // Add reply box to each face if not "Your story"
+        if (story.username !== "Your story") {
+            const replyBox = document.createElement('div');
+            replyBox.className = 'reply-box';
+            replyBox.innerHTML = `<span class="reply-placeholder">Reply to ${story.username}'s Story</span>`;
+            face.appendChild(replyBox);
+        }
+        
         container.appendChild(face);
     }
     
     content.appendChild(container);
-    
-    // Add reply box if not "Your story"
-    const currentStory = allStories[currentStoryIndex];
-    if (currentStory.username !== "Your story") {
-        const replyBox = document.createElement('div');
-        replyBox.className = 'reply-box';
-        replyBox.innerHTML = `<span class="reply-placeholder">Reply to ${currentStory.username}'s Story</span>`;
-        container.appendChild(replyBox);
-    }
 }
 
 // Function to switch to a specific story
