@@ -95,7 +95,7 @@
 .heart-icon svg {
     width: 100%;
     height: 100%;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
 }
 
 .heart-icon.liked svg path {
@@ -130,7 +130,7 @@ body.popup-open {
     .heart-icon svg {
     width: 100%;
     height: 100%;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
 }
 }
 
