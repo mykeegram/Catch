@@ -70,15 +70,24 @@
     padding: 16px;
     overflow-y: auto;
     background-color: #f4f4f5;
+    border: 1px solid transparent; /* Debug border for visibility */
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
+    /* ===== Mobile Background ===== */
     .chat-content {
         background-image: url("https://i.ibb.co/HfvQJj50/Screenshot-20250730-222749.jpg");
         background-repeat: no-repeat;
         background-position: center top;
         background-size: cover;
         background-color: transparent;
+        border: 1px solid red; /* Debug border to confirm media query applies */
+    }
+    .chat-message.sent {
+        background-color: rgba(116, 156, 191, 0.9); /* Slightly transparent for readability */
+    }
+    .chat-message.received {
+        background-color: rgba(229, 229, 234, 0.9); /* Slightly transparent for readability */
     }
 }
 
