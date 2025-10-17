@@ -1,6 +1,3 @@
-/* ===============================
-   STORY POPUP CORE STYLES
-================================= */
 #story-popup {
     position: fixed;
     top: 0;
@@ -107,6 +104,6 @@ body.popup-open {
         bottom: 70px; /* Updated per your request */
     }
     .reply-placeholder {
-        width: 90%; /* Updated per your request */
+        width: 77%; /* Updated per your request */
     }
 }
