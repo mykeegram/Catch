@@ -46,6 +46,15 @@ function renderStoryBox() {
     faces.forEach((face, index) => {
         const faceEl = document.createElement('div');
         faceEl.className = `story-box-face story-box-${face}`;
+        
+        // Add reply box to right and back faces (Chizaram and VaVia)
+        if (face === 'right' || face === 'back') {
+            const replyBox = document.createElement('div');
+            replyBox.className = 'story-reply-box';
+            replyBox.textContent = 'Reply privately...';
+            faceEl.appendChild(replyBox);
+        }
+        
         container.appendChild(faceEl);
     });
     
