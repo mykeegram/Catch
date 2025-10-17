@@ -42,17 +42,17 @@ function renderStoryBox() {
     ];
     
     // Create cube faces
-    const faces = ['front', 'right', 'back'];
+    const faces = ['front', 'right'];
     faces.forEach((face, index) => {
         const faceEl = document.createElement('div');
         faceEl.className = `story-box-face story-box-${face}`;
         
-        // Add reply box to right and back faces (Chizaram and VaVia)
-        if (face === 'right' || face === 'back') {
-            const replyBox = document.createElement('div');
-            replyBox.className = 'story-reply-box';
-            replyBox.textContent = 'Reply privately...';
-            faceEl.appendChild(replyBox);
+        // Add reply input for right face (Chizaram and VaVia)
+        if (face === 'right') {
+            const replyInput = document.createElement('div');
+            replyInput.className = 'reply-input';
+            replyInput.textContent = 'Reply privately...';
+            faceEl.appendChild(replyInput);
         }
         
         container.appendChild(faceEl);
