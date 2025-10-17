@@ -41,7 +41,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     backface-visibility: hidden;
     background: #000; /* Black background for cube faces */
 }
@@ -50,12 +50,16 @@
    ASH-WHITE CONTENT DIV
 ================================= */
 .story-content-div {
-    width: calc(100% - 32px); /* Leave gaps on left and right */
-    height: calc(100% - 160px); /* Shorter height - stops before top and bottom */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 370px; /* Larger width - closer to cube edges */
+    height: 550px; /* Taller height - closer to cube edges */
     background-color: #f3f4f6; /* Ash-white background */
     border-radius: 16px; /* Soft rounded corners */
-    margin-bottom: 12px; /* Small gap before reply box */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    pointer-events: none; /* Allow clicks to pass through */
 }
 
 /* ===============================
@@ -149,9 +153,16 @@ body.popup-open {
 /* Closer on short screens */
 @media screen and (max-height: 700px) {
     .story-content-div {
-        height: calc(100% - 140px);
+        height: 500px;
     }
     .reply-box {
         bottom: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .story-content-div {
+        width: calc(100% - 40px);
+        height: calc(100% - 160px);
     }
 }
