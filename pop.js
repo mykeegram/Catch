@@ -1,5 +1,6 @@
 // Global variables for story navigation
 let currentStoryIndex = 0;
+let currentInternalStoryIndex = 0;
 let allStories = [];
 let likedStories = {
     'Chizaram': false,
@@ -66,6 +67,14 @@ function renderStoryCube() {
         const contentDiv = document.createElement('div');
         contentDiv.className = 'story-content-div';
         
+        // Add internal story indicator if story has multiple internal stories
+        if (story.internalStories && story.internalStories.length > 1) {
+            const indicator = document.createElement('div');
+            indicator.className = 'internal-story-indicator';
+            indicator.textContent = `${currentInternalStoryIndex + 1} / ${story.internalStories.length}`;
+            contentDiv.appendChild(indicator);
+        }
+        
         face.appendChild(contentDiv);
         
         // Add reply box to each face if not "Your story"
@@ -120,7 +129,37 @@ function switchToStory(newIndex) {
     if (newIndex < 0 || newIndex >= allStories.length) return;
     
     currentStoryIndex = newIndex;
+    currentInternalStoryIndex = 0; // Reset internal story index when switching stories
     renderStoryCube();
+}
+
+// Function to switch to next internal story
+function nextInternalStory() {
+    const currentStory = allStories[currentStoryIndex];
+    if (currentStory.internalStories && currentInternalStoryIndex < currentStory.internalStories.length - 1) {
+        currentInternalStoryIndex++;
+        renderStoryCube();
+    } else {
+        // Move to next story if this is the last internal story
+        switchToStory((currentStoryIndex + 1) % allStories.length);
+    }
+}
+
+// Function to switch to previous internal story
+function prevInternalStory() {
+    if (currentInternalStoryIndex > 0) {
+        currentInternalStoryIndex--;
+        renderStoryCube();
+    } else {
+        // Move to previous story if this is the first internal story
+        const prevIndex = (currentStoryIndex - 1 + allStories.length) % allStories.length;
+        switchToStory(prevIndex);
+        const prevStory = allStories[prevIndex];
+        if (prevStory.internalStories) {
+            currentInternalStoryIndex = prevStory.internalStories.length - 1;
+            renderStoryCube();
+        }
+    }
 }
 
 // Function to close story popup
@@ -188,11 +227,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Swipe left - next story
             if (deltaX < -100) {
-                switchToStory((currentStoryIndex + 1) % allStories.length);
+                nextInternalStory();
             }
             // Swipe right - previous story
             else if (deltaX > 100) {
-                switchToStory((currentStoryIndex - 1 + allStories.length) % allStories.length);
+                prevInternalStory();
             }
             
             isDragging = false;
