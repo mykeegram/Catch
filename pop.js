@@ -238,9 +238,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 const container = popup.querySelector('.story-cube-container');
                 if (container) {
-                    // Rotate cube based on drag distance, reduced sensitivity
+                    // Limit drag rotation to prevent showing next user story
+                    const maxRotation = 15; // Reduced max rotation
                     const anglePerFace = 360 / allStories.length;
-                    const dragRotation = (deltaX / 200) * anglePerFace;
+                    let dragRotation = (deltaX / 300) * anglePerFace; // Increased divisor for less sensitivity
+                    
+                    // Clamp rotation to max value
+                    dragRotation = Math.max(-maxRotation, Math.min(maxRotation, dragRotation));
+                    
                     container.style.transition = 'none';
                     container.style.transform = `rotateY(${dragRotation}deg)`;
                 }
@@ -266,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Swipe left - next user's story
             if (deltaX < -100) {
-                switchToUserStory((currentUserIndex + 1) % allStories.length);
+                switchToUserStory(currentUserIndex + 1);
             }
             // Swipe right - previous user's story
             else if (deltaX > 100) {
