@@ -160,6 +160,11 @@ function addTapZones(content) {
     content.appendChild(rightZone);
 }
 
+// Check if element is within reply box or heart icon
+function isClickOnInteractiveElement(element) {
+    return element.closest('.reply-box') || element.closest('.heart-icon');
+}
+
 // Navigate internal stories (tap left/right)
 function navigateInternalStory(direction) {
     const currentUser = allStories[currentUserIndex];
