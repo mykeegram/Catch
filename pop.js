@@ -238,14 +238,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 const container = popup.querySelector('.story-cube-container');
                 if (container) {
-                    // Limit drag rotation to prevent showing next user story
-                    const maxRotation = 15; // Reduced max rotation
-                    const anglePerFace = 360 / allStories.length;
-                    let dragRotation = (deltaX / 300) * anglePerFace; // Increased divisor for less sensitivity
-                    
-                    // Clamp rotation to max value
-                    dragRotation = Math.max(-maxRotation, Math.min(maxRotation, dragRotation));
-                    
+                    // Limit drag rotation to prevent showing next user
+                    // Max 30 degree rotation (reduced from full angle)
+                    const maxRotation = 30;
+                    const dragRotation = Math.max(-maxRotation, Math.min(maxRotation, (deltaX / 200) * 60));
                     container.style.transition = 'none';
                     container.style.transform = `rotateY(${dragRotation}deg)`;
                 }
@@ -269,12 +265,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 container.style.transform = 'rotateY(0deg)';
             }
             
+            // Reduced drag swipe limit (80px instead of 100px for easier edge detection)
+            const swipeThreshold = 80;
+            
+            // Check if on first user (Your story) swiping right
+            if (currentUserIndex === 0 && deltaX > swipeThreshold) {
+                closeStoryPopupWithAnimation();
+                isDragging = false;
+                return;
+            }
+            
+            // Check if on last user (VaVia) swiping left
+            if (currentUserIndex === allStories.length - 1 && deltaX < -swipeThreshold) {
+                closeStoryPopupWithAnimation();
+                isDragging = false;
+                return;
+            }
+            
             // Swipe left - next user's story
-            if (deltaX < -100) {
+            if (deltaX < -swipeThreshold) {
                 switchToUserStory(currentUserIndex + 1);
             }
             // Swipe right - previous user's story
-            else if (deltaX > 100) {
+            else if (deltaX > swipeThreshold) {
                 switchToUserStory(currentUserIndex - 1);
             }
             
