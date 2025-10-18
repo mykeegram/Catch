@@ -90,6 +90,9 @@ function openChat(conversation) {
         const chatContainer = document.getElementById("chat-container");
         if (!chatContainer) throw new Error("Chat container not found");
 
+        const conversationsContainer = document.getElementById("conversations-container");
+        if (!conversationsContainer) throw new Error("Conversations container not found in openChat");
+
         // Render chat content
         chatContainer.innerHTML = `
             <div class="chat-header">
@@ -115,7 +118,8 @@ function openChat(conversation) {
 
         // Slide in chat and slide out index area
         chatContainer.classList.add("open");
-        document.getElementById("conversations-container").classList.add("slide-left");
+        conversationsContainer.classList.add("slide-left");
+        console.log("Applied slide-left to conversations-container"); // Debug log
         document.querySelector(".header").classList.add("slide-left");
         document.querySelector(".stories-container").classList.add("slide-left");
         document.querySelector(".floating-button").classList.add("hidden");
@@ -132,8 +136,12 @@ function openChat(conversation) {
 function closeChat() {
     try {
         const chatContainer = document.getElementById("chat-container");
+        const conversationsContainer = document.getElementById("conversations-container");
+        if (!conversationsContainer) throw new Error("Conversations container not found in closeChat");
+
         chatContainer.classList.remove("open");
-        document.getElementById("conversations-container").classList.remove("slide-left");
+        conversationsContainer.classList.remove("slide-left");
+        console.log("Removed slide-left from conversations-container"); // Debug log
         document.querySelector(".header").classList.remove("slide-left");
         document.querySelector(".stories-container").classList.remove("slide-left");
         document.querySelector(".floating-button").classList.remove("hidden");
