@@ -152,6 +152,12 @@
     right: 0;
     width: 50%;
 }
+
+/* Allow interaction with reply-box through tap zones */
+.reply-box {
+    position: relative;
+    z-index: 20;
+}
 body.popup-open {
     overflow: hidden;
     position: fixed;
