@@ -2,40 +2,30 @@
 let currentUserIndex = 0;
 let currentInternalStoryIndex = 0;
 let allStories = [];
-let likedStories = {
-    'Chizaram': false,
-    'VaVia': false
-};
+let likedStories = {};
 
-// Story data structure with internal stories
-const storyDatabase = {
-    'Your story': {
-        internalStories: [
-            { id: 1, content: 'Your Story 1' },
-            { id: 2, content: 'Your Story 2' },
-            { id: 3, content: 'Your Story 3' }
-        ]
-    },
-    'Chizaram': {
-        internalStories: [
-            { id: 1, content: 'Chizaram Story 1' },
-            { id: 2, content: 'Chizaram Story 2' },
-            { id: 3, content: 'Chizaram Story 3' },
-            { id: 4, content: 'Chizaram Story 4' }
-        ]
-    },
-    'VaVia': {
-        internalStories: [
-            { id: 1, content: 'VaVia Story 1' },
-            { id: 2, content: 'VaVia Story 2' }
-        ]
-    }
+// Store internal stories for each user
+const userInternalStories = {
+    'Your story': [
+        { id: 1, title: 'Your Story 1' },
+        { id: 2, title: 'Your Story 2' },
+        { id: 3, title: 'Your Story 3' }
+    ],
+    'Chizaram': [
+        { id: 1, title: 'Chizaram Story 1' },
+        { id: 2, title: 'Chizaram Story 2' },
+        { id: 3, title: 'Chizaram Story 3' },
+        { id: 4, title: 'Chizaram Story 4' }
+    ],
+    'VaVia': [
+        { id: 1, title: 'VaVia Story 1' },
+        { id: 2, title: 'VaVia Story 2' }
+    ]
 };
 
 // Load liked stories from memory on startup
 function loadLikedStories() {
     if (typeof likedStories === 'object') {
-        // Initialize liked state for each story
         allStories.forEach(story => {
             if (story.username !== "Your story" && !(story.username in likedStories)) {
                 likedStories[story.username] = false;
@@ -48,6 +38,7 @@ function loadLikedStories() {
 function openStoryPopup(story) {
     const popup = document.getElementById('story-popup');
     popup.classList.add('active');
+    popup.classList.remove('closing');
     document.body.classList.add('popup-open');
     
     // Find the index of the clicked story
@@ -76,7 +67,7 @@ function renderStoryCube() {
     const container = document.createElement('div');
     container.className = 'story-cube-container';
     
-    // Create cube faces for all stories (users)
+    // Create cube faces for all stories
     for (let i = 0; i < allStories.length; i++) {
         const story = allStories[i];
         const face = document.createElement('div');
@@ -89,18 +80,34 @@ function renderStoryCube() {
         // Reduced translateZ for closer cube faces
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
-        // Create ash-white content div
+        // Create story content div with gradient based on internal story index
         const contentDiv = document.createElement('div');
         contentDiv.className = 'story-content-div';
         
-        // Add internal story content
-        const currentUser = story.username;
-        const internalStories = storyDatabase[currentUser]?.internalStories || [];
-        const internalStory = internalStories[currentInternalStoryIndex] || { content: 'No story' };
-        
-        contentDiv.innerHTML = `<div class="internal-story-content">${internalStory.content}</div>`;
+        // Apply gradient class if this is not the first internal story
+        if (currentInternalStoryIndex > 0) {
+            const gradientClass = `gradient-${(currentInternalStoryIndex % 6) || 1}`;
+            contentDiv.classList.add(gradientClass);
+        }
         
         face.appendChild(contentDiv);
+        
+        // Add tap zones for internal navigation
+        const tapZoneLeft = document.createElement('div');
+        tapZoneLeft.className = 'tap-zone tap-zone-left';
+        tapZoneLeft.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateInternalStory(-1);
+        });
+        face.appendChild(tapZoneLeft);
+        
+        const tapZoneRight = document.createElement('div');
+        tapZoneRight.className = 'tap-zone tap-zone-right';
+        tapZoneRight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateInternalStory(1);
+        });
+        face.appendChild(tapZoneRight);
         
         // Add reply box to each face if not "Your story"
         if (story.username !== "Your story") {
@@ -136,49 +143,6 @@ function renderStoryCube() {
     }
     
     content.appendChild(container);
-    
-    // Add tap zones for internal story navigation
-    addTapZones(content);
-}
-
-// Add tap zones for internal story navigation
-function addTapZones(content) {
-    const leftZone = document.createElement('div');
-    leftZone.className = 'tap-zone tap-zone-left';
-    leftZone.addEventListener('click', function(e) {
-        e.stopPropagation();
-        navigateInternalStory(-1);
-    });
-    content.appendChild(leftZone);
-    
-    const rightZone = document.createElement('div');
-    rightZone.className = 'tap-zone tap-zone-right';
-    rightZone.addEventListener('click', function(e) {
-        e.stopPropagation();
-        navigateInternalStory(1);
-    });
-    content.appendChild(rightZone);
-}
-
-// Check if element is within reply box or heart icon
-function isClickOnInteractiveElement(element) {
-    return element.closest('.reply-box') || element.closest('.heart-icon');
-}
-
-// Navigate internal stories (tap left/right)
-function navigateInternalStory(direction) {
-    const currentUser = allStories[currentUserIndex];
-    const internalStories = storyDatabase[currentUser.username]?.internalStories || [];
-    
-    const newIndex = currentInternalStoryIndex + direction;
-    
-    // Check bounds
-    if (newIndex < 0 || newIndex >= internalStories.length) {
-        return; // Don't navigate out of bounds for internal stories
-    }
-    
-    currentInternalStoryIndex = newIndex;
-    renderStoryCube();
 }
 
 // Function to toggle like
@@ -192,27 +156,59 @@ function toggleLike(username, heartElement) {
     }
 }
 
-// Function to switch to a specific user's story
-function switchToUserStory(newUserIndex) {
-    if (newUserIndex < 0 || newUserIndex >= allStories.length) {
-        // If trying to go before first user or after last user, close popup
-        closeStoryPopup();
+// Function to navigate internal stories (tap left/right)
+function navigateInternalStory(direction) {
+    const currentUsername = allStories[currentUserIndex].username;
+    const internalStories = userInternalStories[currentUsername] || [];
+    
+    const newIndex = currentInternalStoryIndex + direction;
+    
+    // Clamp to valid range
+    if (newIndex >= 0 && newIndex < internalStories.length) {
+        currentInternalStoryIndex = newIndex;
+        renderStoryCube();
+    }
+}
+
+// Function to switch to a specific user story
+function switchToUserStory(newIndex) {
+    // Check if trying to go back from first user
+    if (newIndex < 0) {
+        closeStoryPopupWithAnimation();
         return;
     }
     
-    currentUserIndex = newUserIndex;
-    currentInternalStoryIndex = 0; // Reset to first internal story
+    // Check if trying to go forward from last user
+    if (newIndex >= allStories.length) {
+        closeStoryPopupWithAnimation();
+        return;
+    }
+    
+    currentUserIndex = newIndex;
+    currentInternalStoryIndex = 0;
     renderStoryCube();
 }
 
-// Function to close story popup
+// Function to close story popup with pop-out animation
+function closeStoryPopupWithAnimation() {
+    const popup = document.getElementById('story-popup');
+    popup.classList.add('closing');
+    
+    setTimeout(() => {
+        popup.classList.remove('active');
+        popup.classList.remove('closing');
+        document.body.classList.remove('popup-open');
+    }, 300);
+}
+
+// Function to close story popup immediately
 function closeStoryPopup() {
     const popup = document.getElementById('story-popup');
     popup.classList.remove('active');
     document.body.classList.remove('popup-open');
 }
 
-// Swipe down to close and horizontal swipe/drag to navigate between users
+// Swipe down to close and horizontal swipe/drag to navigate
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('story-popup');
     let startY = 0;
@@ -257,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Swipe down to close
             if (deltaY > 100 && Math.abs(deltaY) > Math.abs(deltaX)) {
-                closeStoryPopup();
+                closeStoryPopupWithAnimation();
                 isDragging = false;
                 return;
             }
@@ -268,21 +264,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 container.style.transform = 'rotateY(0deg)';
             }
             
-            // Swipe left - next user's story or close if on last user
+            // Swipe left - next user's story
             if (deltaX < -100) {
-                if (currentUserIndex === allStories.length - 1) {
-                    closeStoryPopup();
-                } else {
-                    switchToUserStory(currentUserIndex + 1);
-                }
+                switchToUserStory((currentUserIndex + 1) % allStories.length);
             }
-            // Swipe right - previous user's story or close if on first user
+            // Swipe right - previous user's story
             else if (deltaX > 100) {
-                if (currentUserIndex === 0) {
-                    closeStoryPopup();
-                } else {
-                    switchToUserStory(currentUserIndex - 1);
-                }
+                switchToUserStory(currentUserIndex - 1);
             }
             
             isDragging = false;
