@@ -238,10 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 const container = popup.querySelector('.story-cube-container');
                 if (container) {
-                    // Limit drag rotation to prevent showing next user
-                    // Max 30 degree rotation (reduced from full angle)
-                    const maxRotation = 30;
-                    const dragRotation = Math.max(-maxRotation, Math.min(maxRotation, (deltaX / 200) * 60));
+                    // For edge users (Your story and VaVia), limit drag rotation
+                    const isEdgeUser = currentUserIndex === 0 || currentUserIndex === allStories.length - 1;
+                    const maxDragRotation = isEdgeUser ? 20 : 60; // Reduced limit for edge users
+                    
+                    let dragRotation = (deltaX / 200) * (360 / allStories.length);
+                    dragRotation = Math.max(-maxDragRotation, Math.min(maxDragRotation, dragRotation));
+                    
                     container.style.transition = 'none';
                     container.style.transform = `rotateY(${dragRotation}deg)`;
                 }
@@ -265,30 +268,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 container.style.transform = 'rotateY(0deg)';
             }
             
-            // Reduced drag swipe limit (80px instead of 100px for easier edge detection)
-            const swipeThreshold = 80;
+            const isEdgeUser = currentUserIndex === 0 || currentUserIndex === allStories.length - 1;
             
-            // Check if on first user (Your story) swiping right
-            if (currentUserIndex === 0 && deltaX > swipeThreshold) {
-                closeStoryPopupWithAnimation();
-                isDragging = false;
-                return;
-            }
-            
-            // Check if on last user (VaVia) swiping left
-            if (currentUserIndex === allStories.length - 1 && deltaX < -swipeThreshold) {
-                closeStoryPopupWithAnimation();
-                isDragging = false;
-                return;
-            }
-            
-            // Swipe left - next user's story
-            if (deltaX < -swipeThreshold) {
-                switchToUserStory(currentUserIndex + 1);
-            }
-            // Swipe right - previous user's story
-            else if (deltaX > swipeThreshold) {
-                switchToUserStory(currentUserIndex - 1);
+            if (isEdgeUser) {
+                // For edge users, check if swipe is strong enough to trigger action
+                const swipeThreshold = 150; // Higher threshold for edge users
+                
+                // Swipe left on last user or swipe right on first user - close popup
+                if ((deltaX < -swipeThreshold && currentUserIndex === allStories.length - 1) ||
+                    (deltaX > swipeThreshold && currentUserIndex === 0)) {
+                    closeStoryPopupWithAnimation();
+                } else {
+                    // Reset if threshold not met
+                    container.style.transform = 'rotateY(0deg)';
+                }
+            } else {
+                // For middle users, use normal swipe behavior
+                if (deltaX < -100) {
+                    switchToUserStory(currentUserIndex + 1);
+                } else if (deltaX > 100) {
+                    switchToUserStory(currentUserIndex - 1);
+                }
             }
             
             isDragging = false;
