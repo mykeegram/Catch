@@ -4,22 +4,22 @@ let currentInternalStoryIndex = 0;
 let allStories = [];
 let likedStories = {};
 
-// Store internal stories for each user
+// Store internal stories for each user with their own like status
 const userInternalStories = {
     'Your story': [
-        { id: 1, title: 'Your Story 1' },
-        { id: 2, title: 'Your Story 2' },
-        { id: 3, title: 'Your Story 3' }
+        { id: 1, title: 'Your Story 1', liked: false },
+        { id: 2, title: 'Your Story 2', liked: false },
+        { id: 3, title: 'Your Story 3', liked: false }
     ],
     'Chizaram': [
-        { id: 1, title: 'Chizaram Story 1' },
-        { id: 2, title: 'Chizaram Story 2' },
-        { id: 3, title: 'Chizaram Story 3' },
-        { id: 4, title: 'Chizaram Story 4' }
+        { id: 1, title: 'Chizaram Story 1', liked: false },
+        { id: 2, title: 'Chizaram Story 2', liked: false },
+        { id: 3, title: 'Chizaram Story 3', liked: false },
+        { id: 4, title: 'Chizaram Story 4', liked: false }
     ],
     'VaVia': [
-        { id: 1, title: 'VaVia Story 1' },
-        { id: 2, title: 'VaVia Story 2' }
+        { id: 1, title: 'VaVia Story 1', liked: false },
+        { id: 2, title: 'VaVia Story 2', liked: false }
     ]
 };
 
@@ -121,9 +121,14 @@ function renderStoryCube() {
             const heartIcon = document.createElement('div');
             heartIcon.className = 'heart-icon';
             heartIcon.dataset.username = story.username;
+            heartIcon.dataset.storyId = currentInternalStoryIndex;
             
-            // Check if this story is liked
-            if (likedStories[story.username]) {
+            // Get current internal story
+            const internalStories = userInternalStories[story.username] || [];
+            const currentStory = internalStories[currentInternalStoryIndex];
+            
+            // Check if this specific internal story is liked
+            if (currentStory && currentStory.liked) {
                 heartIcon.classList.add('liked');
             }
             
@@ -131,7 +136,7 @@ function renderStoryCube() {
             
             heartIcon.addEventListener('click', function(e) {
                 e.stopPropagation();
-                toggleLike(story.username, heartIcon);
+                toggleLikeForInternalStory(story.username, currentInternalStoryIndex, heartIcon);
             });
             
             replyBox.appendChild(replySpan);
@@ -145,14 +150,17 @@ function renderStoryCube() {
     content.appendChild(container);
 }
 
-// Function to toggle like
-function toggleLike(username, heartElement) {
-    likedStories[username] = !likedStories[username];
-    
-    if (likedStories[username]) {
-        heartElement.classList.add('liked');
-    } else {
-        heartElement.classList.remove('liked');
+// Function to toggle like for specific internal story
+function toggleLikeForInternalStory(username, storyIndex, heartElement) {
+    const internalStories = userInternalStories[username];
+    if (internalStories && internalStories[storyIndex]) {
+        internalStories[storyIndex].liked = !internalStories[storyIndex].liked;
+        
+        if (internalStories[storyIndex].liked) {
+            heartElement.classList.add('liked');
+        } else {
+            heartElement.classList.remove('liked');
+        }
     }
 }
 
