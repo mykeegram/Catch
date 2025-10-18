@@ -17,16 +17,6 @@
     transform: translateX(-100%);
 }
 
-.conversations-container {
-    width: 100%;
-    max-width: 480px; /* Match body's max-width */
-    transition: transform 0.3s ease-in-out;
-}
-
-.conversations-container.slide-left {
-    transform: translateX(-100%);
-}
-
 .header {
     width: 100%;
     max-width: 480px; /* Match body's max-width */
@@ -34,6 +24,26 @@
 }
 
 .header.slide-left {
+    transform: translateX(-100%);
+}
+
+.stories-container {
+    width: 100%;
+    max-width: 480px; /* Match body's max-width */
+    transition: transform 0.3s ease-in-out;
+}
+
+.stories-container.slide-left {
+    transform: translateX(-100%);
+}
+
+.conversations-container {
+    width: 100%;
+    max-width: 480px; /* Match body's max-width */
+    transition: transform 0.3s ease-in-out;
+}
+
+.conversations-container.slide-left {
     transform: translateX(-100%);
 }
 
