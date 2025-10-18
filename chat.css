@@ -19,8 +19,9 @@
 
 .header {
     width: 100%;
-    max-width: 480px; /* Match body's max-width */
+    max-width: 480px;
     transition: transform 0.3s ease-in-out;
+    position: relative; /* Ensure transform works */
 }
 
 .header.slide-left {
@@ -29,21 +30,25 @@
 
 .stories-container {
     width: 100%;
-    max-width: 480px; /* Match body's max-width */
+    max-width: 480px;
     transition: transform 0.3s ease-in-out;
+    position: relative; /* Ensure transform works */
 }
 
 .stories-container.slide-left {
     transform: translateX(-100%);
 }
 
-.conversations-container {
+#conversations-container {
     width: 100%;
-    max-width: 480px; /* Match body's max-width */
+    max-width: 480px;
     transition: transform 0.3s ease-in-out;
+    background-color: #f9f9f9; /* Temporary debug background */
+    z-index: 900;
+    position: relative; /* Ensure transform works */
 }
 
-.conversations-container.slide-left {
+#conversations-container.slide-left {
     transform: translateX(-100%);
 }
 
