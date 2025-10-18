@@ -60,6 +60,19 @@
     border-radius: 16px; /* Soft rounded corners */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     pointer-events: none; /* Allow clicks to pass through */
+    overflow: hidden; /* Clip the gradient overlay */
+}
+
+.story-content-div::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+    pointer-events: none;
+    z-index: 1;
 }
 
 /* ===============================
@@ -120,8 +133,25 @@
 }
 
 /* ===============================
-   BODY LOCK WHEN POPUP OPEN
+   TAP ZONES FOR INTERNAL NAVIGATION
 ================================= */
+.tap-zone {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    z-index: 5;
+    cursor: pointer;
+}
+
+.tap-zone-left {
+    left: 0;
+    width: 50%;
+}
+
+.tap-zone-right {
+    right: 0;
+    width: 50%;
+}
 body.popup-open {
     overflow: hidden;
     position: fixed;
@@ -164,6 +194,6 @@ body.popup-open {
     .story-content-div {
         width: calc(100% - 40px);
         height: calc(100% - 194px);
-        margin-top: -25px;
+        top: calc(50% - 25px);
     }
 }
