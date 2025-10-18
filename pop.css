@@ -60,6 +60,19 @@
     border-radius: 16px; /* Soft rounded corners */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     pointer-events: none; /* Allow clicks to pass through */
+    overflow: hidden; /* Clip the gradient overlay */
+}
+
+.story-content-div::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+    pointer-events: none;
+    z-index: 1;
 }
 
 /* ===============================
