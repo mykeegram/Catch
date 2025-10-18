@@ -98,7 +98,7 @@ function openChat(conversation) {
     `;
 
     // Render messages
-    const chatContent = chatContainer.querySelector('#chat-content');
+    const chatContent = document.querySelector('#chat-content');
     const messages = chatMessages[conversation.name] || [];
     messages.forEach(message => {
         const messageDiv = document.createElement('div');
