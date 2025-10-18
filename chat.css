@@ -18,11 +18,19 @@
 }
 
 .conversations-container {
+    width: 100%;
+    max-width: 480px; /* Match body's max-width */
     transition: transform 0.3s ease-in-out;
 }
 
 .conversations-container.slide-left {
     transform: translateX(-100%);
+}
+
+.header {
+    width: 100%;
+    max-width: 480px; /* Match body's max-width */
+    transition: transform 0.3s ease-in-out;
 }
 
 .header.slide-left {
@@ -39,7 +47,7 @@
     padding: 12px 16px;
     background-color: #ffffff;
     border-bottom: 1px solid #e5e5ea;
-    transition: transform 0.3s ease-in-out; /* Explicit transition to match .chat-container */
+    transition: transform 0.3s ease-in-out;
 }
 
 .back-button {
@@ -83,10 +91,10 @@
         background-color: transparent;
     }
     .chat-message.sent {
-        background-color: rgba(116, 156, 191, 0.9); /* Slightly transparent for readability */
+        background-color: rgba(116, 156, 191, 0.9);
     }
     .chat-message.received {
-        background-color: rgba(229, 229, 234, 0.9); /* Slightly transparent for readability */
+        background-color: rgba(229, 229, 234, 0.9);
     }
 }
 
