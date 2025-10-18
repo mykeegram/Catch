@@ -22,7 +22,7 @@ const conversations = [
 // Sample chat messages for demonstration
 const chatMessages = {
     'Chizaram': [
-        { text: 'Yo! Chizaram\'s in', sender: 'received', time: 'Wed 10:30 AM' },
+        { text: 'Yo! Chizaram's in', sender: 'received', time: 'Wed 10:30 AM' },
         { text: 'Hey! What\'s up?', sender: 'sent', time: 'Wed 10:32 AM' }
     ],
     'VaVia': [
@@ -98,7 +98,7 @@ function openChat(conversation) {
     `;
 
     // Render messages
-    const chatContent = document.querySelector('#chat-content');
+    const chatContent = chatContainer.querySelector('#chat-content');
     const messages = chatMessages[conversation.name] || [];
     messages.forEach(message => {
         const messageDiv = document.createElement('div');
@@ -107,10 +107,11 @@ function openChat(conversation) {
         chatContent.appendChild(messageDiv);
     });
 
-    // Slide in chat and slide out conversations
+    // Slide in chat and slide out index area
     chatContainer.classList.add('open');
     document.getElementById('conversations-container').classList.add('slide-left');
     document.querySelector('.header').classList.add('slide-left');
+    document.querySelector('.stories-container').classList.add('slide-left');
     document.querySelector('.floating-button').classList.add('hidden');
 
     // Add event listener for back button
@@ -124,6 +125,7 @@ function closeChat() {
     chatContainer.classList.remove('open');
     document.getElementById('conversations-container').classList.remove('slide-left');
     document.querySelector('.header').classList.remove('slide-left');
+    document.querySelector('.stories-container').classList.remove('slide-left');
     document.querySelector('.floating-button').classList.remove('hidden');
 
     // Clear content after animation completes (300ms matches transition duration)
