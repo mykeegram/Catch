@@ -1,4 +1,4 @@
- /* chat.css */
+/* chat.css */
 .chat-container {
     position: fixed;
     top: 0;
@@ -325,12 +325,6 @@
 .wave-bar:nth-child(26) { height: 10px; }
 .wave-bar:nth-child(27) { height: 22px; }
 .wave-bar:nth-child(28) { height: 16px; }
-.wave-bar:nth-child(29) { height: 18px; }
-.wave-bar:nth-child(30) { height: 12px; }
-.wave-bar:nth-child(31) { height: 20px; }
-.wave-bar:nth-child(32) { height: 14px; }
-.wave-bar:nth-child(33) { height: 8px; }
-.wave-bar:nth-child(34) { height: 22px; }
 
 .audio-duration {
     font-size: 13px;
