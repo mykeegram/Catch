@@ -1,5 +1,4 @@
-
-    // chat.js
+// chat.js
 // Conversations data
 const conversations = [
     {
@@ -121,8 +120,8 @@ function openChat(conversation) {
             messageDiv.className = `chat-message ${message.sender} ${message.type === "audio" ? "audio-message" : ""}`;
             
             if (message.type === "audio") {
-                // Generate 34 waveform bars
-                const waveformBars = Array.from({ length: 34 }, () => '<div class="wave-bar"></div>').join('');
+                // Generate 28 waveform bars
+                const waveformBars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 messageDiv.innerHTML = `
                     <div class="message-bubble">
                         <div class="audio-controls">
