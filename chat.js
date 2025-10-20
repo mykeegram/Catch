@@ -1,4 +1,5 @@
-// chat.js
+
+    // chat.js
 // Conversations data
 const conversations = [
     {
@@ -22,12 +23,14 @@ const conversations = [
 // Sample chat messages for demonstration
 const chatMessages = {
     Chizaram: [
-        { text: "Yo! Chizaram's in", sender: "received", time: "Wed 10:30 AM" },
-        { text: "Hey! What's up?", sender: "sent", time: "Wed 10:32 AM" }
+        { type: "text", text: "Yo! Chizaram's in", sender: "received", time: "Wed 10:30 AM" },
+        { type: "audio", duration: "0:14", sender: "received", time: "Wed 10:32 AM" },
+        { type: "text", text: "Hey! What's up?", sender: "sent", time: "Wed 10:34 AM" }
     ],
     VaVia: [
-        { text: "Hey there! How are you?", sender: "received", time: "Tue 3:15 PM" },
-        { text: "I'm good, you?", sender: "sent", time: "Tue 3:16 PM" }
+        { type: "text", text: "Hey there! How are you?", sender: "received", time: "Tue 3:15 PM" },
+        { type: "audio", duration: "0:08", sender: "sent", time: "Tue 3:16 PM" },
+        { type: "text", text: "I'm good, you?", sender: "sent", time: "Tue 3:17 PM" }
     ]
 };
 
@@ -115,23 +118,92 @@ function openChat(conversation) {
         const messages = chatMessages[conversation.name] || [];
         messages.forEach(message => {
             const messageDiv = document.createElement("div");
-            messageDiv.className = `chat-message ${message.sender}`;
-            messageDiv.innerHTML = `
-                <div class="message-bubble">
-                    <div class="message-text">${message.text}</div>
-                    <div class="message-time">
-                        ${message.time}
-                        ${message.sender === "sent" ? `
-                        <span class="check-marks">
-                            <svg viewBox="0 0 16 15" width="16" height="15">
-                                <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"/>
-                            </svg>
-                        </span>
-                        ` : ''}
+            messageDiv.className = `chat-message ${message.sender} ${message.type === "audio" ? "audio-message" : ""}`;
+            
+            if (message.type === "audio") {
+                // Generate 34 waveform bars
+                const waveformBars = Array.from({ length: 34 }, () => '<div class="wave-bar"></div>').join('');
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        <div class="audio-controls">
+                            <button class="play-button">
+                                <svg viewBox="0 0 24 24" width="24" height="24">
+                                    <path fill="currentColor" d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                            <div class="waveform">${waveformBars}</div>
+                            <span class="audio-duration">${message.duration}</span>
+                        </div>
+                        <div class="message-time">
+                            ${message.time}
+                            ${message.sender === "sent" ? `
+                            <span class="check-marks">
+                                <svg viewBox="0 0 16 15" width="16" height="15">
+                                    <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"/>
+                                </svg>
+                            </span>
+                            ` : ''}
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        <div class="message-text">${message.text}</div>
+                        <div class="message-time">
+                            ${message.time}
+                            ${message.sender === "sent" ? `
+                            <span class="check-marks">
+                                <svg viewBox="0 0 16 15" width="16" height="15">
+                                    <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"/>
+                                </svg>
+                            </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
             chatContent.appendChild(messageDiv);
+        });
+
+        // Add play/pause functionality for audio messages
+        chatContent.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const isPlaying = this.classList.contains('playing');
+                
+                if (isPlaying) {
+                    // Pause
+                    this.classList.remove('playing');
+                    this.innerHTML = `
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M8 5v14l11-7z"/>
+                        </svg>
+                    `;
+                } else {
+                    // Play
+                    this.classList.add('playing');
+                    this.innerHTML = `
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                        </svg>
+                    `;
+                    
+                    // Auto-pause after duration
+                    const duration = this.closest('.audio-message').querySelector('.audio-duration').textContent;
+                    const seconds = duration.split(':').reduce((acc, time) => (60 * acc) + +time);
+                    
+                    setTimeout(() => {
+                        if (this.classList.contains('playing')) {
+                            this.classList.remove('playing');
+                            this.innerHTML = `
+                                <svg viewBox="0 0 24 24" width="24" height="24">
+                                    <path fill="currentColor" d="M8 5v14l11-7z"/>
+                                </svg>
+                            `;
+                        }
+                    }, seconds * 1000);
+                }
+            });
         });
 
         // Slide in chat and slide out index area
