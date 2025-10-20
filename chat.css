@@ -1,4 +1,4 @@
-/* chat.css */
+ /* chat.css */
 .chat-container {
     position: fixed;
     top: 0;
@@ -165,10 +165,34 @@
     clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
 
+.chat-message.received .message-bubble::after {
+    content: '';
+    position: absolute;
+    left: -8px;
+    bottom: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border-radius: 0 20px 0 0;
+    clip-path: polygon(0 100%, 100% 100%, 100% 0);
+}
+
 .chat-message.sent .message-bubble {
     background-color: #d9fdd3;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     position: relative;
+}
+
+.chat-message.sent .message-bubble::before {
+    content: '';
+    position: absolute;
+    right: -8px;
+    bottom: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #d9fdd3;
+    border-radius: 20px 0 0 0;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
 }
 
 .chat-message.sent .message-bubble::after {
@@ -210,6 +234,111 @@
     fill: #53bdeb;
 }
 
+/* Audio Message Styles */
+.audio-message {
+    min-width: 280px;
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.play-button {
+    background-color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s;
+}
+
+.chat-message.sent .play-button {
+    background-color: #d9fdd3;
+}
+
+.play-button:hover {
+    background-color: #f0f0f0;
+}
+
+.chat-message.sent .play-button:hover {
+    background-color: #c8ecc0;
+}
+
+.play-button svg {
+    color: #54656f;
+    margin-left: 2px;
+}
+
+.play-button.playing svg {
+    margin-left: 0;
+}
+
+.waveform {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    height: 30px;
+}
+
+.wave-bar {
+    width: 3px;
+    background-color: #8696a0;
+    border-radius: 2px;
+    transition: height 0.3s ease;
+}
+
+.wave-bar:nth-child(1) { height: 8px; }
+.wave-bar:nth-child(2) { height: 14px; }
+.wave-bar:nth-child(3) { height: 20px; }
+.wave-bar:nth-child(4) { height: 16px; }
+.wave-bar:nth-child(5) { height: 10px; }
+.wave-bar:nth-child(6) { height: 22px; }
+.wave-bar:nth-child(7) { height: 18px; }
+.wave-bar:nth-child(8) { height: 12px; }
+.wave-bar:nth-child(9) { height: 24px; }
+.wave-bar:nth-child(10) { height: 14px; }
+.wave-bar:nth-child(11) { height: 20px; }
+.wave-bar:nth-child(12) { height: 16px; }
+.wave-bar:nth-child(13) { height: 10px; }
+.wave-bar:nth-child(14) { height: 18px; }
+.wave-bar:nth-child(15) { height: 22px; }
+.wave-bar:nth-child(16) { height: 12px; }
+.wave-bar:nth-child(17) { height: 16px; }
+.wave-bar:nth-child(18) { height: 20px; }
+.wave-bar:nth-child(19) { height: 14px; }
+.wave-bar:nth-child(20) { height: 8px; }
+.wave-bar:nth-child(21) { height: 18px; }
+.wave-bar:nth-child(22) { height: 24px; }
+.wave-bar:nth-child(23) { height: 12px; }
+.wave-bar:nth-child(24) { height: 20px; }
+.wave-bar:nth-child(25) { height: 14px; }
+.wave-bar:nth-child(26) { height: 10px; }
+.wave-bar:nth-child(27) { height: 22px; }
+.wave-bar:nth-child(28) { height: 16px; }
+.wave-bar:nth-child(29) { height: 18px; }
+.wave-bar:nth-child(30) { height: 12px; }
+.wave-bar:nth-child(31) { height: 20px; }
+.wave-bar:nth-child(32) { height: 14px; }
+.wave-bar:nth-child(33) { height: 8px; }
+.wave-bar:nth-child(34) { height: 22px; }
+
+.audio-duration {
+    font-size: 13px;
+    color: #667781;
+    flex-shrink: 0;
+    min-width: 35px;
+}
+
 @media (max-width: 768px) {
     /* ===== Mobile Background ===== */
     .chat-content {
@@ -225,10 +354,18 @@
     .chat-message.received .message-bubble {
         background-color: rgba(255, 255, 255, 0.9);
     }
+    .chat-message.sent .message-bubble::before,
     .chat-message.sent .message-bubble::after {
         background-color: rgba(217, 253, 211, 0.9);
     }
-    .chat-message.received .message-bubble::before {
+    .chat-message.received .message-bubble::before,
+    .chat-message.received .message-bubble::after {
         background-color: rgba(255, 255, 255, 0.9);
+    }
+    .chat-message.sent .play-button {
+        background-color: rgba(217, 253, 211, 0.9);
+    }
+    .chat-message.sent .play-button:hover {
+        background-color: rgba(200, 236, 192, 0.9);
     }
 }
