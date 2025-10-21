@@ -62,50 +62,60 @@
 }
 
 /* ===============================
-   STORY HEADER (PROGRESS BAR + USER INFO)
+   STORY HEADER (Progress, Avatar, Username, Time)
 ================================= */
 .story-header {
     position: absolute;
     top: 20px;
-    left: 0;
-    right: 0;
-    padding: 0 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 370px;
     z-index: 20;
     pointer-events: none;
 }
 
-.story-progress-bars {
+.story-progress-container {
     display: flex;
     gap: 4px;
     margin-bottom: 12px;
+    padding: 0 12px;
 }
 
 .story-progress-bar {
     flex: 1;
     height: 2px;
     background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
+    border-radius: 1px;
     overflow: hidden;
 }
 
 .story-progress-fill {
     height: 100%;
     background-color: #ffffff;
-    width: 0%;
-    transition: width 0.3s ease;
+    width: 100%;
+    border-radius: 1px;
 }
 
-.story-progress-fill.active {
+.story-progress-bar.active .story-progress-fill {
     width: 100%;
+}
+
+.story-progress-bar.viewed .story-progress-fill {
+    width: 100%;
+}
+
+.story-progress-bar.upcoming .story-progress-fill {
+    width: 0%;
 }
 
 .story-user-info {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 0 12px;
 }
 
-.story-user-avatar {
+.story-avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -115,29 +125,41 @@
 
 .story-user-details {
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .story-username {
-    color: #ffffff;
     font-size: 14px;
     font-weight: 600;
-    margin: 0;
+    color: #ffffff;
+    line-height: 1.2;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .story-timestamp {
-    color: rgba(255, 255, 255, 0.8);
     font-size: 12px;
-    margin: 0;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.2;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.story-more-icon {
+.story-more-options {
     width: 24px;
     height: 24px;
-    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     pointer-events: auto;
+}
+
+.story-more-options svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 /* ===============================
@@ -301,6 +323,9 @@ body.popup-open {
         width: 100%;
         height: 100%;
         transform: translateY(-6px);
+    }
+    .story-header {
+        width: calc(100% - 40px);
     }
 }
 
