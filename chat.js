@@ -38,11 +38,13 @@ const chatMessages = {
 // Function to render conversations
 function renderConversations() {
     try {
+        console.log("Starting renderConversations"); // Debug log
         const container = document.getElementById("conversations-container");
         if (!container) throw new Error("Conversations container not found");
         container.innerHTML = "";
 
         conversations.forEach(conv => {
+            console.log(`Rendering conversation for ${conv.name}`); // Debug log
             const conversationItem = document.createElement("div");
             conversationItem.className = "conversation-item";
 
@@ -53,6 +55,7 @@ function renderConversations() {
                 const img = document.createElement("img");
                 img.src = conv.avatar;
                 img.alt = conv.name;
+                img.onerror = () => console.error(`Failed to load avatar for ${conv.name}`); // Debug image errors
                 avatarDiv.appendChild(img);
             } else {
                 avatarDiv.textContent = conv.avatar;
@@ -81,6 +84,7 @@ function renderConversations() {
             container.appendChild(conversationItem);
         });
 
+        console.log("Finished rendering conversations"); // Debug log
         // Add click event listeners after rendering
         addConversationListeners();
     } catch (error) {
@@ -91,6 +95,7 @@ function renderConversations() {
 // Function to create and render chat interface
 function openChat(conversation) {
     try {
+        console.log(`Opening chat for ${conversation.name}`); // Debug log
         const chatContainer = document.getElementById("chat-container");
         if (!chatContainer) throw new Error("Chat container not found");
 
@@ -118,6 +123,7 @@ function openChat(conversation) {
         const chatContent = chatContainer.querySelector("#chat-content");
         const messages = chatMessages[conversation.name] || [];
         messages.forEach(message => {
+            console.log(`Rendering message: ${message.type} for ${conversation.name}`); // Debug log
             const messageDiv = document.createElement("div");
             messageDiv.className = `chat-message ${message.sender} ${message.type === "audio" ? "audio-message" : ""}`;
             
@@ -168,6 +174,7 @@ function openChat(conversation) {
         });
 
         // Initialize wave play functionality for rendered messages
+        console.log("Initializing wave-play"); // Debug log
         initializeWavePlay();
 
         // Slide in chat and slide out index area
@@ -189,6 +196,7 @@ function openChat(conversation) {
 // Function to close chat
 function closeChat() {
     try {
+        console.log("Closing chat"); // Debug log
         const chatContainer = document.getElementById("chat-container");
         const conversationsContainer = document.getElementById("conversations-container");
         if (!conversationsContainer) throw new Error("Conversations container not found in closeChat");
@@ -212,9 +220,12 @@ function closeChat() {
 // Add click event listeners to conversation items
 function addConversationListeners() {
     try {
+        console.log("Adding conversation listeners"); // Debug log
         const conversationItems = document.querySelectorAll(".conversation-item");
+        console.log(`Found ${conversationItems.length} conversation items`); // Debug log
         conversationItems.forEach((item, index) => {
             item.addEventListener("click", () => {
+                console.log(`Clicked conversation: ${conversations[index].name}`); // Debug log
                 openChat(conversations[index]);
             });
         });
@@ -226,6 +237,7 @@ function addConversationListeners() {
 // Call renderConversations on page load
 document.addEventListener("DOMContentLoaded", () => {
     try {
+        console.log("DOMContentLoaded: Initializing conversations"); // Debug log
         renderConversations();
     } catch (error) {
         console.error("Error initializing conversations:", error);
