@@ -140,8 +140,6 @@ function renderStoryCube() {
         userInfoRow.appendChild(userTextContainer);
         storyHeader.appendChild(userInfoRow);
         
-        face.appendChild(storyHeader);
-        
         // Create story content div with gradient based on internal story index
         const contentDiv = document.createElement('div');
         contentDiv.className = 'story-content-div';
@@ -151,6 +149,9 @@ function renderStoryCube() {
             const gradientClass = `gradient-${(currentInternalStoryIndex % 6) || 1}`;
             contentDiv.classList.add(gradientClass);
         }
+        
+        // Append header INSIDE the content div
+        contentDiv.appendChild(storyHeader);
         
         face.appendChild(contentDiv);
         
