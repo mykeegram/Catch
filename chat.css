@@ -1,4 +1,4 @@
-/* chat.css */
+ /* chat.css */
 .chat-container {
     position: fixed;
     top: 0;
@@ -28,6 +28,10 @@
     transform: translateX(-100%);
 }
 
+.header.slide-left-discussion {
+    transform: translateX(-25vw);
+}
+
 .stories-container {
     width: 100%;
     max-width: 480px;
@@ -39,10 +43,14 @@
     transform: translateX(-100%);
 }
 
+.stories-container.slide-left-discussion {
+    transform: translateX(-25vw);
+}
+
 #conversations-container {
     width: 100%;
     max-width: 480px;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
     background-color: #f9f9f9; /* Temporary debug background */
     z-index: 900;
     position: relative; /* Ensure transform works */
@@ -52,8 +60,86 @@
     transform: translateX(-100%);
 }
 
+#conversations-container.slide-left-discussion {
+    transform: translateX(-25vw);
+    width: 25vw;  /* 1/4 of viewport, like Discord sidebar */
+    min-width: 200px;  /* Minimum for usability */
+    max-width: 300px;
+}
+
 .floating-button.hidden {
     display: none;
+}
+
+/* Discussions Container (New Discord-like Panel) */
+.discussions-container {
+    position: fixed;
+    top: 0;
+    left: 25vw;  /* Starts off-screen after conversations slide left */
+    width: 75vw;  /* 3/4 of viewport */
+    min-width: 320px;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);  /* Hidden initially */
+    transition: transform 0.3s ease-in-out;
+}
+
+.discussions-container.open {
+    transform: translateX(0);
+}
+
+.discussion-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #36393f;  /* Discord dark theme header */
+    border-bottom: 1px solid #202225;
+    color: #ffffff;
+}
+
+.back-button {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 16px;
+}
+
+.back-button svg {
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+}
+
+.discussion-title {
+    flex: 1;
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+}
+
+.discussion-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    background-color: #36393f;  /* Discord dark background */
+    color: #dcddde;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Empty State for New Discussions */
+.empty-state {
+    text-align: center;
+    color: #72767d;
+    font-size: 16px;
 }
 
 .chat-header {
@@ -362,4 +448,16 @@
     .chat-message.sent .play-button:hover {
         background-color: rgba(200, 236, 192, 0.9);
     }
+
+    /* Mobile adjustments for discussions */
+    .discussions-container {
+        left: 25%;
+        width: 75%;
+    }
+
+    #conversations-container.slide-left-discussion {
+        width: 25%;
+        min-width: 150px;
+    }
 }
+  
