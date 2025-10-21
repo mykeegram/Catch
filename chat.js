@@ -45,9 +45,9 @@ const chatMessages = {
 };
 
 // Function to render conversations
-function renderConversations() {
+function renderConversations(isDiscussion = false) {
     try {
-        console.log("Starting renderConversations"); // Debug log
+        console.log("Starting renderConversations, isDiscussion:", isDiscussion); // Debug log
         const container = document.getElementById("conversations-container");
         if (!container) throw new Error("Conversations container not found");
         container.innerHTML = "";
@@ -70,26 +70,29 @@ function renderConversations() {
                 avatarDiv.textContent = conv.avatar;
             }
 
-            const contentDiv = document.createElement("div");
-            contentDiv.className = "conversation-content";
-            contentDiv.innerHTML = `
-                <div class="conversation-header">
-                    <span class="conversation-name">${conv.name}</span>
-                </div>
-                <div class="conversation-message">${conv.message}</div>
-            `;
+            // Only render content if not in discussion mode
+            if (!isDiscussion) {
+                const contentDiv = document.createElement("div");
+                contentDiv.className = "conversation-content";
+                contentDiv.innerHTML = `
+                    <div class="conversation-header">
+                        <span class="conversation-name">${conv.name}</span>
+                    </div>
+                    <div class="conversation-message">${conv.message}</div>
+                `;
 
-            const rightSection = document.createElement("div");
-            rightSection.className = "right-section";
-            rightSection.innerHTML = `
-                <span class="conversation-time">${conv.time}</span>
-                <div class="badge">${conv.badge}</div>
-            `;
+                const rightSection = document.createElement("div");
+                rightSection.className = "right-section";
+                rightSection.innerHTML = `
+                    <span class="conversation-time">${conv.time}</span>
+                    <div class="badge">${conv.badge}</div>
+                `;
+
+                conversationItem.appendChild(contentDiv);
+                conversationItem.appendChild(rightSection);
+            }
 
             conversationItem.appendChild(avatarDiv);
-            conversationItem.appendChild(contentDiv);
-            conversationItem.appendChild(rightSection);
-
             container.appendChild(conversationItem);
         });
 
@@ -101,7 +104,7 @@ function renderConversations() {
     }
 }
 
-// Function to create and render discussion panel (empty, Discord-like)
+// Function to create and render discussion panel (empty, Discord-like but with white background)
 function openDiscussion(conversation) {
     try {
         console.log(`Opening discussion for ${conversation.name}`); // Debug log
@@ -110,6 +113,9 @@ function openDiscussion(conversation) {
 
         const conversationsContainer = document.getElementById("conversations-container");
         if (!conversationsContainer) throw new Error("Conversations container not found in openDiscussion");
+
+        // Re-render conversations with only avatars
+        renderConversations(true);
 
         // Render empty discussion content
         discussionsContainer.innerHTML = `
@@ -122,21 +128,22 @@ function openDiscussion(conversation) {
                 <div class="discussion-title">${conversation.name}</div>
             </div>
             <div class="discussion-content" id="discussion-content">
-                <!-- Empty for now, like a new Discord DM -->
+                <!-- Empty for now -->
                 <div class="empty-state">
                     <p>No messages yet. Start the conversation!</p>
                 </div>
             </div>
         `;
 
-        // Slide conversations to left (25% width) and show discussions (75%)
+        // Slide conversations to left (25% width) and hide other elements completely
         conversationsContainer.style.width = "25vw";  // 1/4 of viewport width
         discussionsContainer.classList.add("open");
         conversationsContainer.classList.add("slide-left-discussion");
-        console.log("Applied slide-left-discussion to conversations-container"); // Debug log
-        document.querySelector(".header").classList.add("slide-left-discussion");
-        document.querySelector(".stories-container").classList.add("slide-left-discussion");
+        document.querySelector(".header").classList.add("slide-off-left");
+        document.querySelector(".stories-container").classList.add("slide-off-left");
         document.querySelector(".floating-button").classList.add("hidden");
+
+        console.log("Applied slide-left-discussion to conversations-container"); // Debug log
 
         // Add event listener for back button
         const backButton = discussionsContainer.querySelector(".back-button");
@@ -157,10 +164,14 @@ function closeDiscussion() {
         discussionsContainer.classList.remove("open");
         conversationsContainer.classList.remove("slide-left-discussion");
         conversationsContainer.style.width = "";  // Reset to full width
-        console.log("Removed slide-left-discussion from conversations-container"); // Debug log
-        document.querySelector(".header").classList.remove("slide-left-discussion");
-        document.querySelector(".stories-container").classList.remove("slide-left-discussion");
+        document.querySelector(".header").classList.remove("slide-off-left");
+        document.querySelector(".stories-container").classList.remove("slide-off-left");
         document.querySelector(".floating-button").classList.remove("hidden");
+
+        // Re-render conversations with full content
+        renderConversations(false);
+
+        console.log("Removed slide-left-discussion from conversations-container"); // Debug log
 
         // Clear content after animation completes (300ms matches transition duration)
         setTimeout(() => {
@@ -180,6 +191,9 @@ function openChat(conversation) {
 
         const conversationsContainer = document.getElementById("conversations-container");
         if (!conversationsContainer) throw new Error("Conversations container not found in openChat");
+
+        // Ensure conversations are rendered fully when opening chat
+        renderConversations(false);
 
         // Render chat content
         chatContainer.innerHTML = `
@@ -287,6 +301,9 @@ function closeChat() {
         document.querySelector(".stories-container").classList.remove("slide-left");
         document.querySelector(".floating-button").classList.remove("hidden");
 
+        // Re-render conversations with full content
+        renderConversations(false);
+
         // Clear content after animation completes (300ms matches transition duration)
         setTimeout(() => {
             chatContainer.innerHTML = "";
@@ -321,7 +338,7 @@ function addConversationListeners() {
 document.addEventListener("DOMContentLoaded", () => {
     try {
         console.log("DOMContentLoaded: Initializing conversations"); // Debug log
-        renderConversations();
+        renderConversations(false);
     } catch (error) {
         console.error("Error initializing conversations:", error);
     }
