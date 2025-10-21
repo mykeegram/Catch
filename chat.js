@@ -1,4 +1,6 @@
 // chat.js
+import { initializeWavePlay } from './wave-play.js';
+
 // Conversations data
 const conversations = [
     {
@@ -165,45 +167,8 @@ function openChat(conversation) {
             chatContent.appendChild(messageDiv);
         });
 
-        // Add play/pause functionality for audio messages
-        chatContent.querySelectorAll('.play-button').forEach(button => {
-            button.addEventListener('click', function() {
-                const isPlaying = this.classList.contains('playing');
-                
-                if (isPlaying) {
-                    // Pause
-                    this.classList.remove('playing');
-                    this.innerHTML = `
-                        <svg viewBox="0 0 24 24" width="24" height="24">
-                            <path fill="currentColor" d="M8 5v14l11-7z"/>
-                        </svg>
-                    `;
-                } else {
-                    // Play
-                    this.classList.add('playing');
-                    this.innerHTML = `
-                        <svg viewBox="0 0 24 24" width="24" height="24">
-                            <path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                        </svg>
-                    `;
-                    
-                    // Auto-pause after duration
-                    const duration = this.closest('.audio-message').querySelector('.audio-duration').textContent;
-                    const seconds = duration.split(':').reduce((acc, time) => (60 * acc) + +time);
-                    
-                    setTimeout(() => {
-                        if (this.classList.contains('playing')) {
-                            this.classList.remove('playing');
-                            this.innerHTML = `
-                                <svg viewBox="0 0 24 24" width="24" height="24">
-                                    <path fill="currentColor" d="M8 5v14l11-7z"/>
-                                </svg>
-                            `;
-                        }
-                    }, seconds * 1000);
-                }
-            });
-        });
+        // Initialize wave play functionality for rendered messages
+        initializeWavePlay();
 
         // Slide in chat and slide out index area
         chatContainer.classList.add("open");
