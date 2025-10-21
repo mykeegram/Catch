@@ -60,51 +60,11 @@
     transform: translateX(-100%);
 }
 
-#conversations-container.slide-left-discussion {
-    transform: translateX(0); /* Stay visible at left edge */
-    width: 25vw; /* 1/4 of viewport */
-    min-width: 60px; /* Narrower to fit only avatars */
+#conversations-container.slide-off-left {
+    transform: translateX(-100vw); /* Slide completely off-screen */
+    width: 25vw; /* 1/4 of viewport width */
+    min-width: 60px; /* Enough for avatars only */
     max-width: 80px;
-}
-
-/* Adjust conversation item for avatar-only display in discussion mode */
-.conversation-item {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #e5e5ea;
-}
-
-.conversation-item .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e5e5ea;
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    flex-shrink: 0;
-}
-
-.conversation-item .avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.conversation-content,
-.right-section {
-    transition: opacity 0.2s ease-in-out;
-}
-
-#conversations-container.slide-left-discussion .conversation-content,
-#conversations-container.slide-left-discussion .right-section {
-    opacity: 0; /* Hide names, messages, and badges in discussion mode */
-    display: none; /* Ensure they don't take up space */
 }
 
 .floating-button.hidden {
@@ -115,15 +75,14 @@
 .discussions-container {
     position: fixed;
     top: 0;
-    left: 25vw; /* Starts after the 25% conversation list */
-    width: 75vw; /* 3/4 of viewport */
-    min-width: 320px;
+    left: 100%; /* Starts off-screen */
+    width: 100%; /* Full screen width */
+    max-width: 480px;
     height: 100%;
     background-color: #ffffff; /* White background */
     z-index: 950;
     display: flex;
     flex-direction: column;
-    transform: translateX(100%); /* Hidden initially */
     transition: transform 0.3s ease-in-out;
 }
 
@@ -178,8 +137,31 @@
 /* Empty State for New Discussions */
 .empty-state {
     text-align: center;
-    color: #666;
+    color: #667781;
     font-size: 16px;
+}
+
+/* Avatar-Only Styles for Conversation List */
+.conversation-item.avatar-only {
+    justify-content: center;
+    padding: 8px;
+}
+
+.conversation-item.avatar-only .conversation-content,
+.conversation-item.avatar-only .right-section {
+    display: none; /* Hide names, messages, and badges */
+}
+
+.conversation-item.avatar-only .avatar {
+    margin: 0;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+}
+
+.conversation-item.avatar-only .avatar img {
+    width: 100%;
+    height: 100%;
 }
 
 .chat-header {
@@ -189,6 +171,22 @@
     background-color: #ffffff;
     border-bottom: 1px solid #e5e5ea;
     transition: transform 0.3s ease-in-out;
+}
+
+.back-button {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 16px;
+}
+
+.back-button svg {
+    width: 100%;
+    height: 100%;
+    color: #749cbf;
 }
 
 .chat-title {
@@ -475,14 +473,19 @@
 
     /* Mobile adjustments for discussions */
     .discussions-container {
-        left: 25%;
-        width: 75%;
+        width: 100%; /* Full width on mobile */
     }
 
-    #conversations-container.slide-left-discussion {
-        width: 25%;
-        min-width: 50px; /* Narrower for avatars only */
-        max-width: 70px;
+    #conversations-container.slide-off-left {
+        width: 25%; /* Adjusted for mobile */
+        min-width: 50px;
+        max-width: 60px;
+    }
+
+    .conversation-item.avatar-only .avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
     }
 }
  
