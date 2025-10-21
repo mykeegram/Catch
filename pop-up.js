@@ -80,21 +80,11 @@ function renderStoryCube() {
         // Reduced translateZ for closer cube faces
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
-        // Create story content div with gradient based on internal story index
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'story-content-div';
-        
-        // Apply gradient class if this is not the first internal story
-        if (currentInternalStoryIndex > 0) {
-            const gradientClass = `gradient-${(currentInternalStoryIndex % 6) || 1}`;
-            contentDiv.classList.add(gradientClass);
-        }
-        
-        // Add story header with progress bars, avatar, username, and timestamp
+        // Create story header (progress bar + user info)
         const storyHeader = document.createElement('div');
         storyHeader.className = 'story-header';
         
-        // Progress bars
+        // Progress bars container
         const progressBars = document.createElement('div');
         progressBars.className = 'story-progress-bars';
         
@@ -105,11 +95,7 @@ function renderStoryCube() {
             
             const progressFill = document.createElement('div');
             progressFill.className = 'story-progress-fill';
-            
-            // Mark completed and active progress bars
-            if (j < currentInternalStoryIndex) {
-                progressFill.classList.add('completed');
-            } else if (j === currentInternalStoryIndex) {
+            if (j <= currentInternalStoryIndex) {
                 progressFill.classList.add('active');
             }
             
@@ -119,42 +105,52 @@ function renderStoryCube() {
         
         storyHeader.appendChild(progressBars);
         
-        // User info section
+        // User info container
         const userInfo = document.createElement('div');
         userInfo.className = 'story-user-info';
         
         // Avatar
         const avatar = document.createElement('img');
-        avatar.className = 'story-avatar';
-        avatar.src = story.image; // Use the story's image
+        avatar.className = 'story-user-avatar';
+        avatar.src = story.avatar || 'https://via.placeholder.com/32';
         avatar.alt = story.username;
         
-        // User details (username and timestamp)
+        // User details
         const userDetails = document.createElement('div');
         userDetails.className = 'story-user-details';
         
-        const username = document.createElement('div');
+        const username = document.createElement('p');
         username.className = 'story-username';
         username.textContent = story.username;
         
-        const timestamp = document.createElement('div');
+        const timestamp = document.createElement('p');
         timestamp.className = 'story-timestamp';
-        timestamp.textContent = 'Oct 01 at 8:25 PM';
+        timestamp.textContent = story.timestamp || 'Oct 01 at 8:25 PM';
         
         userDetails.appendChild(username);
         userDetails.appendChild(timestamp);
         
-        // Menu icon
-        const menuIcon = document.createElement('div');
-        menuIcon.className = 'story-menu-icon';
-        menuIcon.innerHTML = '⋮';
+        // More icon (three dots)
+        const moreIcon = document.createElement('div');
+        moreIcon.className = 'story-more-icon';
+        moreIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>`;
         
         userInfo.appendChild(avatar);
         userInfo.appendChild(userDetails);
-        userInfo.appendChild(menuIcon);
+        userInfo.appendChild(moreIcon);
         
         storyHeader.appendChild(userInfo);
-        contentDiv.appendChild(storyHeader);
+        face.appendChild(storyHeader);
+        
+        // Create story content div with gradient based on internal story index
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'story-content-div';
+        
+        // Apply gradient class if this is not the first internal story
+        if (currentInternalStoryIndex > 0) {
+            const gradientClass = `gradient-${(currentInternalStoryIndex % 6) || 1}`;
+            contentDiv.classList.add(gradientClass);
+        }
         
         face.appendChild(contentDiv);
         
