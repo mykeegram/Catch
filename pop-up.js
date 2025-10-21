@@ -80,10 +80,6 @@ function renderStoryCube() {
         // Reduced translateZ for closer cube faces
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
-        // Create story header (progress bars, avatar, username, timestamp)
-        const header = createStoryHeader(story);
-        face.appendChild(header);
-        
         // Create story content div with gradient based on internal story index
         const contentDiv = document.createElement('div');
         contentDiv.className = 'story-content-div';
@@ -93,6 +89,76 @@ function renderStoryCube() {
             const gradientClass = `gradient-${(currentInternalStoryIndex % 6) || 1}`;
             contentDiv.classList.add(gradientClass);
         }
+        
+        // Add story header (progress bar, avatar, username, timestamp, menu)
+        const storyHeader = document.createElement('div');
+        storyHeader.className = 'story-header';
+        
+        // Progress bars container
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'progress-bars-container';
+        
+        const internalStories = userInternalStories[story.username] || [];
+        for (let j = 0; j < internalStories.length; j++) {
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            
+            const progressFill = document.createElement('div');
+            progressFill.className = 'progress-fill';
+            
+            // Fill completed stories, current story, and leave future stories empty
+            if (j < currentInternalStoryIndex) {
+                progressFill.style.width = '100%';
+            } else if (j === currentInternalStoryIndex) {
+                progressFill.style.width = '50%'; // Static 50% for current story
+            } else {
+                progressFill.style.width = '0%';
+            }
+            
+            progressBar.appendChild(progressFill);
+            progressContainer.appendChild(progressBar);
+        }
+        
+        storyHeader.appendChild(progressContainer);
+        
+        // User info container
+        const userInfo = document.createElement('div');
+        userInfo.className = 'story-user-info';
+        
+        // Avatar
+        const avatar = document.createElement('div');
+        avatar.className = 'story-avatar';
+        const avatarImg = document.createElement('img');
+        avatarImg.src = story.image || 'default-avatar.jpg';
+        avatarImg.alt = story.username;
+        avatar.appendChild(avatarImg);
+        
+        // Text info (username + timestamp)
+        const textInfo = document.createElement('div');
+        textInfo.className = 'story-text-info';
+        
+        const username = document.createElement('div');
+        username.className = 'story-username';
+        username.textContent = story.username;
+        
+        const timestamp = document.createElement('div');
+        timestamp.className = 'story-timestamp';
+        timestamp.textContent = story.time || 'Oct 01 at 8:25 PM';
+        
+        textInfo.appendChild(username);
+        textInfo.appendChild(timestamp);
+        
+        // Menu icon (three dots)
+        const menuIcon = document.createElement('div');
+        menuIcon.className = 'story-menu-icon';
+        menuIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2" fill="white"/><circle cx="12" cy="12" r="2" fill="white"/><circle cx="12" cy="19" r="2" fill="white"/></svg>`;
+        
+        userInfo.appendChild(avatar);
+        userInfo.appendChild(textInfo);
+        userInfo.appendChild(menuIcon);
+        
+        storyHeader.appendChild(userInfo);
+        contentDiv.appendChild(storyHeader);
         
         face.appendChild(contentDiv);
         
@@ -152,82 +218,6 @@ function renderStoryCube() {
     }
     
     content.appendChild(container);
-}
-
-// Function to create story header with progress bars, avatar, username, and timestamp
-function createStoryHeader(story) {
-    const header = document.createElement('div');
-    header.className = 'story-header';
-    
-    // Create progress bar container
-    const progressContainer = document.createElement('div');
-    progressContainer.className = 'story-progress-container';
-    
-    // Get internal stories for this user
-    const internalStories = userInternalStories[story.username] || [];
-    
-    // Create progress bars for each internal story
-    internalStories.forEach((internalStory, index) => {
-        const progressBar = document.createElement('div');
-        progressBar.className = 'story-progress-bar';
-        
-        // Add state class based on current position
-        if (index < currentInternalStoryIndex) {
-            progressBar.classList.add('viewed');
-        } else if (index === currentInternalStoryIndex) {
-            progressBar.classList.add('active');
-        } else {
-            progressBar.classList.add('upcoming');
-        }
-        
-        const progressFill = document.createElement('div');
-        progressFill.className = 'story-progress-fill';
-        
-        progressBar.appendChild(progressFill);
-        progressContainer.appendChild(progressBar);
-    });
-    
-    header.appendChild(progressContainer);
-    
-    // Create user info section
-    const userInfo = document.createElement('div');
-    userInfo.className = 'story-user-info';
-    
-    // Avatar
-    const avatar = document.createElement('img');
-    avatar.className = 'story-avatar';
-    avatar.src = story.avatar || 'https://via.placeholder.com/32';
-    avatar.alt = story.username;
-    
-    // User details container
-    const userDetails = document.createElement('div');
-    userDetails.className = 'story-user-details';
-    
-    // Username
-    const username = document.createElement('div');
-    username.className = 'story-username';
-    username.textContent = story.username;
-    
-    // Timestamp
-    const timestamp = document.createElement('div');
-    timestamp.className = 'story-timestamp';
-    timestamp.textContent = story.time || 'Oct 01 at 8:25 PM';
-    
-    userDetails.appendChild(username);
-    userDetails.appendChild(timestamp);
-    
-    // More options button
-    const moreOptions = document.createElement('div');
-    moreOptions.className = 'story-more-options';
-    moreOptions.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>`;
-    
-    userInfo.appendChild(avatar);
-    userInfo.appendChild(userDetails);
-    userInfo.appendChild(moreOptions);
-    
-    header.appendChild(userInfo);
-    
-    return header;
 }
 
 // Function to toggle like for specific internal story
