@@ -138,6 +138,17 @@ function renderStoryCube() {
         
         userInfoRow.appendChild(profilePic);
         userInfoRow.appendChild(userTextContainer);
+        
+        // Three-dot menu button
+        const menuButton = document.createElement('div');
+        menuButton.className = 'story-menu-button';
+        menuButton.innerHTML = '⋮';
+        menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Add menu functionality here if needed
+        });
+        
+        userInfoRow.appendChild(menuButton);
         storyHeader.appendChild(userInfoRow);
         
         // Create story content div with gradient based on internal story index
