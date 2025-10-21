@@ -1,22 +1,86 @@
 // wave-play.js
 function initializeWavePlay() {
-    document.querySelectorAll('.play-button').forEach(button => {
-        button.addEventListener('click', function() {
-            const audioMessage = this.closest('.audio-message');
-            const durationElement = audioMessage.querySelector('.audio-duration');
-            const waveform = audioMessage.querySelector('.waveform');
-            const waveBars = waveform.querySelectorAll('.wave-bar');
-            const isPlaying = this.classList.contains('playing');
+    document.querySelectorAll('.audio-message').forEach(audioMessage => {
+        const button = audioMessage.querySelector('.play-button');
+        const durationElement = audioMessage.querySelector('.audio-duration');
+        const waveform = audioMessage.querySelector('.waveform');
+        const waveBars = waveform.querySelectorAll('.wave-bar');
 
+        // Play/Pause button click handler
+        button.addEventListener('click', function () {
+            const isPlaying = this.classList.contains('playing');
             if (isPlaying) {
-                // Pause the audio
                 pauseAudio(this, durationElement, waveBars);
             } else {
-                // Play the audio
                 playAudio(this, durationElement, waveBars);
             }
         });
+
+        // Waveform seeking functionality
+        waveform.addEventListener('mousedown', startSeeking);
+        waveform.addEventListener('touchstart', startSeeking);
+
+        function startSeeking(event) {
+            event.preventDefault(); // Prevent default touch/click behavior
+            const isPlaying = button.classList.contains('playing');
+
+            // If playing, pause the audio temporarily
+            if (isPlaying) {
+                pauseAudio(button, durationElement, waveBars);
+            }
+
+            // Calculate the seek position
+            seekToPosition(event, waveform, button, durationElement, waveBars);
+
+            // Add move and end listeners for dragging
+            document.addEventListener('mousemove', handleDragging);
+            document.addEventListener('touchmove', handleDragging);
+            document.addEventListener('mouseup', stopSeeking);
+            document.addEventListener('touchend', stopSeeking);
+
+            function handleDragging(event) {
+                seekToPosition(event, waveform, button, durationElement, waveBars);
+            }
+
+            function stopSeeking() {
+                // Remove move and end listeners
+                document.removeEventListener('mousemove', handleDragging);
+                document.removeEventListener('touchmove', handleDragging);
+                document.removeEventListener('mouseup', stopSeeking);
+                document.removeEventListener('touchend', stopSeeking);
+
+                // Resume playback if it was playing
+                if (isPlaying) {
+                    playAudio(button, durationElement, waveBars);
+                }
+            }
+        }
     });
+}
+
+function seekToPosition(event, waveform, button, durationElement, waveBars) {
+    const rect = waveform.getBoundingClientRect();
+    const clientX = event.type.includes('touch') ? event.touches[0].clientX : event.clientX;
+    const offsetX = clientX - rect.left; // X position relative to waveform
+    const waveformWidth = rect.width;
+    const seekPercentage = Math.max(0, Math.min(1, offsetX / waveformWidth)); // Clamp between 0 and 1
+
+    // Calculate new time and bar index
+    const initialDuration = durationElement.dataset.initialDuration || durationElement.textContent;
+    const totalSeconds = parseDuration(initialDuration);
+    const newTime = totalSeconds * (1 - seekPercentage); // Reverse for countdown
+    const barCount = waveBars.length;
+    const newBarIndex = Math.floor(seekPercentage * barCount);
+
+    // Update waveform bars
+    waveBars.forEach((bar, index) => {
+        bar.style.backgroundColor = index < newBarIndex ? '#006400' : '#8696a0';
+    });
+
+    // Update duration display and button state
+    durationElement.textContent = formatDuration(newTime);
+    button.dataset.currentTime = newTime;
+    button.dataset.currentBarIndex = newBarIndex;
 }
 
 function playAudio(button, durationElement, waveBars) {
@@ -28,19 +92,24 @@ function playAudio(button, durationElement, waveBars) {
         </svg>
     `;
 
-    // Parse initial duration (e.g., "0:14" -> 14 seconds)
-    const initialDuration = durationElement.textContent;
-    const totalSeconds = parseDuration(initialDuration);
-    
-    // Determine if fast animation is needed (for durations 0:01 to 0:09)
-    const isFast = totalSeconds <= 9;
-    const animationSpeed = isFast ? 0.5 : 1; // Fast: 0.5x normal speed, Normal: 1x speed
+    // Store initial duration if not already stored
+    if (!durationElement.dataset.initialDuration) {
+        durationElement.dataset.initialDuration = durationElement.textContent;
+    }
 
-    // Calculate interval for updating each bar (total duration / number of bars)
-    const barCount = waveBars.length; // 28 bars
+    // Parse initial duration
+    const initialDuration = durationElement.dataset.initialDuration;
+    const totalSeconds = parseDuration(initialDuration);
+
+    // Determine animation speed
+    const isFast = totalSeconds <= 9;
+    const animationSpeed = isFast ? 0.5 : 1;
+
+    // Calculate interval for updating each bar
+    const barCount = waveBars.length;
     const intervalMs = (totalSeconds * 1000) / barCount * animationSpeed;
 
-    // Get or initialize current time and bar index from data attributes
+    // Get or initialize current time and bar index
     let currentSeconds = parseFloat(button.dataset.currentTime || totalSeconds);
     let currentBarIndex = parseInt(button.dataset.currentBarIndex || 0, 10);
 
@@ -62,7 +131,7 @@ function playAudio(button, durationElement, waveBars) {
                 </svg>
             `;
             durationElement.textContent = initialDuration;
-            waveBars.forEach(bar => bar.style.backgroundColor = '#8696a0'); // Reset to default color
+            waveBars.forEach(bar => bar.style.backgroundColor = '#8696a0');
             button.dataset.currentTime = totalSeconds;
             button.dataset.currentBarIndex = 0;
             return;
@@ -75,7 +144,7 @@ function playAudio(button, durationElement, waveBars) {
         const barIndexToFill = Math.floor((totalSeconds - currentSeconds) / totalSeconds * barCount);
         if (barIndexToFill > currentBarIndex) {
             for (let i = currentBarIndex; i < barIndexToFill && i < barCount; i++) {
-                waveBars[i].style.backgroundColor = '#006400'; // Deep green
+                waveBars[i].style.backgroundColor = '#006400';
             }
             currentBarIndex = barIndexToFill;
         }
@@ -84,7 +153,7 @@ function playAudio(button, durationElement, waveBars) {
         button.dataset.currentTime = currentSeconds;
         button.dataset.currentBarIndex = currentBarIndex;
         button.dataset.intervalId = intervalId;
-    }, 100); // Update every 100ms
+    }, 100);
 }
 
 function pauseAudio(button, durationElement, waveBars) {
