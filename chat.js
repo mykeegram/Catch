@@ -18,6 +18,14 @@ const conversations = [
         badge: 2,
         avatar: "https://i.ibb.co/C5b875C6/Screenshot-20250904-050841.jpg",
         isImage: true
+    },
+    {
+        name: "Donald Trump",
+        message: "You're fired! Wait, no, hired!",
+        time: "Today",
+        badge: 0,
+        avatar: "D",
+        isImage: false
     }
 ];
 
@@ -32,7 +40,8 @@ const chatMessages = {
         { type: "text", text: "Hey there! How are you?", sender: "received", time: "Tue 3:15 PM" },
         { type: "audio", duration: "0:08", sender: "sent", time: "Tue 3:16 PM" },
         { type: "text", text: "I'm good, you?", sender: "sent", time: "Tue 3:17 PM" }
-    ]
+    ],
+    "Donald Trump": []  // Empty messages for the new conversation
 };
 
 // Function to render conversations
@@ -89,6 +98,76 @@ function renderConversations() {
         addConversationListeners();
     } catch (error) {
         console.error("Error rendering conversations:", error);
+    }
+}
+
+// Function to create and render discussion panel (empty, Discord-like)
+function openDiscussion(conversation) {
+    try {
+        console.log(`Opening discussion for ${conversation.name}`); // Debug log
+        const discussionsContainer = document.getElementById("discussions-container");
+        if (!discussionsContainer) throw new Error("Discussions container not found");
+
+        const conversationsContainer = document.getElementById("conversations-container");
+        if (!conversationsContainer) throw new Error("Conversations container not found in openDiscussion");
+
+        // Render empty discussion content
+        discussionsContainer.innerHTML = `
+            <div class="discussion-header">
+                <div class="back-button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </div>
+                <div class="discussion-title">${conversation.name}</div>
+            </div>
+            <div class="discussion-content" id="discussion-content">
+                <!-- Empty for now, like a new Discord DM -->
+                <div class="empty-state">
+                    <p>No messages yet. Start the conversation!</p>
+                </div>
+            </div>
+        `;
+
+        // Slide conversations to left (25% width) and show discussions (75%)
+        conversationsContainer.style.width = "25vw";  // 1/4 of viewport width
+        discussionsContainer.classList.add("open");
+        conversationsContainer.classList.add("slide-left-discussion");
+        console.log("Applied slide-left-discussion to conversations-container"); // Debug log
+        document.querySelector(".header").classList.add("slide-left-discussion");
+        document.querySelector(".stories-container").classList.add("slide-left-discussion");
+        document.querySelector(".floating-button").classList.add("hidden");
+
+        // Add event listener for back button
+        const backButton = discussionsContainer.querySelector(".back-button");
+        backButton.addEventListener("click", closeDiscussion);
+    } catch (error) {
+        console.error("Error opening discussion:", error);
+    }
+}
+
+// Function to close discussion
+function closeDiscussion() {
+    try {
+        console.log("Closing discussion"); // Debug log
+        const discussionsContainer = document.getElementById("discussions-container");
+        const conversationsContainer = document.getElementById("conversations-container");
+        if (!conversationsContainer) throw new Error("Conversations container not found in closeDiscussion");
+
+        discussionsContainer.classList.remove("open");
+        conversationsContainer.classList.remove("slide-left-discussion");
+        conversationsContainer.style.width = "";  // Reset to full width
+        console.log("Removed slide-left-discussion from conversations-container"); // Debug log
+        document.querySelector(".header").classList.remove("slide-left-discussion");
+        document.querySelector(".stories-container").classList.remove("slide-left-discussion");
+        document.querySelector(".floating-button").classList.remove("hidden");
+
+        // Clear content after animation completes (300ms matches transition duration)
+        setTimeout(() => {
+            discussionsContainer.innerHTML = "";
+        }, 300);
+    } catch (error) {
+        console.error("Error closing discussion:", error);
     }
 }
 
@@ -226,7 +305,11 @@ function addConversationListeners() {
         conversationItems.forEach((item, index) => {
             item.addEventListener("click", () => {
                 console.log(`Clicked conversation: ${conversations[index].name}`); // Debug log
-                openChat(conversations[index]);
+                if (conversations[index].name === "Donald Trump") {
+                    openDiscussion(conversations[index]);
+                } else {
+                    openChat(conversations[index]);
+                }
             });
         });
     } catch (error) {
