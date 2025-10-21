@@ -80,6 +80,68 @@ function renderStoryCube() {
         // Reduced translateZ for closer cube faces
         face.style.transform = `rotateY(${rotationAngle}deg) translateZ(100px)`;
         
+        // Create story header (progress bar, profile pic, username, timestamp)
+        const storyHeader = document.createElement('div');
+        storyHeader.className = 'story-header';
+        
+        // Progress bars container
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'progress-bars-container';
+        
+        const internalStories = userInternalStories[story.username] || [];
+        for (let j = 0; j < internalStories.length; j++) {
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            
+            const progressFill = document.createElement('div');
+            progressFill.className = 'progress-fill';
+            
+            // Set progress based on current internal story index
+            if (j < currentInternalStoryIndex) {
+                progressFill.style.width = '100%';
+            } else if (j === currentInternalStoryIndex) {
+                progressFill.style.width = '50%'; // Static 50% for current story
+            } else {
+                progressFill.style.width = '0%';
+            }
+            
+            progressBar.appendChild(progressFill);
+            progressContainer.appendChild(progressBar);
+        }
+        
+        storyHeader.appendChild(progressContainer);
+        
+        // User info row
+        const userInfoRow = document.createElement('div');
+        userInfoRow.className = 'story-user-info';
+        
+        // Profile picture
+        const profilePic = document.createElement('img');
+        profilePic.className = 'story-profile-pic';
+        profilePic.src = story.profilePic;
+        profilePic.alt = story.username;
+        
+        // Username and timestamp container
+        const userTextContainer = document.createElement('div');
+        userTextContainer.className = 'story-user-text';
+        
+        const username = document.createElement('span');
+        username.className = 'story-username';
+        username.textContent = story.username;
+        
+        const timestamp = document.createElement('span');
+        timestamp.className = 'story-timestamp';
+        timestamp.textContent = 'Oct 01 at 8:30 PM';
+        
+        userTextContainer.appendChild(username);
+        userTextContainer.appendChild(timestamp);
+        
+        userInfoRow.appendChild(profilePic);
+        userInfoRow.appendChild(userTextContainer);
+        storyHeader.appendChild(userInfoRow);
+        
+        face.appendChild(storyHeader);
+        
         // Create story content div with gradient based on internal story index
         const contentDiv = document.createElement('div');
         contentDiv.className = 'story-content-div';
@@ -91,79 +153,6 @@ function renderStoryCube() {
         }
         
         face.appendChild(contentDiv);
-        
-        // Add story header (progress bar, avatar, username, time)
-        const header = document.createElement('div');
-        header.className = 'story-header';
-        
-        // Progress bar container
-        const progressContainer = document.createElement('div');
-        progressContainer.className = 'story-progress-container';
-        
-        const internalStories = userInternalStories[story.username] || [];
-        for (let j = 0; j < internalStories.length; j++) {
-            const progressBar = document.createElement('div');
-            progressBar.className = 'story-progress-bar';
-            
-            const progressFill = document.createElement('div');
-            progressFill.className = 'story-progress-fill';
-            
-            // Only show filled progress for current and previous stories
-            if (j < currentInternalStoryIndex) {
-                progressFill.style.width = '100%';
-            } else if (j === currentInternalStoryIndex) {
-                progressFill.style.width = '100%'; // Static - always full
-            } else {
-                progressFill.style.width = '0%';
-            }
-            
-            progressBar.appendChild(progressFill);
-            progressContainer.appendChild(progressBar);
-        }
-        
-        header.appendChild(progressContainer);
-        
-        // User info container
-        const userInfo = document.createElement('div');
-        userInfo.className = 'story-user-info';
-        
-        const userLeft = document.createElement('div');
-        userLeft.className = 'story-user-left';
-        
-        // Avatar
-        const avatar = document.createElement('img');
-        avatar.className = 'story-avatar';
-        avatar.src = story.avatar || 'https://via.placeholder.com/32';
-        avatar.alt = story.username;
-        
-        // Username and time
-        const usernameTime = document.createElement('div');
-        usernameTime.className = 'story-username-time';
-        
-        const username = document.createElement('div');
-        username.className = 'story-username';
-        username.textContent = story.username;
-        
-        const time = document.createElement('div');
-        time.className = 'story-time';
-        time.textContent = story.time || 'Oct 01 at 8:25 PM';
-        
-        usernameTime.appendChild(username);
-        usernameTime.appendChild(time);
-        
-        userLeft.appendChild(avatar);
-        userLeft.appendChild(usernameTime);
-        
-        // Menu icon
-        const menuIcon = document.createElement('div');
-        menuIcon.className = 'story-menu-icon';
-        menuIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="5" r="2" fill="#ffffff"></circle> <circle cx="12" cy="12" r="2" fill="#ffffff"></circle> <circle cx="12" cy="19" r="2" fill="#ffffff"></circle> </g></svg>`;
-        
-        userInfo.appendChild(userLeft);
-        userInfo.appendChild(menuIcon);
-        
-        header.appendChild(userInfo);
-        face.appendChild(header);
         
         // Add tap zones for internal navigation
         const tapZoneLeft = document.createElement('div');
