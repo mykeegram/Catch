@@ -28,10 +28,6 @@
     transform: translateX(-100%);
 }
 
-.header.slide-off-left {
-    transform: translateX(-100vw); /* Slide completely off-screen */
-}
-
 .stories-container {
     width: 100%;
     max-width: 480px;
@@ -41,10 +37,6 @@
 
 .stories-container.slide-left {
     transform: translateX(-100%);
-}
-
-.stories-container.slide-off-left {
-    transform: translateX(-100vw); /* Slide completely off-screen */
 }
 
 #conversations-container {
@@ -60,41 +52,61 @@
     transform: translateX(-100%);
 }
 
-#conversations-container.slide-off-left {
-    transform: translateX(-100vw); /* Slide completely off-screen */
-    width: 25vw; /* 1/4 of viewport width */
-    min-width: 60px; /* Enough for avatars only */
-    max-width: 80px;
+/* Quarter slide for group chats (avatars only) */
+#conversations-container.slide-left-quarter {
+    transform: translateX(0);
+    width: 25%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 950;
+    overflow-y: auto;
+}
+
+#conversations-container.slide-left-quarter .conversation-item {
+    padding: 12px 8px;
+    justify-content: center;
+}
+
+#conversations-container.slide-left-quarter .conversation-content,
+#conversations-container.slide-left-quarter .right-section {
+    display: none;
+}
+
+#conversations-container.slide-left-quarter .avatar {
+    margin-right: 0;
 }
 
 .floating-button.hidden {
     display: none;
 }
 
-/* Discussions Container (Donald Trump Panel) */
+/* Discussions Container (New Donald Trump Panel) */
 .discussions-container {
     position: fixed;
     top: 0;
-    left: 100%; /* Starts off-screen */
-    width: 100%; /* Full screen width */
+    left: 100%;  /* Starts off-screen */
+    width: 100%;
     max-width: 480px;
     height: 100%;
-    background-color: #ffffff; /* White background */
-    z-index: 950;
+    background-color: #ffffff;  /* White background */
+    z-index: 1000;
     display: flex;
     flex-direction: column;
+    transform: translateX(0);  /* Hidden initially */
     transition: transform 0.3s ease-in-out;
 }
 
 .discussions-container.open {
-    transform: translateX(0);
+    transform: translateX(-100%);
 }
 
 .discussion-header {
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    background-color: #ffffff; /* White background for navbar */
+    background-color: #ffffff;
     border-bottom: 1px solid #e5e5ea;
     color: #000000;
 }
@@ -127,7 +139,7 @@
     flex: 1;
     padding: 16px;
     overflow-y: auto;
-    background-color: #ffffff; /* White background */
+    background-color: #ffffff;
     color: #000000;
     display: flex;
     align-items: center;
@@ -137,31 +149,8 @@
 /* Empty State for New Discussions */
 .empty-state {
     text-align: center;
-    color: #667781;
+    color: #666;
     font-size: 16px;
-}
-
-/* Avatar-Only Styles for Conversation List */
-.conversation-item.avatar-only {
-    justify-content: center;
-    padding: 8px;
-}
-
-.conversation-item.avatar-only .conversation-content,
-.conversation-item.avatar-only .right-section {
-    display: none; /* Hide names, messages, and badges */
-}
-
-.conversation-item.avatar-only .avatar {
-    margin: 0;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-}
-
-.conversation-item.avatar-only .avatar img {
-    width: 100%;
-    height: 100%;
 }
 
 .chat-header {
@@ -472,20 +461,13 @@
     }
 
     /* Mobile adjustments for discussions */
+    #conversations-container.slide-left-quarter {
+        width: 25%;
+        min-width: 80px;  /* Adjusted for smaller screens */
+    }
+
     .discussions-container {
-        width: 100%; /* Full width on mobile */
-    }
-
-    #conversations-container.slide-off-left {
-        width: 25%; /* Adjusted for mobile */
-        min-width: 50px;
-        max-width: 60px;
-    }
-
-    .conversation-item.avatar-only .avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
+        width: 100%;
+        max-width: none;  /* Full width on mobile */
     }
 }
- 
