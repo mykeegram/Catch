@@ -294,7 +294,7 @@
     width: 3px;
     background-color: #8696a0;
     border-radius: 2px;
-    transition: height 0.3s ease;
+    transition: height 0.3s ease, background-color 0.3s ease; /* Added background-color transition */
 }
 
 .wave-bar:nth-child(1) { height: 8px; }
