@@ -90,27 +90,29 @@ function renderStoryCube() {
             contentDiv.classList.add(gradientClass);
         }
         
-        // Add story header (progress bar, avatar, username, timestamp, menu)
-        const storyHeader = document.createElement('div');
-        storyHeader.className = 'story-header';
+        face.appendChild(contentDiv);
         
-        // Progress bars container
+        // Add story header (progress bar, avatar, username, time)
+        const header = document.createElement('div');
+        header.className = 'story-header';
+        
+        // Progress bar container
         const progressContainer = document.createElement('div');
-        progressContainer.className = 'progress-bars-container';
+        progressContainer.className = 'story-progress-container';
         
         const internalStories = userInternalStories[story.username] || [];
         for (let j = 0; j < internalStories.length; j++) {
             const progressBar = document.createElement('div');
-            progressBar.className = 'progress-bar';
+            progressBar.className = 'story-progress-bar';
             
             const progressFill = document.createElement('div');
-            progressFill.className = 'progress-fill';
+            progressFill.className = 'story-progress-fill';
             
-            // Fill completed stories, current story, and leave future stories empty
+            // Only show filled progress for current and previous stories
             if (j < currentInternalStoryIndex) {
                 progressFill.style.width = '100%';
             } else if (j === currentInternalStoryIndex) {
-                progressFill.style.width = '50%'; // Static 50% for current story
+                progressFill.style.width = '100%'; // Static - always full
             } else {
                 progressFill.style.width = '0%';
             }
@@ -119,48 +121,49 @@ function renderStoryCube() {
             progressContainer.appendChild(progressBar);
         }
         
-        storyHeader.appendChild(progressContainer);
+        header.appendChild(progressContainer);
         
         // User info container
         const userInfo = document.createElement('div');
         userInfo.className = 'story-user-info';
         
-        // Avatar
-        const avatar = document.createElement('div');
-        avatar.className = 'story-avatar';
-        const avatarImg = document.createElement('img');
-        avatarImg.src = story.image || 'default-avatar.jpg';
-        avatarImg.alt = story.username;
-        avatar.appendChild(avatarImg);
+        const userLeft = document.createElement('div');
+        userLeft.className = 'story-user-left';
         
-        // Text info (username + timestamp)
-        const textInfo = document.createElement('div');
-        textInfo.className = 'story-text-info';
+        // Avatar
+        const avatar = document.createElement('img');
+        avatar.className = 'story-avatar';
+        avatar.src = story.avatar || 'https://via.placeholder.com/32';
+        avatar.alt = story.username;
+        
+        // Username and time
+        const usernameTime = document.createElement('div');
+        usernameTime.className = 'story-username-time';
         
         const username = document.createElement('div');
         username.className = 'story-username';
         username.textContent = story.username;
         
-        const timestamp = document.createElement('div');
-        timestamp.className = 'story-timestamp';
-        timestamp.textContent = story.time || 'Oct 01 at 8:25 PM';
+        const time = document.createElement('div');
+        time.className = 'story-time';
+        time.textContent = story.time || 'Oct 01 at 8:25 PM';
         
-        textInfo.appendChild(username);
-        textInfo.appendChild(timestamp);
+        usernameTime.appendChild(username);
+        usernameTime.appendChild(time);
         
-        // Menu icon (three dots)
+        userLeft.appendChild(avatar);
+        userLeft.appendChild(usernameTime);
+        
+        // Menu icon
         const menuIcon = document.createElement('div');
         menuIcon.className = 'story-menu-icon';
-        menuIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5" r="2" fill="white"/><circle cx="12" cy="12" r="2" fill="white"/><circle cx="12" cy="19" r="2" fill="white"/></svg>`;
+        menuIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="5" r="2" fill="#ffffff"></circle> <circle cx="12" cy="12" r="2" fill="#ffffff"></circle> <circle cx="12" cy="19" r="2" fill="#ffffff"></circle> </g></svg>`;
         
-        userInfo.appendChild(avatar);
-        userInfo.appendChild(textInfo);
+        userInfo.appendChild(userLeft);
         userInfo.appendChild(menuIcon);
         
-        storyHeader.appendChild(userInfo);
-        contentDiv.appendChild(storyHeader);
-        
-        face.appendChild(contentDiv);
+        header.appendChild(userInfo);
+        face.appendChild(header);
         
         // Add tap zones for internal navigation
         const tapZoneLeft = document.createElement('div');
