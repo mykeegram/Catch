@@ -52,7 +52,7 @@
     transform: translateX(-100%);
 }
 
-/* Quarter slide for group chats (avatars and counters) */
+/* Quarter slide for group chats (avatars with counters) */
 #conversations-container.slide-left-quarter {
     transform: translateX(0);
     width: 25%;
@@ -77,26 +77,33 @@
     display: none;
 }
 
-#conversations-container.slide-left-quarter .avatar {
+#conversations-container.slide-left-quarter .avatar-container {
+    position: relative;
     margin-right: 0;
-    margin-bottom: 8px; /* Space for badge below */
 }
 
-#conversations-container.slide-left-quarter .badge-below {
-    display: block;
-    background-color: #ff2d55;
-    color: #fff;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+#conversations-container.slide-left-quarter .badge-overlay {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    background-color: #749cbf; /* Matches conversation list color */
+    color: #fff;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 10px;
     font-weight: 600;
+    border: 2px solid #f9f9f9; /* Matches sidebar background for clean look */
 }
 
-.badge-below {
+.avatar-container {
+    position: relative;
+}
+
+.badge-overlay {
     display: none; /* Hidden in normal view */
 }
 
@@ -494,9 +501,11 @@
         min-width: 240px;  /* Adjusted for mobile usability */
     }
 
-    #conversations-container.slide-left-quarter .badge-below {
-        font-size: 10px;
-        width: 18px;
-        height: 18px;
+    #conversations-container.slide-left-quarter .badge-overlay {
+        font-size: 8px;
+        width: 14px;
+        height: 14px;
+        bottom: -2px;
+        right: -2px;
     }
 }
