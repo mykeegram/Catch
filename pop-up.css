@@ -113,6 +113,7 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+    flex: 1; /* Push menu button to the right */
 }
 
 .story-username {
@@ -127,6 +128,22 @@
     font-size: 12px;
     font-weight: 400;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.story-menu-button {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: auto;
+    padding: 4px 8px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    user-select: none;
+    line-height: 1;
+}
+
+.story-menu-button:hover {
+    opacity: 0.8;
 }
 
 /* ===============================
