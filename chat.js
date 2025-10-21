@@ -21,11 +21,12 @@ const conversations = [
     },
     {
         name: "Donald Trump",
-        message: "You're fired! Wait, no, hired!",
-        time: "Today",
+        message: "Discussion group",
+        time: "Mon",
         badge: 0,
-        avatar: "D",
-        isImage: false
+        avatar: "DT",
+        isImage: false,
+        isGroup: true
     }
 ];
 
@@ -41,7 +42,7 @@ const chatMessages = {
         { type: "audio", duration: "0:08", sender: "sent", time: "Tue 3:16 PM" },
         { type: "text", text: "I'm good, you?", sender: "sent", time: "Tue 3:17 PM" }
     ],
-    "Donald Trump": []  // Empty messages for the new conversation
+    "Donald Trump": []  // Empty messages for the group discussion
 };
 
 // Function to render conversations
@@ -122,27 +123,20 @@ function openDiscussion(conversation) {
                 <div class="discussion-title">${conversation.name}</div>
             </div>
             <div class="discussion-content" id="discussion-content">
-                <!-- Empty for now -->
+                <!-- Empty for now, like a new Discord DM -->
                 <div class="empty-state">
                     <p>No messages yet. Start the conversation!</p>
                 </div>
             </div>
         `;
 
-        // Hide conversation names, messages, and badges
-        const conversationItems = document.querySelectorAll(".conversation-item");
-        conversationItems.forEach(item => {
-            item.classList.add("avatar-only");
-        });
-
-        // Slide conversations, header, and stories off-screen
-        conversationsContainer.style.width = "25vw";  // 1/4 of viewport width
-        conversationsContainer.classList.add("slide-off-left");
-        document.querySelector(".header").classList.add("slide-off-left");
-        document.querySelector(".stories-container").classList.add("slide-off-left");
-        document.querySelector(".floating-button").classList.add("hidden");
+        // Slide conversations to left (25% width with only avatars) and show discussions (75%)
+        conversationsContainer.classList.add("slide-left-quarter");
         discussionsContainer.classList.add("open");
-        console.log("Applied slide-off-left and avatar-only styles"); // Debug log
+        console.log("Applied slide-left-quarter to conversations-container"); // Debug log
+        document.querySelector(".header").classList.add("slide-left");
+        document.querySelector(".stories-container").classList.add("slide-left");
+        document.querySelector(".floating-button").classList.add("hidden");
 
         // Add event listener for back button
         const backButton = discussionsContainer.querySelector(".back-button");
@@ -160,19 +154,12 @@ function closeDiscussion() {
         const conversationsContainer = document.getElementById("conversations-container");
         if (!conversationsContainer) throw new Error("Conversations container not found in closeDiscussion");
 
-        // Remove avatar-only styles to restore full conversation list
-        const conversationItems = document.querySelectorAll(".conversation-item");
-        conversationItems.forEach(item => {
-            item.classList.remove("avatar-only");
-        });
-
         discussionsContainer.classList.remove("open");
-        conversationsContainer.classList.remove("slide-off-left");
-        conversationsContainer.style.width = "";  // Reset to full width
-        document.querySelector(".header").classList.remove("slide-off-left");
-        document.querySelector(".stories-container").classList.remove("slide-off-left");
+        conversationsContainer.classList.remove("slide-left-quarter");
+        console.log("Removed slide-left-quarter from conversations-container"); // Debug log
+        document.querySelector(".header").classList.remove("slide-left");
+        document.querySelector(".stories-container").classList.remove("slide-left");
         document.querySelector(".floating-button").classList.remove("hidden");
-        console.log("Removed slide-off-left and avatar-only styles"); // Debug log
 
         // Clear content after animation completes (300ms matches transition duration)
         setTimeout(() => {
@@ -192,12 +179,6 @@ function openChat(conversation) {
 
         const conversationsContainer = document.getElementById("conversations-container");
         if (!conversationsContainer) throw new Error("Conversations container not found in openChat");
-
-        // Ensure conversation list is in full view
-        const conversationItems = document.querySelectorAll(".conversation-item");
-        conversationItems.forEach(item => {
-            item.classList.remove("avatar-only");
-        });
 
         // Render chat content
         chatContainer.innerHTML = `
@@ -298,12 +279,6 @@ function closeChat() {
         const conversationsContainer = document.getElementById("conversations-container");
         if (!conversationsContainer) throw new Error("Conversations container not found in closeChat");
 
-        // Ensure conversation list is in full view
-        const conversationItems = document.querySelectorAll(".conversation-item");
-        conversationItems.forEach(item => {
-            item.classList.remove("avatar-only");
-        });
-
         chatContainer.classList.remove("open");
         conversationsContainer.classList.remove("slide-left");
         console.log("Removed slide-left from conversations-container"); // Debug log
@@ -329,7 +304,7 @@ function addConversationListeners() {
         conversationItems.forEach((item, index) => {
             item.addEventListener("click", () => {
                 console.log(`Clicked conversation: ${conversations[index].name}`); // Debug log
-                if (conversations[index].name === "Donald Trump") {
+                if (conversations[index].isGroup) {
                     openDiscussion(conversations[index]);
                 } else {
                     openChat(conversations[index]);
