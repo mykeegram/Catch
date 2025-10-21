@@ -87,14 +87,14 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    bottom: -4px;
-    right: -4px;
+    bottom: 0;
+    right: 0;
     background-color: #749cbf; /* Matches conversation list color */
     color: #fff;
-    width: 16px;
-    height: 16px;
+    width: 20px; /* Matches .badge size */
+    height: 20px; /* Matches .badge size */
     border-radius: 50%;
-    font-size: 10px;
+    font-size: 12px; /* Matches .badge font-size */
     font-weight: 600;
     border: 2px solid #f9f9f9; /* Matches sidebar background for clean look */
 }
@@ -105,6 +105,19 @@
 
 .badge-overlay {
     display: none; /* Hidden in normal view */
+}
+
+.badge {
+    background-color: #749cbf;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .floating-button.hidden {
@@ -502,10 +515,10 @@
     }
 
     #conversations-container.slide-left-quarter .badge-overlay {
-        font-size: 8px;
-        width: 14px;
-        height: 14px;
-        bottom: -2px;
-        right: -2px;
+        font-size: 10px;
+        width: 18px;
+        height: 18px;
+        bottom: 0;
+        right: 0;
     }
 }
