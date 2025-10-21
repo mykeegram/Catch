@@ -58,6 +58,9 @@ function renderConversations() {
             const conversationItem = document.createElement("div");
             conversationItem.className = "conversation-item";
 
+            const avatarContainer = document.createElement("div");
+            avatarContainer.className = "avatar-container";
+
             const avatarDiv = document.createElement("div");
             avatarDiv.className = "avatar";
             
@@ -70,6 +73,13 @@ function renderConversations() {
             } else {
                 avatarDiv.textContent = conv.avatar;
             }
+
+            // Add badge for sidebar view, placed on avatar
+            const badgeOverlay = document.createElement("div");
+            badgeOverlay.className = "badge-overlay";
+            badgeOverlay.textContent = conv.badge;
+            avatarContainer.appendChild(avatarDiv);
+            avatarContainer.appendChild(badgeOverlay);
 
             const contentDiv = document.createElement("div");
             contentDiv.className = "conversation-content";
@@ -87,15 +97,9 @@ function renderConversations() {
                 <div class="badge">${conv.badge}</div>
             `;
 
-            conversationItem.appendChild(avatarDiv);
+            conversationItem.appendChild(avatarContainer);
             conversationItem.appendChild(contentDiv);
             conversationItem.appendChild(rightSection);
-
-            // Add badge below avatar for sidebar view
-            const badgeBelow = document.createElement("div");
-            badgeBelow.className = "badge-below";
-            badgeBelow.textContent = conv.badge;
-            conversationItem.appendChild(badgeBelow);
 
             container.appendChild(conversationItem);
         });
@@ -246,7 +250,7 @@ function openChat(conversation) {
                             ${message.sender === "sent" ? `
                             <span class="check-marks">
                                 <svg viewBox="0 0 16 15" width="16" height="15">
-                                    <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.363.365 0 0 0-.063-.51z"/>
+                                    <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"/>
                                 </svg>
                             </span>
                             ` : ''}
