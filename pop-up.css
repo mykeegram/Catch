@@ -116,11 +116,19 @@
     flex: 1; /* Push menu button to the right */
 }
 
+/* Username in the POPUP (white with shadow) */
 .story-username {
-    color: #c3c4c7;
+    color: #ffffff;
     font-size: 14px;
     font-weight: 600;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Username in the CONVERSATION LIST (black, no shadow) */
+.story-item .username,
+.story-item span:not(.story-username) {
+    color: #000 !important;
+    text-shadow: none !important;
 }
 
 .story-timestamp {
