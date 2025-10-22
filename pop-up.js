@@ -118,7 +118,10 @@ function renderStoryCube() {
         // Profile picture
         const profilePic = document.createElement('img');
         profilePic.className = 'story-profile-pic';
-        profilePic.src = story.profilePic;
+        
+        // *** FIX: Changed from 'story.profilePic' to 'story.avatar' ***
+        profilePic.src = story.avatar;
+        
         profilePic.alt = story.username;
         
         // Username and timestamp container
@@ -245,7 +248,19 @@ function navigateInternalStory(direction) {
     
     const newIndex = currentInternalStoryIndex + direction;
     
-    // Clamp to valid range
+    // If navigating back from the first internal story, switch to the previous user story
+    if (newIndex < 0) {
+        switchToUserStory(currentUserIndex - 1);
+        return;
+    }
+
+    // If navigating forward past the last internal story, switch to the next user story
+    if (newIndex >= internalStories.length) {
+        switchToUserStory(currentUserIndex + 1);
+        return;
+    }
+    
+    // Clamp to valid range (already handled by the checks above, but good for safety)
     if (newIndex >= 0 && newIndex < internalStories.length) {
         currentInternalStoryIndex = newIndex;
         renderStoryCube();
@@ -399,3 +414,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
