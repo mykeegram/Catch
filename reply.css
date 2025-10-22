@@ -1,0 +1,48 @@
+/* reply.css */
+
+/* Reply section within a message bubble */
+.reply-section {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #06cf9c;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+}
+
+/* Reply section for sent messages */
+.chat-message.sent .reply-section {
+    background-color: rgba(0, 0, 0, 0.08);
+    border-left-color: #128c7e;
+}
+
+/* Reply name styling */
+.reply-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #06cf9c;
+    margin-bottom: 2px;
+}
+
+/* Reply name for sent messages */
+.chat-message.sent .reply-name {
+    color: #128c7e;
+}
+
+/* Reply text styling */
+.reply-text {
+    font-size: 13px;
+    color: #667781;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Mobile adjustments for reply section */
+@media (max-width: 768px) {
+    .reply-section {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+    .chat-message.sent .reply-section {
+        background-color: rgba(0, 0, 0, 0.12);
+    }
+}
