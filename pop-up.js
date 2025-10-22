@@ -23,6 +23,52 @@ const userInternalStories = {
     ]
 };
 
+// ==================================================
+// NEW HELPER FUNCTIONS FOR LETTER AVATARS
+// ==================================================
+
+// Function to create 'Your story' profile (M)
+function createMProfile() {
+    const profileDiv = document.createElement('div');
+    profileDiv.className = 'story-profile-pic';
+    profileDiv.style.border = 'none'; // Remove white border for placeholder
+    
+    // Orange Gradient Style
+    profileDiv.style.background = 'linear-gradient(135deg, rgb(255, 149, 0), rgb(255, 123, 0))';
+    profileDiv.style.color = '#ffffff';
+    profileDiv.style.display = 'flex';
+    profileDiv.style.alignItems = 'center';
+    profileDiv.style.justifyContent = 'center';
+    profileDiv.style.fontSize = '18px';
+    profileDiv.style.fontWeight = 'bold';
+    profileDiv.textContent = 'M';
+    
+    return profileDiv;
+}
+
+// Function to create 'Chizaram' profile (C)
+function createCProfile() {
+    const profileDiv = document.createElement('div');
+    profileDiv.className = 'story-profile-pic';
+    profileDiv.style.border = 'none'; // Remove white border for placeholder
+    
+    // Green Gradient Style
+    profileDiv.style.background = 'linear-gradient(135deg, #54D079, #3FB963)';
+    profileDiv.style.color = '#ffffff';
+    profileDiv.style.display = 'flex';
+    profileDiv.style.alignItems = 'center';
+    profileDiv.style.justifyContent = 'center';
+    profileDiv.style.fontSize = '18px';
+    profileDiv.style.fontWeight = 'bold';
+    profileDiv.textContent = 'C';
+    
+    return profileDiv;
+}
+
+// ==================================================
+// REST OF THE SCRIPT
+// ==================================================
+
 // Load liked stories from memory on startup
 function loadLikedStories() {
     if (typeof likedStories === 'object') {
@@ -115,14 +161,26 @@ function renderStoryCube() {
         const userInfoRow = document.createElement('div');
         userInfoRow.className = 'story-user-info';
         
-        // Profile picture
-        const profilePic = document.createElement('img');
-        profilePic.className = 'story-profile-pic';
+        // ==================================================
+        // CONDITIONAL PROFILE RENDERING LOGIC (The Fix)
+        // ==================================================
+        let profileElement;
         
-        // *** FIX: Changed from 'story.profilePic' to 'story.avatar' ***
-        profilePic.src = story.avatar;
-        
-        profilePic.alt = story.username;
+        if (story.username === "Your story") {
+            profileElement = createMProfile();
+        } else if (story.username === "Chizaram") {
+            profileElement = createCProfile();
+        } else {
+            // Default: Use <img> for users with image URLs (like VaVia)
+            profileElement = document.createElement('img');
+            profileElement.className = 'story-profile-pic';
+            profileElement.src = story.avatar; // Uses the provided 'avatar' property
+            profileElement.alt = story.username;
+        }
+
+        userInfoRow.appendChild(profileElement); // Append the created element
+        // ==================================================
+
         
         // Username and timestamp container
         const userTextContainer = document.createElement('div');
@@ -139,7 +197,6 @@ function renderStoryCube() {
         userTextContainer.appendChild(username);
         userTextContainer.appendChild(timestamp);
         
-        userInfoRow.appendChild(profilePic);
         userInfoRow.appendChild(userTextContainer);
         
         // Three-dot menu button
