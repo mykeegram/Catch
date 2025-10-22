@@ -116,19 +116,18 @@
     flex: 1; /* Push menu button to the right */
 }
 
-/* Username in the POPUP (white with shadow) */
-.story-username {
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
 /* Username in the CONVERSATION LIST (black, no shadow) */
-.story-item .username,
-.story-item span:not(.story-username) {
+.story-item .story-username {
     color: #000 !important;
     text-shadow: none !important;
+}
+
+/* Username in the POPUP HEADER (white with shadow) */
+.story-user-text .story-username {
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 
 .story-timestamp {
