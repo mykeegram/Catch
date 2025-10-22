@@ -22,14 +22,14 @@ function initializeWavePlay() {
 
         function startSeeking(event) {
             event.preventDefault(); // Prevent default touch/click behavior
-            const isPlaying = button.classList.contains('playing');
+            const wasPlaying = button.classList.contains('playing');
 
-            // If playing, pause the audio temporarily
-            if (isPlaying) {
+            // Pause audio during seeking to update state
+            if (wasPlaying) {
                 pauseAudio(button, durationElement, waveBars);
             }
 
-            // Calculate the seek position
+            // Calculate and update seek position
             seekToPosition(event, waveform, button, durationElement, waveBars);
 
             // Add move and end listeners for dragging
@@ -49,8 +49,8 @@ function initializeWavePlay() {
                 document.removeEventListener('mouseup', stopSeeking);
                 document.removeEventListener('touchend', stopSeeking);
 
-                // Resume playback if it was playing
-                if (isPlaying) {
+                // Resume playback if it was playing before seeking
+                if (wasPlaying) {
                     playAudio(button, durationElement, waveBars);
                 }
             }
@@ -79,11 +79,16 @@ function seekToPosition(event, waveform, button, durationElement, waveBars) {
 
     // Update duration display and button state
     durationElement.textContent = formatDuration(newTime);
-    button.dataset.currentTime = newTime;
-    button.dataset.currentBarIndex = newBarIndex;
+    button.dataset.currentTime = newTime.toString();
+    button.dataset.currentBarIndex = newBarIndex.toString();
 }
 
 function playAudio(button, durationElement, waveBars) {
+    // Clear any existing interval to prevent glitches
+    if (button.dataset.intervalId) {
+        clearInterval(button.dataset.intervalId);
+    }
+
     // Set playing state
     button.classList.add('playing');
     button.innerHTML = `
@@ -113,10 +118,10 @@ function playAudio(button, durationElement, waveBars) {
     let currentSeconds = parseFloat(button.dataset.currentTime || totalSeconds);
     let currentBarIndex = parseInt(button.dataset.currentBarIndex || 0, 10);
 
-    // Clear any existing interval
-    if (button.dataset.intervalId) {
-        clearInterval(button.dataset.intervalId);
-    }
+    // Ensure waveform reflects current state
+    waveBars.forEach((bar, index) => {
+        bar.style.backgroundColor = index < currentBarIndex ? '#006400' : '#8696a0';
+    });
 
     // Start countdown and bar animation
     const intervalId = setInterval(() => {
@@ -132,8 +137,8 @@ function playAudio(button, durationElement, waveBars) {
             `;
             durationElement.textContent = initialDuration;
             waveBars.forEach(bar => bar.style.backgroundColor = '#8696a0');
-            button.dataset.currentTime = totalSeconds;
-            button.dataset.currentBarIndex = 0;
+            button.dataset.currentTime = totalSeconds.toString();
+            button.dataset.currentBarIndex = '0';
             return;
         }
 
@@ -150,15 +155,17 @@ function playAudio(button, durationElement, waveBars) {
         }
 
         // Store current state
-        button.dataset.currentTime = currentSeconds;
-        button.dataset.currentBarIndex = currentBarIndex;
-        button.dataset.intervalId = intervalId;
+        button.dataset.currentTime = currentSeconds.toString();
+        button.dataset.currentBarIndex = currentBarIndex.toString();
+        button.dataset.intervalId = intervalId.toString();
     }, 100);
 }
 
 function pauseAudio(button, durationElement, waveBars) {
     // Clear interval and retain current state
-    clearInterval(button.dataset.intervalId);
+    if (button.dataset.intervalId) {
+        clearInterval(button.dataset.intervalId);
+    }
     button.classList.remove('playing');
     button.innerHTML = `
         <svg viewBox="0 0 24 24" width="24" height="24">
