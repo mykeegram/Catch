@@ -1,27 +1,16 @@
-/* header.css */
-
-/* Root variables for consistent theming */
+/* header.css - FULLY SCOPED TO .app-chat-header */
 :root {
-    --bg: #ffffff;
-    --text-primary: #0b0b0b;
-    --text-secondary: #8f9498;
-    --avatar-gradient-start: #8bd641;
-    --avatar-gradient-end: #33a84d;
-    --badge-bg: #2f8ef7;
-    --icon-color: #6b6f73;
+    --header-bg: #ffffff;
+    --header-text-primary: #0b0b0b;
+    --header-text-secondary: #8f9498;
+    --header-avatar-start: #8bd641;
+    --header-avatar-end: #33a84d;
+    --header-badge-bg: #2f8ef7;
+    --header-icon-color: #6b6f73;
 }
 
-/* Base body styles (applied globally, but can be scoped if needed) */
-body {
-    margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: var(--bg);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* Chat header container */
-.chat-header {
+/* === ONLY APPLIES INSIDE .app-chat-header === */
+.app-chat-header {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -29,18 +18,18 @@ body {
     height: 64px;
     box-sizing: border-box;
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    background-color: var(--header-bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
-/* Left section (back button + avatar) */
-.left {
+.app-chat-header .left {
     display: flex;
     align-items: center;
     gap: 12px;
     min-width: 0;
 }
 
-/* Icon button styles (back, more options) */
-.icon-btn {
+.app-chat-header .icon-btn {
     width: 28px;
     height: 28px;
     display: flex;
@@ -54,30 +43,29 @@ body {
     transition: background 0.2s ease;
 }
 
-.icon-btn:hover {
+.app-chat-header .icon-btn:hover {
     background: rgba(0, 0, 0, 0.06);
 }
 
-.icon-btn:focus-visible {
+.app-chat-header .icon-btn:focus-visible {
     outline: 2px solid #2f8ef7;
     outline-offset: 2px;
 }
 
-.icon-btn svg {
+.app-chat-header .icon-btn svg {
     width: 20px;
     height: 20px;
     display: block;
 }
 
-/* Avatar wrapper and avatar */
-.avatar-wrap {
+.app-chat-header .avatar-wrap {
     position: relative;
     width: 44px;
     height: 44px;
     flex: 0 0 44px;
 }
 
-.avatar {
+.app-chat-header .avatar {
     width: 100%;
     height: 100%;
     border-radius: 50%;
@@ -88,18 +76,17 @@ body {
     font-weight: 600;
     font-size: 18px;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.06);
-    background: linear-gradient(135deg, var(--avatar-gradient-start) 0%, var(--avatar-gradient-end) 100%);
+    background: linear-gradient(135deg, var(--header-avatar-start) 0%, var(--header-avatar-end) 100%);
 }
 
-/* Badge on avatar */
-.badge {
+.app-chat-header .badge {
     position: absolute;
     top: -6px;
     left: -6px;
     min-width: 20px;
     height: 20px;
     padding: 0 5px;
-    background: var(--badge-bg);
+    background: var(--header-badge-bg);
     color: white;
     font-size: 12px;
     font-weight: 700;
@@ -110,8 +97,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
-/* Meta section (name + subtext) */
-.meta {
+.app-chat-header .meta {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -120,43 +106,43 @@ body {
     flex: 1;
 }
 
-.name {
+.app-chat-header .name {
     font-size: 16px;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--header-text-primary);
     line-height: 1;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
-.sub {
+.app-chat-header .sub {
     font-size: 13px;
-    color: var(--text-secondary);
+    color: var(--header-text-secondary);
     margin-top: 4px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
-/* Mobile adjustments */
+/* Mobile */
 @media (max-width: 360px) {
-    .chat-header {
+    .app-chat-header {
         padding: 10px;
         height: 56px;
     }
-    .avatar-wrap {
+    .app-chat-header .avatar-wrap {
         width: 40px;
         height: 40px;
     }
-    .avatar {
+    .app-chat-header .avatar {
         font-size: 16px;
     }
-    .icon-btn {
+    .app-chat-header .icon-btn {
         width: 24px;
         height: 24px;
     }
-    .icon-btn svg {
+    .app-chat-header .icon-btn svg {
         width: 18px;
         height: 18px;
     }
