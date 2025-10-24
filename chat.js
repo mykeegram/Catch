@@ -1,7 +1,8 @@
 // chat.js
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
-import { renderHeader } from './header.js';          // <-- NEW
+import { renderHeader } from './header.js';
+import { initMessaging } from './message.js';          // ← NEW: Input bar
 
 // -------------------------------------------------
 // Conversations data
@@ -174,7 +175,7 @@ function closeDiscussion() {
 }
 
 // -------------------------------------------------
-// Open chat – uses .app-chat-header
+// Open chat – uses .app-chat-header + INPUT BAR
 // -------------------------------------------------
 function openChat(conversation) {
     try {
@@ -182,6 +183,7 @@ function openChat(conversation) {
         const convs = document.getElementById("conversations-container");
         if (!chat || !convs) throw new Error("Missing containers");
 
+        // ----- HEADER + CONTENT -----
         chat.innerHTML = `
             <header class="app-chat-header" role="banner" aria-label="Chat header"></header>
             <div class="chat-content" id="chat-content">
@@ -191,6 +193,7 @@ function openChat(conversation) {
             </div>
         `;
 
+        // ----- RENDER HEADER -----
         const header = chat.querySelector(".app-chat-header");
         renderHeader(header, {
             title: conversation.name,
@@ -202,6 +205,7 @@ function openChat(conversation) {
             onBack: closeChat
         });
 
+        // ----- RENDER MESSAGES -----
         const content = chat.querySelector("#chat-content");
         const msgs = chatMessages[conversation.name] || [];
 
@@ -212,13 +216,13 @@ function openChat(conversation) {
             const bubble = document.createElement("div");
             bubble.className = "message-bubble";
 
-            // ---- Reply ----
+            // Reply
             if (msg.reply) {
                 const replySec = createReplySection(msg.reply);
                 if (replySec) bubble.appendChild(replySec);
             }
 
-            // ---- Text / Audio ----
+            // Text / Audio
             if (msg.type === "audio") {
                 const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 bubble.innerHTML += `
@@ -236,7 +240,7 @@ function openChat(conversation) {
                 bubble.innerHTML += `<div class="message-text">${msg.text}</div>`;
             }
 
-            // ---- Time + Checkmarks ----
+            // Time + Checkmarks
             bubble.innerHTML += `
                 <div class="message-time">
                     ${msg.time}
@@ -255,7 +259,10 @@ function openChat(conversation) {
 
         initializeWavePlay();
 
-        // ---- Open animation ----
+        // ----- INPUT BAR -----
+        initMessaging(chat);  // ← THIS ADDS THE FULL INPUT BAR
+
+        // ----- OPEN ANIMATION -----
         chat.classList.add("open");
         convs.classList.add("slide-left");
         document.querySelector(".header").classList.add("slide-left");
