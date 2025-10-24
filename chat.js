@@ -1,6 +1,7 @@
 // chat.js
 import { initializeWavePlay } from './wave-play.js';
-import { createReplySection } from './reply.js'; // Import reply functionality
+import { createReplySection } from './reply.js';
+import { renderHeader } from './header.js'; // NEW: Import header renderer
 
 // Conversations data
 const conversations = [
@@ -53,7 +54,7 @@ const chatMessages = {
             text: "Here you go: +234 123 456 7890",
             sender: "sent",
             time: "Wed 2:05 PM",
-            reply: { name: "Mykee Blogger", text: "U fit give me your WhatsApp number" }
+            reply: { name: "Mykee Blogger", text: "U fit give me ▲your WhatsApp number" }
         },
         { type: "text", text: "Who be this", sender: "sent", time: "Wed 10:56 AM" },
         {
@@ -75,13 +76,13 @@ const chatMessages = {
 // Function to render conversations
 function renderConversations() {
     try {
-        console.log("Starting renderConversations"); // Debug log
+        console.log("Starting renderConversations");
         const container = document.getElementById("conversations-container");
         if (!container) throw new Error("Conversations container not found");
         container.innerHTML = "";
 
         conversations.forEach(conv => {
-            console.log(`Rendering conversation for ${conv.name}`); // Debug log
+            console.log(`Rendering conversation for ${conv.name}`);
             const conversationItem = document.createElement("div");
             conversationItem.className = "conversation-item";
 
@@ -104,6 +105,7 @@ function renderConversations() {
             const badgeOverlay = document.createElement("div");
             badgeOverlay.className = "badge-overlay";
             badgeOverlay.textContent = conv.badge;
+            if (conv.badge === 0) badgeOverlay.style.display = 'none'; // Hide if 0
             avatarContainer.appendChild(avatarDiv);
             avatarContainer.appendChild(badgeOverlay);
 
@@ -120,7 +122,7 @@ function renderConversations() {
             rightSection.className = "right-section";
             rightSection.innerHTML = `
                 <span class="conversation-time">${conv.time}</span>
-                <div class="badge">${conv.badge}</div>
+                <div class="badge">${conv.badge > 0 ? conv.badge : ''}</div>
             `;
 
             conversationItem.appendChild(avatarContainer);
@@ -130,14 +132,14 @@ function renderConversations() {
             container.appendChild(conversationItem);
         });
 
-        console.log("Finished rendering conversations"); // Debug log
+        console.log("Finished rendering conversations");
         addConversationListeners();
     } catch (error) {
         console.error("Error rendering conversations:", error);
     }
 }
 
-// Function to create and render discussion panel
+// Function to open discussion panel (Donald Trump group)
 function openDiscussion(conversation) {
     try {
         console.log(`Opening discussion for ${conversation.name}`);
@@ -145,17 +147,11 @@ function openDiscussion(conversation) {
         if (!discussionsContainer) throw new Error("Discussions container not found");
 
         const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found in openDiscussion");
+        if (!conversationsContainer) throw new Error("Conversations container not found");
 
+        // Use the new unified header
         discussionsContainer.innerHTML = `
-            <div class="discussion-header">
-                <div class="back-button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M15 18l-6-6 6-6" />
-                    </svg>
-                </div>
-                <div class="discussion-title">${conversation.name}</div>
-            </div>
+            <header class="chat-header" role="banner" aria-label="Discussion header"></header>
             <div class="discussion-content" id="discussion-content">
                 <div class="empty-state">
                     <p>No messages yet. Start the conversation!</p>
@@ -163,15 +159,22 @@ function openDiscussion(conversation) {
             </div>
         `;
 
+        // Render header using header.js
+        const headerContainer = discussionsContainer.querySelector(".chat-header");
+        renderHeader(headerContainer, {
+            title: conversation.name,
+            avatar: conversation.avatar,
+            badge: conversation.badge,
+            subtext: "Discussion group",
+            onBack: closeDiscussion
+        });
+
+        // Slide animations
         conversationsContainer.classList.add("slide-left-quarter");
         discussionsContainer.classList.add("open");
-        console.log("Applied slide-left-quarter to conversations-container");
         document.querySelector(".header").classList.add("slide-left");
         document.querySelector(".stories-container").classList.add("slide-left");
         document.querySelector(".floating-button").classList.add("hidden");
-
-        const backButton = discussionsContainer.querySelector(".back-button");
-        backButton.addEventListener("click", closeDiscussion);
     } catch (error) {
         console.error("Error opening discussion:", error);
     }
@@ -183,11 +186,10 @@ function closeDiscussion() {
         console.log("Closing discussion");
         const discussionsContainer = document.getElementById("discussions-container");
         const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found in closeDiscussion");
+        if (!conversationsContainer) throw new Error("Conversations container not found");
 
         discussionsContainer.classList.remove("open");
         conversationsContainer.classList.remove("slide-left-quarter");
-        console.log("Removed slide-left-quarter from conversations-container");
         document.querySelector(".header").classList.remove("slide-left");
         document.querySelector(".stories-container").classList.remove("slide-left");
         document.querySelector(".floating-button").classList.remove("hidden");
@@ -200,7 +202,7 @@ function closeDiscussion() {
     }
 }
 
-// Function to create and render chat interface
+// Function to open chat
 function openChat(conversation) {
     try {
         console.log(`Opening chat for ${conversation.name}`);
@@ -208,17 +210,11 @@ function openChat(conversation) {
         if (!chatContainer) throw new Error("Chat container not found");
 
         const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found in openChat");
+        if (!conversationsContainer) throw new Error("Conversations container not found");
 
+        // Use the new unified header
         chatContainer.innerHTML = `
-            <div class="chat-header">
-                <div class="back-button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M15 18l-6-6 6-6" />
-                    </svg>
-                </div>
-                <div class="chat-title">${conversation.name}</div>
-            </div>
+            <header class="chat-header" role="banner" aria-label="Chat header"></header>
             <div class="chat-content" id="chat-content">
                 <div class="date-divider">
                     <span class="date-badge">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
@@ -226,22 +222,30 @@ function openChat(conversation) {
             </div>
         `;
 
+        // Render header using header.js
+        const headerContainer = chatContainer.querySelector(".chat-header");
+        renderHeader(headerContainer, {
+            title: conversation.name,
+            avatar: conversation.avatar,
+            badge: conversation.badge,
+            subtext: "last seen recently",
+            onBack: closeChat
+        });
+
+        // Render messages
         const chatContent = chatContainer.querySelector("#chat-content");
         const messages = chatMessages[conversation.name] || [];
         messages.forEach(message => {
-            console.log(`Rendering message: ${message.type} for ${conversation.name}`);
             const messageDiv = document.createElement("div");
             messageDiv.className = `chat-message ${message.sender} ${message.type === "audio" ? "audio-message" : ""}`;
             
             const messageBubble = document.createElement("div");
             messageBubble.className = "message-bubble";
 
-            // Add reply section if present
+            // Add reply section
             if (message.reply) {
                 const replySection = createReplySection(message.reply);
-                if (replySection) {
-                    messageBubble.appendChild(replySection);
-                }
+                if (replySection) messageBubble.appendChild(replySection);
             }
 
             if (message.type === "audio") {
@@ -278,18 +282,14 @@ function openChat(conversation) {
             chatContent.appendChild(messageDiv);
         });
 
-        console.log("Initializing wave-play");
         initializeWavePlay();
 
+        // Open animation
         chatContainer.classList.add("open");
         conversationsContainer.classList.add("slide-left");
-        console.log("Applied slide-left to conversations-container");
         document.querySelector(".header").classList.add("slide-left");
         document.querySelector(".stories-container").classList.add("slide-left");
         document.querySelector(".floating-button").classList.add("hidden");
-
-        const backButton = chatContainer.querySelector(".back-button");
-        backButton.addEventListener("click", closeChat);
     } catch (error) {
         console.error("Error opening chat:", error);
     }
@@ -301,11 +301,10 @@ function closeChat() {
         console.log("Closing chat");
         const chatContainer = document.getElementById("chat-container");
         const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found in closeChat");
+        if (!conversationsContainer) throw new Error("Conversations container not found");
 
         chatContainer.classList.remove("open");
         conversationsContainer.classList.remove("slide-left");
-        console.log("Removed slide-left from conversations-container");
         document.querySelector(".header").classList.remove("slide-left");
         document.querySelector(".stories-container").classList.remove("slide-left");
         document.querySelector(".floating-button").classList.remove("hidden");
@@ -318,15 +317,14 @@ function closeChat() {
     }
 }
 
-// Add click event listeners to conversation items
+// Add click listeners to conversation items
 function addConversationListeners() {
     try {
         console.log("Adding conversation listeners");
         const conversationItems = document.querySelectorAll(".conversation-item");
-        console.log(`Found ${conversationItems.length} conversation items`);
         conversationItems.forEach((item, index) => {
             item.addEventListener("click", () => {
-                console.log(`Clicked conversation: ${conversations[index].name}`);
+                console.log(`Clicked: ${conversations[index].name}`);
                 if (conversations[index].isGroup) {
                     openDiscussion(conversations[index]);
                 } else {
@@ -335,16 +333,17 @@ function addConversationListeners() {
             });
         });
     } catch (error) {
-        console.error("Error adding conversation listeners:", error);
+        console.error("Error adding listeners:", error);
     }
 }
 
-// Call renderConversations on page load
+// Initialize on load
 document.addEventListener("DOMContentLoaded", () => {
     try {
-        console.log("DOMContentLoaded: Initializing conversations");
+        console.log("Initializing app");
         renderConversations();
     } catch (error) {
-        console.error("Error initializing conversations:", error);
+        console.error("Init error:", error);
     }
 });
+    
