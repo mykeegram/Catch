@@ -1,9 +1,11 @@
 // chat.js
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
-import { renderHeader } from './header.js'; // NEW: Import header renderer
+import { renderHeader } from './header.js';          // <-- NEW
 
+// -------------------------------------------------
 // Conversations data
+// -------------------------------------------------
 const conversations = [
     {
         name: "Chizaram",
@@ -32,37 +34,19 @@ const conversations = [
     }
 ];
 
-// Sample chat messages with reply data
+// -------------------------------------------------
+// Sample chat messages (with replies)
+// -------------------------------------------------
 const chatMessages = {
     Chizaram: [
-        {
-            type: "text",
-            text: "U fit give me your WhatsApp number",
-            sender: "received",
-            time: "Wed 2:01 PM",
-            reply: { name: "Jackson Dave", text: "Afa" }
-        },
+        { type: "text", text: "U fit give me your WhatsApp number", sender: "received", time: "Wed 2:01 PM",
+          reply: { name: "Jackson Dave", text: "Afa" } },
         { type: "text", text: "Mykee Blogger", sender: "received", time: "Wed 10:40 AM" },
-        {
-            type: "audio",
-            duration: "0:14",
-            sender: "received",
-            time: "Wed 10:42 AM"
-        },
-        {
-            type: "text",
-            text: "Here you go: +234 123 456 7890",
-            sender: "sent",
-            time: "Wed 2:05 PM",
-            reply: { name: "Mykee Blogger", text: "U fit give me ▲your WhatsApp number" }
-        },
+        { type: "audio", duration: "0:14", sender: "received", time: "Wed 10:42 AM" },
+        { type: "text", text: "Here you go: +234 123 456 7890", sender: "sent", time: "Wed 2:05 PM",
+          reply: { name: "Mykee Blogger", text: "U fit give me your WhatsApp number" } },
         { type: "text", text: "Who be this", sender: "sent", time: "Wed 10:56 AM" },
-        {
-            type: "audio",
-            duration: "0:08",
-            sender: "sent",
-            time: "Wed 10:57 AM"
-        },
+        { type: "audio", duration: "0:08", sender: "sent", time: "Wed 10:57 AM" },
         { type: "text", text: "Messiah", sender: "received", time: "Wed 10:58 AM" }
     ],
     VaVia: [
@@ -73,30 +57,31 @@ const chatMessages = {
     "Donald Trump": []
 };
 
-// Function to render conversations
+// -------------------------------------------------
+// Render conversation list
+// -------------------------------------------------
 function renderConversations() {
     try {
-        console.log("Starting renderConversations");
         const container = document.getElementById("conversations-container");
         if (!container) throw new Error("Conversations container not found");
         container.innerHTML = "";
 
         conversations.forEach(conv => {
-            console.log(`Rendering conversation for ${conv.name}`);
-            const conversationItem = document.createElement("div");
-            conversationItem.className = "conversation-item";
+            const item = document.createElement("div");
+            item.className = "conversation-item";
 
-            const avatarContainer = document.createElement("div");
-            avatarContainer.className = "avatar-container";
+            // ---- Avatar ----
+            const avatarWrap = document.createElement("div");
+            avatarWrap.className = "avatar-container";
 
             const avatarDiv = document.createElement("div");
             avatarDiv.className = "avatar";
-            
+
             if (conv.isImage) {
                 const img = document.createElement("img");
                 img.src = conv.avatar;
                 img.alt = conv.name;
-                img.onerror = () => console.error(`Failed to load avatar for ${conv.name}`);
+                img.onerror = () => console.error(`Avatar load error: ${conv.name}`);
                 avatarDiv.appendChild(img);
             } else {
                 avatarDiv.textContent = conv.avatar;
@@ -105,63 +90,55 @@ function renderConversations() {
             const badgeOverlay = document.createElement("div");
             badgeOverlay.className = "badge-overlay";
             badgeOverlay.textContent = conv.badge;
-            if (conv.badge === 0) badgeOverlay.style.display = 'none'; // Hide if 0
-            avatarContainer.appendChild(avatarDiv);
-            avatarContainer.appendChild(badgeOverlay);
+            if (conv.badge === 0) badgeOverlay.style.display = "none";
 
-            const contentDiv = document.createElement("div");
-            contentDiv.className = "conversation-content";
-            contentDiv.innerHTML = `
+            avatarWrap.appendChild(avatarDiv);
+            avatarWrap.appendChild(badgeOverlay);
+
+            // ---- Content ----
+            const content = document.createElement("div");
+            content.className = "conversation-content";
+            content.innerHTML = `
                 <div class="conversation-header">
                     <span class="conversation-name">${conv.name}</span>
                 </div>
                 <div class="conversation-message">${conv.message}</div>
             `;
 
-            const rightSection = document.createElement("div");
-            rightSection.className = "right-section";
-            rightSection.innerHTML = `
+            // ---- Right side ----
+            const right = document.createElement("div");
+            right.className = "right-section";
+            right.innerHTML = `
                 <span class="conversation-time">${conv.time}</span>
-                <div class="badge">${conv.badge > 0 ? conv.badge : ''}</div>
+                <div class="badge">${conv.badge > 0 ? conv.badge : ""}</div>
             `;
 
-            conversationItem.appendChild(avatarContainer);
-            conversationItem.appendChild(contentDiv);
-            conversationItem.appendChild(rightSection);
-
-            container.appendChild(conversationItem);
+            item.append(avatarWrap, content, right);
+            container.appendChild(item);
         });
 
-        console.log("Finished rendering conversations");
         addConversationListeners();
-    } catch (error) {
-        console.error("Error rendering conversations:", error);
-    }
+    } catch (e) { console.error(e); }
 }
 
-// Function to open discussion panel (Donald Trump group)
+// -------------------------------------------------
+// Open discussion (group) – uses .app-chat-header
+// -------------------------------------------------
 function openDiscussion(conversation) {
     try {
-        console.log(`Opening discussion for ${conversation.name}`);
-        const discussionsContainer = document.getElementById("discussions-container");
-        if (!discussionsContainer) throw new Error("Discussions container not found");
+        const discussions = document.getElementById("discussions-container");
+        const convs = document.getElementById("conversations-container");
+        if (!discussions || !convs) throw new Error("Missing containers");
 
-        const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found");
-
-        // Use the new unified header
-        discussionsContainer.innerHTML = `
-            <header class="chat-header" role="banner" aria-label="Discussion header"></header>
+        discussions.innerHTML = `
+            <header class="app-chat-header" role="banner" aria-label="Discussion header"></header>
             <div class="discussion-content" id="discussion-content">
-                <div class="empty-state">
-                    <p>No messages yet. Start the conversation!</p>
-                </div>
+                <div class="empty-state"><p>No messages yet. Start the conversation!</p></div>
             </div>
         `;
 
-        // Render header using header.js
-        const headerContainer = discussionsContainer.querySelector(".chat-header");
-        renderHeader(headerContainer, {
+        const header = discussions.querySelector(".app-chat-header");
+        renderHeader(header, {
             title: conversation.name,
             avatar: conversation.avatar,
             badge: conversation.badge,
@@ -169,52 +146,44 @@ function openDiscussion(conversation) {
             onBack: closeDiscussion
         });
 
-        // Slide animations
-        conversationsContainer.classList.add("slide-left-quarter");
-        discussionsContainer.classList.add("open");
+        convs.classList.add("slide-left-quarter");
+        discussions.classList.add("open");
         document.querySelector(".header").classList.add("slide-left");
         document.querySelector(".stories-container").classList.add("slide-left");
         document.querySelector(".floating-button").classList.add("hidden");
-    } catch (error) {
-        console.error("Error opening discussion:", error);
-    }
+    } catch (e) { console.error(e); }
 }
 
-// Function to close discussion
+// -------------------------------------------------
+// Close discussion
+// -------------------------------------------------
 function closeDiscussion() {
     try {
-        console.log("Closing discussion");
-        const discussionsContainer = document.getElementById("discussions-container");
-        const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found");
+        const discussions = document.getElementById("discussions-container");
+        const convs = document.getElementById("conversations-container");
+        if (!convs) throw new Error("Conversations container missing");
 
-        discussionsContainer.classList.remove("open");
-        conversationsContainer.classList.remove("slide-left-quarter");
+        discussions.classList.remove("open");
+        convs.classList.remove("slide-left-quarter");
         document.querySelector(".header").classList.remove("slide-left");
         document.querySelector(".stories-container").classList.remove("slide-left");
         document.querySelector(".floating-button").classList.remove("hidden");
 
-        setTimeout(() => {
-            discussionsContainer.innerHTML = "";
-        }, 300);
-    } catch (error) {
-        console.error("Error closing discussion:", error);
-    }
+        setTimeout(() => { discussions.innerHTML = ""; }, 300);
+    } catch (e) { console.error(e); }
 }
 
-// Function to open chat
+// -------------------------------------------------
+// Open chat – uses .app-chat-header
+// -------------------------------------------------
 function openChat(conversation) {
     try {
-        console.log(`Opening chat for ${conversation.name}`);
-        const chatContainer = document.getElementById("chat-container");
-        if (!chatContainer) throw new Error("Chat container not found");
+        const chat = document.getElementById("chat-container");
+        const convs = document.getElementById("conversations-container");
+        if (!chat || !convs) throw new Error("Missing containers");
 
-        const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found");
-
-        // Use the new unified header
-        chatContainer.innerHTML = `
-            <header class="chat-header" role="banner" aria-label="Chat header"></header>
+        chat.innerHTML = `
+            <header class="app-chat-header" role="banner" aria-label="Chat header"></header>
             <div class="chat-content" id="chat-content">
                 <div class="date-divider">
                     <span class="date-badge">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
@@ -222,128 +191,116 @@ function openChat(conversation) {
             </div>
         `;
 
-        // Render header using header.js
-        const headerContainer = chatContainer.querySelector(".chat-header");
-        renderHeader(headerContainer, {
+        const header = chat.querySelector(".app-chat-header");
+        renderHeader(header, {
             title: conversation.name,
-            avatar: conversation.avatar,
+            avatar: conversation.isImage
+                ? `<img src="${conversation.avatar}" alt="${conversation.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+                : conversation.avatar,
             badge: conversation.badge,
             subtext: "last seen recently",
             onBack: closeChat
         });
 
-        // Render messages
-        const chatContent = chatContainer.querySelector("#chat-content");
-        const messages = chatMessages[conversation.name] || [];
-        messages.forEach(message => {
-            const messageDiv = document.createElement("div");
-            messageDiv.className = `chat-message ${message.sender} ${message.type === "audio" ? "audio-message" : ""}`;
-            
-            const messageBubble = document.createElement("div");
-            messageBubble.className = "message-bubble";
+        const content = chat.querySelector("#chat-content");
+        const msgs = chatMessages[conversation.name] || [];
 
-            // Add reply section
-            if (message.reply) {
-                const replySection = createReplySection(message.reply);
-                if (replySection) messageBubble.appendChild(replySection);
+        msgs.forEach(msg => {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `chat-message ${msg.sender} ${msg.type === "audio" ? "audio-message" : ""}`;
+
+            const bubble = document.createElement("div");
+            bubble.className = "message-bubble";
+
+            // ---- Reply ----
+            if (msg.reply) {
+                const replySec = createReplySection(msg.reply);
+                if (replySec) bubble.appendChild(replySec);
             }
 
-            if (message.type === "audio") {
-                const waveformBars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
-                messageBubble.innerHTML += `
+            // ---- Text / Audio ----
+            if (msg.type === "audio") {
+                const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
+                bubble.innerHTML += `
                     <div class="audio-controls">
                         <button class="play-button">
                             <svg viewBox="0 0 24 24" width="24" height="24">
                                 <path fill="currentColor" d="M8 5v14l11-7z"/>
                             </svg>
                         </button>
-                        <div class="waveform">${waveformBars}</div>
-                        <span class="audio-duration">${message.duration}</span>
+                        <div class="waveform">${bars}</div>
+                        <span class="audio-duration">${msg.duration}</span>
                     </div>
                 `;
             } else {
-                messageBubble.innerHTML += `<div class="message-text">${message.text}</div>`;
+                bubble.innerHTML += `<div class="message-text">${msg.text}</div>`;
             }
 
-            messageBubble.innerHTML += `
+            // ---- Time + Checkmarks ----
+            bubble.innerHTML += `
                 <div class="message-time">
-                    ${message.time}
-                    ${message.sender === "sent" ? `
+                    ${msg.time}
+                    ${msg.sender === "sent" ? `
                     <span class="check-marks">
                         <svg viewBox="0 0 16 15" width="16" height="15">
                             <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.88a.32.32 0 0 1-.484.032l-.358-.325a.32.32 0 0 0-.484.032l-.378.48a.418.418 0 0 0 .036.54l1.32 1.267a.32.32 0 0 0 .484-.034l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.88a.32.32 0 0 1-.484.032L1.892 7.77a.366.366 0 0 0-.516.005l-.423.433a.364.364 0 0 0 .006.514l3.255 3.185a.32.32 0 0 0 .484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"/>
                         </svg>
-                    </span>
-                    ` : ''}
+                    </span>` : ''}
                 </div>
             `;
 
-            messageDiv.appendChild(messageBubble);
-            chatContent.appendChild(messageDiv);
+            msgDiv.appendChild(bubble);
+            content.appendChild(msgDiv);
         });
 
         initializeWavePlay();
 
-        // Open animation
-        chatContainer.classList.add("open");
-        conversationsContainer.classList.add("slide-left");
+        // ---- Open animation ----
+        chat.classList.add("open");
+        convs.classList.add("slide-left");
         document.querySelector(".header").classList.add("slide-left");
         document.querySelector(".stories-container").classList.add("slide-left");
         document.querySelector(".floating-button").classList.add("hidden");
-    } catch (error) {
-        console.error("Error opening chat:", error);
-    }
+    } catch (e) { console.error(e); }
 }
 
-// Function to close chat
+// -------------------------------------------------
+// Close chat
+// -------------------------------------------------
 function closeChat() {
     try {
-        console.log("Closing chat");
-        const chatContainer = document.getElementById("chat-container");
-        const conversationsContainer = document.getElementById("conversations-container");
-        if (!conversationsContainer) throw new Error("Conversations container not found");
+        const chat = document.getElementById("chat-container");
+        const convs = document.getElementById("conversations-container");
+        if (!convs) throw new Error("Conversations container missing");
 
-        chatContainer.classList.remove("open");
-        conversationsContainer.classList.remove("slide-left");
+        chat.classList.remove("open");
+        convs.classList.remove("slide-left");
         document.querySelector(".header").classList.remove("slide-left");
         document.querySelector(".stories-container").classList.remove("slide-left");
         document.querySelector(".floating-button").classList.remove("hidden");
 
-        setTimeout(() => {
-            chatContainer.innerHTML = "";
-        }, 300);
-    } catch (error) {
-        console.error("Error closing chat:", error);
-    }
+        setTimeout(() => { chat.innerHTML = ""; }, 300);
+    } catch (e) { console.error(e); }
 }
 
-// Add click listeners to conversation items
+// -------------------------------------------------
+// Conversation click listeners
+// -------------------------------------------------
 function addConversationListeners() {
     try {
-        console.log("Adding conversation listeners");
-        const conversationItems = document.querySelectorAll(".conversation-item");
-        conversationItems.forEach((item, index) => {
-            item.addEventListener("click", () => {
-                console.log(`Clicked: ${conversations[index].name}`);
-                if (conversations[index].isGroup) {
-                    openDiscussion(conversations[index]);
-                } else {
-                    openChat(conversations[index]);
-                }
+        const items = document.querySelectorAll(".conversation-item");
+        items.forEach((el, i) => {
+            el.addEventListener("click", () => {
+                if (conversations[i].isGroup) openDiscussion(conversations[i]);
+                else openChat(conversations[i]);
             });
         });
-    } catch (error) {
-        console.error("Error adding listeners:", error);
-    }
+    } catch (e) { console.error(e); }
 }
 
-// Initialize on load
+// -------------------------------------------------
+// Init
+// -------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-    try {
-        console.log("Initializing app");
-        renderConversations();
-    } catch (error) {
-        console.error("Init error:", error);
-    }
+    try { renderConversations(); } catch (e) { console.error(e); }
 });
-    
