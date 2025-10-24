@@ -1,0 +1,141 @@
+/* message.css */
+.message-input-area {
+    padding: 12px 16px;
+    background: #f9f9f9;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    position: relative;
+    z-index: 10;
+}
+
+/* ---- INPUT WRAPPER ---- */
+.message-input-area .input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    position: relative;
+}
+
+/* ---- MESSAGE BUBBLE ---- */
+.message-input-area .message-bubble {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 10px 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 30px;
+    position: relative;
+}
+.message-input-area .message-bubble::after {
+    content: '';
+    position: absolute;
+    top: auto;
+    bottom: 12px;
+    right: -6px;
+    width: 15px;
+    height: 15px;
+    background-color: #fff;
+    transform: translateY(0) rotate(45deg);
+    border-radius: 0 4px 0 0;
+    box-shadow: 2px -2px 6px rgba(0,0,0,0.1);
+    z-index: -1;
+}
+
+/* ---- ICONS ---- */
+.message-input-area .icon {
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+    align-self: flex-end;
+    flex-shrink: 0;
+    position: relative;
+    top: -5px;
+}
+
+/* ---- INPUT ---- */
+.message-input-area .message-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 16px;
+    margin: 0 6px;
+    background: transparent;
+    color: #000;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-height: 20px;
+    max-height: 120px;
+    box-sizing: border-box;
+    line-height: 1.4;
+    overflow-y: auto;
+}
+.message-input-area .message-input[contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: #999;
+    pointer-events: none;
+    display: block;
+}
+
+/* ---- ATTACH ---- */
+.message-input-area .attach-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    align-self: flex-end;
+    flex-shrink: 0;
+    top: -7px;
+    position: relative;
+}
+.message-input-area .attach-btn i {
+    font-size: 20px;
+    color: #555;
+}
+
+/* ---- MIC / SEND ---- */
+.message-input-area .mic-btn {
+    background: #749cbf;
+    border: none;
+    border-radius: 50%;
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.1s ease;
+    touch-action: none;
+    z-index: 1001;
+    align-self: flex-end;
+    flex-shrink: 0;
+}
+.message-input-area .mic-btn:active {
+    transform: scale(0.94);
+}
+
+/* ---- SEND ICON (hidden until text) ---- */
+.message-input-area .send-icon {
+    display: none;
+    width: 24px;
+    height: 24px;
+}
+.message-input-area .send-icon svg {
+    fill: #fff;
+}
+
+/* ---- RECORDING OVERLAY (optional) ---- */
+.message-input-area .recording-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.05);
+    border-radius: 30px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #555;
+}
