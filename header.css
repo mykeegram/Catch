@@ -131,19 +131,24 @@
         padding: 10px;
         height: 56px;
     }
+    
     .app-chat-header .avatar-wrap {
-        width: 40px;
-        height: 40px;
-    }
+    width: 40px;
+    position: relative;
+    height: 40px;
+    right: 17px;
+   }
     .app-chat-header .avatar {
         font-size: 16px;
     }
     .app-chat-header .icon-btn {
-        width: 24px;
-        height: 24px;
-    }
+    width: 24px;
+    height: 24px;
+    right: 5px;
+    position: relative;
+}
     .app-chat-header .icon-btn svg {
-        width: 18px;
-        height: 18px;
+        width: 27px;
+        height: 27px;
     }
 }
