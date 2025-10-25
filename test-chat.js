@@ -264,21 +264,33 @@ function openChat(conversation) {
 
         // Track if user has manually scrolled up
         content.addEventListener("scroll", () => {
-            const isAtBottom = content.scrollHeight - content.scrollTop <= content.clientHeight + 50;
+            const isAtBottom = content.scrollHeight - content.scrollTop <= content.clientHeight + 100;
             userHasScrolled = !isAtBottom;
         });
 
-        // When user clicks to type, scroll to bottom only if they haven't scrolled up
-        chatInput.addEventListener("focus", () => {
+        // When user clicks to type, push content up to give room for new message
+        // but ONLY if they're already at or near the bottom
+        const scrollUpForInput = () => {
             if (!userHasScrolled) {
-                content.scrollTop = content.scrollHeight;
+                // Scroll to bottom + add extra space (like pushing content up)
+                content.scrollTo({
+                    top: content.scrollHeight,
+                    behavior: 'smooth'
+                });
             }
-        });
+        };
+
+        chatInput.addEventListener("click", scrollUpForInput);
+        chatInput.addEventListener("focus", scrollUpForInput);
 
         // Initial scroll to bottom when chat opens
         setTimeout(() => {
             content.scrollTop = content.scrollHeight;
-        }, 100);
+        }, 50);
+        
+        setTimeout(() => {
+            content.scrollTop = content.scrollHeight;
+        }, 200);
 
         // ---- Open animation ----
         chat.classList.add("open");
