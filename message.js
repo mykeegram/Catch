@@ -31,3 +31,53 @@ export function createMessageInput() {
     `;
 }
 
+/**
+ * Initializes keyboard handling for the message input.
+ * Scrolls to bottom only if user is already at the bottom when keyboard appears.
+ */
+export function initializeKeyboardHandling() {
+    const input = document.getElementById('chat-input-div');
+    const chatContent = document.getElementById('chat-content');
+    
+    if (!input || !chatContent) return;
+
+    let wasAtBottom = false;
+
+    // Check if user is at the bottom of the chat
+    function isScrolledToBottom() {
+        const threshold = 100; // pixels from bottom
+        return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
+    }
+
+    // When input is focused (keyboard about to appear)
+    input.addEventListener('focus', () => {
+        wasAtBottom = isScrolledToBottom();
+        
+        // If user was at bottom, scroll to bottom after keyboard appears
+        if (wasAtBottom) {
+            setTimeout(() => {
+                chatContent.scrollTop = chatContent.scrollHeight;
+            }, 300); // Delay to account for keyboard animation
+        }
+    });
+
+    // Handle viewport resize (when keyboard appears/disappears)
+    let lastHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    
+    function handleViewportResize() {
+        const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        
+        // Keyboard appeared (viewport got smaller)
+        if (currentHeight < lastHeight && wasAtBottom) {
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+        
+        lastHeight = currentHeight;
+    }
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', handleViewportResize);
+    } else {
+        window.addEventListener('resize', handleViewportResize);
+    }
+}
