@@ -1,8 +1,7 @@
 // chat.js
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
-import { renderHeader } from './header.js';
-import { initMessaging } from './message.js';          // ← Input bar
+import { renderHeader } from './header.js';          // <-- NEW
 
 // -------------------------------------------------
 // Conversations data
@@ -175,7 +174,7 @@ function closeDiscussion() {
 }
 
 // -------------------------------------------------
-// Open chat – uses .app-chat-header + INPUT BAR
+// Open chat – uses .app-chat-header
 // -------------------------------------------------
 function openChat(conversation) {
     try {
@@ -183,7 +182,6 @@ function openChat(conversation) {
         const convs = document.getElementById("conversations-container");
         if (!chat || !convs) throw new Error("Missing containers");
 
-        // ----- HEADER + CONTENT -----
         chat.innerHTML = `
             <header class="app-chat-header" role="banner" aria-label="Chat header"></header>
             <div class="chat-content" id="chat-content">
@@ -193,7 +191,6 @@ function openChat(conversation) {
             </div>
         `;
 
-        // ----- RENDER HEADER -----
         const header = chat.querySelector(".app-chat-header");
         renderHeader(header, {
             title: conversation.name,
@@ -205,7 +202,6 @@ function openChat(conversation) {
             onBack: closeChat
         });
 
-        // ----- RENDER MESSAGES -----
         const content = chat.querySelector("#chat-content");
         const msgs = chatMessages[conversation.name] || [];
 
@@ -216,13 +212,13 @@ function openChat(conversation) {
             const bubble = document.createElement("div");
             bubble.className = "message-bubble";
 
-            // Reply
+            // ---- Reply ----
             if (msg.reply) {
                 const replySec = createReplySection(msg.reply);
                 if (replySec) bubble.appendChild(replySec);
             }
 
-            // Text / Audio
+            // ---- Text / Audio ----
             if (msg.type === "audio") {
                 const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 bubble.innerHTML += `
@@ -240,7 +236,7 @@ function openChat(conversation) {
                 bubble.innerHTML += `<div class="message-text">${msg.text}</div>`;
             }
 
-            // Time + Checkmarks
+            // ---- Time + Checkmarks ----
             bubble.innerHTML += `
                 <div class="message-time">
                     ${msg.time}
@@ -259,23 +255,13 @@ function openChat(conversation) {
 
         initializeWavePlay();
 
-        // ----- OPEN ANIMATION -----
+        // ---- Open animation ----
         chat.classList.add("open");
         convs.classList.add("slide-left");
         document.querySelector(".header").classList.add("slide-left");
         document.querySelector(".stories-container").classList.add("slide-left");
         document.querySelector(".floating-button").classList.add("hidden");
-
-        // ----- INPUT BAR – CALL LAST WITH SAFETY -----
-        setTimeout(() => {
-            if (chat && chat.querySelector && typeof initMessaging === "function") {
-                initMessaging(chat);
-            }
-        }, 50);
-
-    } catch (e) {
-        console.error("Error in openChat:", e);
-    }
+    } catch (e) { console.error(e); }
 }
 
 // -------------------------------------------------
