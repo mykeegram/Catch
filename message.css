@@ -46,8 +46,7 @@ svg#micSVG {
 
 .input-bubble .icon {
     font-size: 20px;
-    /* Updated color to #749cbf */
-    color: #749cbf;
+    color: #555;
     cursor: pointer;
     align-self: flex-end;
     flex-shrink: 0;
@@ -74,12 +73,12 @@ svg#micSVG {
     overflow-y: auto;
     /* Override: ensure it fits within the new input bubble */
     padding: 0; 
+    caret-color: #749cbf; /* Blue caret like Telegram */
 }
 
 .message-input[contenteditable][data-placeholder]:empty::before {
     content: attr(data-placeholder);
-    /* Updated color to #749cbf */
-    color: #749cbf;
+    color: #999;
     pointer-events: none;
     display: block;
 }
@@ -97,8 +96,7 @@ svg#micSVG {
 
 .attach-btn i {
     font-size: 20px;
-    /* Updated color to #749cbf */
-    color: #749cbf;
+    color: #555;
 }
 
 .mic-btn {
