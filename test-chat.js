@@ -192,7 +192,7 @@ function openChat(conversation) {
                     <span class="date-badge">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
                 </div>
             </div>
-            ${createMessageInput()} `;
+            ${createMessageInput()}`;
 
         const header = chat.querySelector(".app-chat-header");
         renderHeader(header, {
@@ -258,6 +258,28 @@ function openChat(conversation) {
 
         initializeWavePlay();
 
+        // ---- Auto-scroll behavior ----
+        const chatInput = chat.querySelector("#chat-input-div");
+        let userHasScrolled = false;
+
+        // Track if user has manually scrolled up
+        content.addEventListener("scroll", () => {
+            const isAtBottom = content.scrollHeight - content.scrollTop <= content.clientHeight + 50;
+            userHasScrolled = !isAtBottom;
+        });
+
+        // When user clicks to type, scroll to bottom only if they haven't scrolled up
+        chatInput.addEventListener("focus", () => {
+            if (!userHasScrolled) {
+                content.scrollTop = content.scrollHeight;
+            }
+        });
+
+        // Initial scroll to bottom when chat opens
+        setTimeout(() => {
+            content.scrollTop = content.scrollHeight;
+        }, 100);
+
         // ---- Open animation ----
         chat.classList.add("open");
         convs.classList.add("slide-left");
@@ -307,4 +329,3 @@ function addConversationListeners() {
 document.addEventListener("DOMContentLoaded", () => {
     try { renderConversations(); } catch (e) { console.error(e); }
 });
-
