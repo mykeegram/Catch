@@ -268,20 +268,27 @@ function openChat(conversation) {
             userHasScrolled = !isAtBottom;
         });
 
-        // When user clicks to type, push content up to give room for new message
-        // but ONLY if they're already at or near the bottom
-        const scrollUpForInput = () => {
+        // When user clicks to type, add padding and scroll to show space for new message
+        const handleInputFocus = () => {
             if (!userHasScrolled) {
-                // Scroll to bottom + add extra space (like pushing content up)
-                content.scrollTo({
-                    top: content.scrollHeight,
-                    behavior: 'smooth'
-                });
+                content.classList.add('input-focused');
+                setTimeout(() => {
+                    content.scrollTo({
+                        top: content.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }, 100);
             }
         };
 
-        chatInput.addEventListener("click", scrollUpForInput);
-        chatInput.addEventListener("focus", scrollUpForInput);
+        // Remove padding when input loses focus
+        const handleInputBlur = () => {
+            content.classList.remove('input-focused');
+        };
+
+        chatInput.addEventListener("focus", handleInputFocus);
+        chatInput.addEventListener("blur", handleInputBlur);
+        chatInput.addEventListener("click", handleInputFocus);
 
         // Initial scroll to bottom when chat opens
         setTimeout(() => {
