@@ -9,18 +9,7 @@ export function renderHeader(container, config) {
             badge = 0,
             subtext = "Active now",
             onBack,
-            onMore,
-            menuItems = [
-                { label: 'Search', icon: '' },
-                { label: 'Mute', icon: '' },
-                { label: 'Call', icon: '' },
-                { label: 'Video Call', icon: '' },
-                { label: 'Select Messages', icon: '' },
-                { label: 'Send a Gift', icon: '' },
-                { label: 'Block user', icon: '' },
-                { label: 'Delete Chat', icon: '', danger: true }
-            ],
-            onMenuItemClick
+            onMore
         } = config;
 
         // ---- SCOPED CLASS ----
@@ -58,8 +47,6 @@ export function renderHeader(container, config) {
                     <circle cx="12" cy="18"  r="1.6" fill="var(--header-icon-color)"/>
                 </svg>
             </button>
-
-            <div class="dropdown-wrapper"></div>
         `;
 
         // ---- EVENT LISTENERS ----
@@ -67,90 +54,7 @@ export function renderHeader(container, config) {
         backBtn?.addEventListener("click", onBack || (() => {}));
 
         const moreBtn = container.querySelector(".more-options");
-        const dropdownWrapper = container.querySelector(".dropdown-wrapper");
-
-        // ---- CREATE DROPDOWN MENU ----
-        const menu = document.createElement('div');
-        menu.className = 'dropdown-menu';
-        menu.setAttribute('role', 'menu');
-        menu.style.display = 'none';
-
-        // Build menu items
-        menuItems.forEach((item, index) => {
-            const menuItem = document.createElement('button');
-            menuItem.className = `dropdown-item ${item.danger ? 'danger' : ''}`;
-            menuItem.setAttribute('role', 'menuitem');
-            menuItem.innerHTML = `
-                <span class="dropdown-icon">${item.icon || ''}</span>
-                <span class="dropdown-label">${item.label}</span>
-            `;
-            
-            menuItem.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (onMenuItemClick) onMenuItemClick(item, index);
-                if (onMore) onMore(item, index);
-                closeDropdown();
-            });
-
-            menu.appendChild(menuItem);
-        });
-
-        dropdownWrapper.appendChild(menu);
-
-        // Toggle dropdown
-        function toggleDropdown(e) {
-            e.stopPropagation();
-            const isVisible = menu.style.display === 'block';
-            
-            if (isVisible) {
-                closeDropdown();
-            } else {
-                openDropdown();
-            }
-        }
-
-        function openDropdown() {
-            // Close any other open dropdowns
-            document.querySelectorAll('.dropdown-menu').forEach(m => {
-                if (m !== menu) m.style.display = 'none';
-            });
-            
-            menu.style.display = 'block';
-            positionMenu();
-        }
-
-        function closeDropdown() {
-            menu.style.display = 'none';
-        }
-
-        function positionMenu() {
-            const rect = moreBtn.getBoundingClientRect();
-            const menuRect = menu.getBoundingClientRect();
-            
-            // Position below trigger, aligned to right
-            menu.style.top = `${rect.bottom + 8}px`;
-            menu.style.right = `${window.innerWidth - rect.right}px`;
-            
-            // Adjust if menu goes off screen
-            if (rect.bottom + menuRect.height + 8 > window.innerHeight) {
-                menu.style.top = `${rect.top - menuRect.height - 8}px`;
-            }
-        }
-
-        // Attach to trigger button
-        moreBtn?.addEventListener('click', toggleDropdown);
-
-        // Close on outside click
-        document.addEventListener('click', (e) => {
-            if (!dropdownWrapper.contains(e.target) && !moreBtn.contains(e.target)) {
-                closeDropdown();
-            }
-        });
-
-        // Close on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeDropdown();
-        });
+        moreBtn?.addEventListener("click", onMore || (() => {}));
 
     } catch (error) {
         console.error("Error rendering header:", error);
