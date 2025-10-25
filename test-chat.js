@@ -2,7 +2,7 @@
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
 import { renderHeader } from './header.js';
-import { createMessageInput } from './message.js'; // <-- NEW IMPORT
+import { createMessageInput, initializeKeyboardHandling } from './message.js'; // <-- UPDATED IMPORT
 
 // -------------------------------------------------
 // Conversations data
@@ -192,7 +192,8 @@ function openChat(conversation) {
                     <span class="date-badge">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
                 </div>
             </div>
-            ${createMessageInput()}`;
+            ${createMessageInput()}
+        `;
 
         const header = chat.querySelector(".app-chat-header");
         renderHeader(header, {
@@ -257,47 +258,7 @@ function openChat(conversation) {
         });
 
         initializeWavePlay();
-
-        // ---- Auto-scroll behavior ----
-        const chatInput = chat.querySelector("#chat-input-div");
-        let userHasScrolled = false;
-
-        // Track if user has manually scrolled up
-        content.addEventListener("scroll", () => {
-            const isAtBottom = content.scrollHeight - content.scrollTop <= content.clientHeight + 100;
-            userHasScrolled = !isAtBottom;
-        });
-
-        // When user clicks to type, add padding and scroll to show space for new message
-        const handleInputFocus = () => {
-            if (!userHasScrolled) {
-                content.classList.add('input-focused');
-                setTimeout(() => {
-                    content.scrollTo({
-                        top: content.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }, 100);
-            }
-        };
-
-        // Remove padding when input loses focus
-        const handleInputBlur = () => {
-            content.classList.remove('input-focused');
-        };
-
-        chatInput.addEventListener("focus", handleInputFocus);
-        chatInput.addEventListener("blur", handleInputBlur);
-        chatInput.addEventListener("click", handleInputFocus);
-
-        // Initial scroll to bottom when chat opens
-        setTimeout(() => {
-            content.scrollTop = content.scrollHeight;
-        }, 50);
-        
-        setTimeout(() => {
-            content.scrollTop = content.scrollHeight;
-        }, 200);
+        initializeKeyboardHandling(); // <-- Initialize keyboard behavior
 
         // ---- Open animation ----
         chat.classList.add("open");
