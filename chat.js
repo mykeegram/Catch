@@ -1,6 +1,6 @@
 // chat.js
 import { initializeWavePlay } from './wave-play.js';
-import { createReplySection } from './reply.js';
+import { createReplySection } from './reply/reply.js';
 import { renderHeader } from './header.js';          // <-- NEW
 
 // -------------------------------------------------
