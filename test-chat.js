@@ -258,7 +258,18 @@ function openChat(conversation) {
         });
 
         initializeWavePlay();
-        initializeKeyboardHandling(); // <-- Initialize keyboard behavior
+        
+        // ---- Scroll to bottom to show latest messages ----
+        // Wait for content to render, then scroll
+        setTimeout(() => {
+            content.scrollTop = content.scrollHeight;
+            console.log('Initial scroll to bottom:', content.scrollHeight);
+        }, 150);
+
+        // Initialize keyboard behavior after initial scroll
+        setTimeout(() => {
+            initializeKeyboardHandling();
+        }, 200);
 
         // ---- Open animation ----
         chat.classList.add("open");
