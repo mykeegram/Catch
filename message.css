@@ -1,47 +1,54 @@
-/* message.css */
+ /* message.css */
+
+/* Wrapper to hold the input fixed at the bottom of the chat/discussion container */
+.chat-input-area {
+    width: 100%;
+    padding: 8px 16px;
+    background-color: transparent; /* Ensures it is transparent over the background */
+    box-sizing: border-box;
+    flex-shrink: 0; /* Prevents it from shrinking when chat content overflows */
+    margin-top: auto; /* Pushes it to the bottom of the flex column (chat-container) */
+}
 
 .input-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* Align the mic button with the message bubble */
     gap: 8px;
     width: 100%;
     position: relative;
-    padding: 8px 16px; /* Added padding to lift off the bottom edge */
-    background-color: transparent; /* Ensure it floats over chat background */
 }
 
-.chat-container.open .input-wrapper {
-    /* Optional: If you want the input to be at the bottom of the chat view */
-    position: sticky; 
-    bottom: 0;
-    margin-top: auto; /* Push it to the bottom */
-}
-
-.message-bubble {
+.input-bubble {
+    /* Use the existing .message-bubble background/shadow styles but ensure no chat-specific padding/margin */
     background: #fff;
     display: flex;
-    align-items: flex-end; /* Align icon/clip to the bottom of text */
+    align-items: center;
     flex: 1;
     padding: 10px 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     border-radius: 30px;
     position: relative;
+    /* OVERRIDE: Ensure the new input bubble doesn't inherit chat message padding/min-width */
+    max-width: none;
+    min-width: 0;
+    padding: 8px 12px;
 }
 
-/* Hides the default bubble tail when the input bar is at the bottom */
-.message-bubble::after {
-    content: none; 
+/* IMPORTANT FIX: Remove the message-bubble chat tail if it was accidentally inherited */
+.input-bubble::before,
+.input-bubble::after {
+    content: none !important; 
 }
 
-/* Styles for the mic button and input elements */
-.message-bubble .icon {
+
+.input-bubble .icon {
     font-size: 20px;
     color: #555;
     cursor: pointer;
     align-self: flex-end;
     flex-shrink: 0;
     position: relative;
-    top: -5px;
+    top: 0; /* Align correctly */
 }
 
 .message-input {
@@ -61,6 +68,8 @@
     box-sizing: border-box;
     line-height: 1.4;
     overflow-y: auto;
+    /* Override: ensure it fits within the new input bubble */
+    padding: 0; 
 }
 
 .message-input[contenteditable][data-placeholder]:empty::before {
@@ -77,7 +86,7 @@
     cursor: pointer;
     align-self: flex-end;
     flex-shrink: 0;
-    top: -7px;
+    top: 0; /* Align correctly */
     position: relative;
 }
 
@@ -90,8 +99,8 @@
     background: #749cbf;
     border: none;
     border-radius: 50%;
-    width: 48px; /* Slightly reduced size for better fit */
-    height: 48px;
+    width: 48px; /* Adjusted size */
+    height: 48px; /* Adjusted size */
     display: flex;
     position: relative;
     align-items: center;
@@ -104,9 +113,3 @@
     align-self: flex-end;
     flex-shrink: 0;
 }
-
-.mic-btn svg {
-    width: 24px;
-    height: 24px;
-}
-
