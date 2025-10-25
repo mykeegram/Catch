@@ -1,0 +1,112 @@
+/* message.css */
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    position: relative;
+    padding: 8px 16px; /* Added padding to lift off the bottom edge */
+    background-color: transparent; /* Ensure it floats over chat background */
+}
+
+.chat-container.open .input-wrapper {
+    /* Optional: If you want the input to be at the bottom of the chat view */
+    position: sticky; 
+    bottom: 0;
+    margin-top: auto; /* Push it to the bottom */
+}
+
+.message-bubble {
+    background: #fff;
+    display: flex;
+    align-items: flex-end; /* Align icon/clip to the bottom of text */
+    flex: 1;
+    padding: 10px 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 30px;
+    position: relative;
+}
+
+/* Hides the default bubble tail when the input bar is at the bottom */
+.message-bubble::after {
+    content: none; 
+}
+
+/* Styles for the mic button and input elements */
+.message-bubble .icon {
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+    align-self: flex-end;
+    flex-shrink: 0;
+    position: relative;
+    top: -5px;
+}
+
+.message-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 16px;
+    margin: 0 6px;
+    background: transparent;
+    color: #000;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-height: 20px;
+    max-height: 120px;
+    box-sizing: border-box;
+    line-height: 1.4;
+    overflow-y: auto;
+}
+
+.message-input[contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: #999;
+    pointer-events: none;
+    display: block;
+}
+
+.attach-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    align-self: flex-end;
+    flex-shrink: 0;
+    top: -7px;
+    position: relative;
+}
+
+.attach-btn i {
+    font-size: 20px;
+    color: #555;
+}
+
+.mic-btn {
+    background: #749cbf;
+    border: none;
+    border-radius: 50%;
+    width: 48px; /* Slightly reduced size for better fit */
+    height: 48px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.1s ease;
+    touch-action: none;
+    z-index: 1001;
+    align-self: flex-end;
+    flex-shrink: 0;
+}
+
+.mic-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
