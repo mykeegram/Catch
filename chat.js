@@ -2,7 +2,7 @@
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
 import { renderHeader } from './header.js';
-import { initMessaging } from './message.js';          // ← NEW: Input bar
+import { initMessaging } from './message.js';          // ← Input bar
 
 // -------------------------------------------------
 // Conversations data
@@ -259,16 +259,23 @@ function openChat(conversation) {
 
         initializeWavePlay();
 
-        // ----- INPUT BAR -----
-        initMessaging(chat);  // ← THIS ADDS THE FULL INPUT BAR
-
         // ----- OPEN ANIMATION -----
         chat.classList.add("open");
         convs.classList.add("slide-left");
         document.querySelector(".header").classList.add("slide-left");
         document.querySelector(".stories-container").classList.add("slide-left");
         document.querySelector(".floating-button").classList.add("hidden");
-    } catch (e) { console.error(e); }
+
+        // ----- INPUT BAR – CALL LAST WITH SAFETY -----
+        setTimeout(() => {
+            if (chat && chat.querySelector && typeof initMessaging === "function") {
+                initMessaging(chat);
+            }
+        }, 50);
+
+    } catch (e) {
+        console.error("Error in openChat:", e);
+    }
 }
 
 // -------------------------------------------------
