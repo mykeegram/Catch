@@ -131,12 +131,13 @@ function openDiscussion(conversation) {
         const convs = document.getElementById("conversations-container");
         if (!discussions || !convs) throw new Error("Missing containers");
 
+        // NOTE: The message input is NOT included here as requested.
         discussions.innerHTML = `
             <header class="app-chat-header" role="banner" aria-label="Discussion header"></header>
             <div class="discussion-content" id="discussion-content">
                 <div class="empty-state"><p>No messages yet. Start the conversation!</p></div>
             </div>
-            ${createMessageInput()} `;
+            `;
 
         const header = discussions.querySelector(".app-chat-header");
         renderHeader(header, {
@@ -183,6 +184,7 @@ function openChat(conversation) {
         const convs = document.getElementById("conversations-container");
         if (!chat || !convs) throw new Error("Missing containers");
 
+        // The chat container is expected to be a flex-column parent (from chat.css)
         chat.innerHTML = `
             <header class="app-chat-header" role="banner" aria-label="Chat header"></header>
             <div class="chat-content" id="chat-content">
