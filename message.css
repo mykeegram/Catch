@@ -3,12 +3,16 @@
 /* Wrapper to hold the input fixed at the bottom of the chat/discussion container */
 .chat-input-area {
     width: 100%;
-    padding: 8px 16px;
+    padding: 3px 7px;
     background-color: transparent; /* Ensures it is transparent over the background */
     box-sizing: border-box;
     flex-shrink: 0; /* Prevents it from shrinking when chat content overflows */
     margin-top: auto; /* Pushes it to the bottom of the flex column (chat-container) */
 }
+svg#micSVG {
+    height: 26px;
+}
+
 
 .input-wrapper {
     display: flex;
@@ -31,7 +35,6 @@
     /* OVERRIDE: Ensure the new input bubble doesn't inherit chat message padding/min-width */
     max-width: none;
     min-width: 0;
-    padding: 8px 12px;
 }
 
 /* IMPORTANT FIX: Remove the message-bubble chat tail if it was accidentally inherited */
