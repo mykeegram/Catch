@@ -7,6 +7,19 @@
 export function createMessageInput() {
     // NOTE: The main wrapper needs to be a separate container to float at the bottom
     return `
+        <div class="emoji-picker-container" id="emoji-picker-container">
+            <div class="emoji-picker-header">
+                <span class="emoji-picker-title">Emoji</span>
+                <button class="emoji-picker-close" id="emoji-picker-close">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M19.6 4.4L12 12l-7.6-7.6L3 5.8 10.6 13.4 3 21l1.4 1.4L12 14.8l7.6 7.6L21 21l-7.6-7.6L21 5.8z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="emoji-picker-content">
+                <p style="text-align: center; color: #666; padding: 40px 20px;">Emoji picker placeholder</p>
+            </div>
+        </div>
         <div class="chat-input-area"> 
             <div class="input-wrapper">
                 <div class="message-bubble input-bubble"> <div class="icon" id="emoji-btn"><i class="fa-regular fa-face-smile"></i></div>
@@ -29,6 +42,74 @@ export function createMessageInput() {
             </div>
         </div>
     `;
+}
+
+/**
+ * Initializes emoji picker functionality
+ */
+export function initializeEmojiPicker() {
+    const emojiBtn = document.getElementById('emoji-btn');
+    const emojiPicker = document.getElementById('emoji-picker-container');
+    const emojiClose = document.getElementById('emoji-picker-close');
+    const chatContent = document.getElementById('chat-content');
+    
+    if (!emojiBtn || !emojiPicker || !chatContent) {
+        console.log('Emoji picker: Missing elements');
+        return;
+    }
+
+    let wasAtBottom = false;
+
+    // Check if user is at the bottom of the chat
+    function isScrolledToBottom() {
+        const threshold = 50;
+        return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
+    }
+
+    // Scroll to bottom smoothly
+    function scrollToBottom() {
+        chatContent.scrollTo({
+            top: chatContent.scrollHeight,
+            behavior: 'smooth'
+        });
+    }
+
+    // Open emoji picker
+    emojiBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        wasAtBottom = isScrolledToBottom();
+        console.log('Opening emoji picker, was at bottom:', wasAtBottom);
+        
+        emojiPicker.classList.add('open');
+        
+        // If user was at bottom, scroll up to accommodate emoji picker
+        if (wasAtBottom) {
+            setTimeout(scrollToBottom, 100);
+            setTimeout(scrollToBottom, 300);
+        }
+    });
+
+    // Close emoji picker
+    emojiClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('Closing emoji picker');
+        emojiPicker.classList.remove('open');
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+        if (emojiPicker.classList.contains('open') && 
+            !emojiPicker.contains(e.target) && 
+            !emojiBtn.contains(e.target)) {
+            emojiPicker.classList.remove('open');
+        }
+    });
+
+    console.log('Emoji picker initialized');
 }
 
 /**
@@ -133,103 +214,4 @@ export function initializeKeyboardHandling() {
     });
 
     console.log('Keyboard handling initialized');
-}
-
-/**
- * Initializes emoji picker functionality
- */
-export function initializeEmojiPicker() {
-    const emojiBtn = document.getElementById('emoji-btn');
-    const chatContent = document.getElementById('chat-content');
-    const chatContainer = document.getElementById('chat-container');
-    
-    if (!emojiBtn || !chatContent || !chatContainer) {
-        console.log('Emoji picker: Missing elements');
-        return;
-    }
-
-    let isEmojiPickerOpen = false;
-    let emojiPickerElement = null;
-
-    function isScrolledToBottom() {
-        const threshold = 50;
-        return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
-    }
-
-    function scrollToBottom() {
-        chatContent.scrollTo({
-            top: chatContent.scrollHeight,
-            behavior: 'smooth'
-        });
-    }
-
-    function openEmojiPicker() {
-        if (isEmojiPickerOpen) return;
-
-        const wasAtBottom = isScrolledToBottom();
-        console.log('Opening emoji picker, was at bottom:', wasAtBottom);
-
-        // Create emoji picker element
-        emojiPickerElement = document.createElement('div');
-        emojiPickerElement.className = 'emoji-picker';
-        emojiPickerElement.innerHTML = `
-            <div class="emoji-picker-header">
-                <span>Emoji Picker (Coming Soon)</span>
-                <button class="emoji-close-btn">×</button>
-            </div>
-            <div class="emoji-picker-content">
-                <p style="text-align: center; color: #666; padding: 20px;">
-                    Emoji selection will be added here
-                </p>
-            </div>
-        `;
-
-        chatContainer.appendChild(emojiPickerElement);
-        
-        // Trigger animation
-        setTimeout(() => {
-            emojiPickerElement.classList.add('open');
-        }, 10);
-
-        isEmojiPickerOpen = true;
-
-        // Scroll to bottom if user was at bottom
-        if (wasAtBottom) {
-            setTimeout(scrollToBottom, 100);
-            setTimeout(scrollToBottom, 300);
-        }
-
-        // Close button handler
-        const closeBtn = emojiPickerElement.querySelector('.emoji-close-btn');
-        closeBtn.addEventListener('click', closeEmojiPicker);
-    }
-
-    function closeEmojiPicker() {
-        if (!isEmojiPickerOpen || !emojiPickerElement) return;
-
-        console.log('Closing emoji picker');
-        emojiPickerElement.classList.remove('open');
-        
-        setTimeout(() => {
-            if (emojiPickerElement && emojiPickerElement.parentNode) {
-                emojiPickerElement.parentNode.removeChild(emojiPickerElement);
-            }
-            emojiPickerElement = null;
-            isEmojiPickerOpen = false;
-        }, 300);
-    }
-
-    // Emoji button click handler
-    emojiBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        if (isEmojiPickerOpen) {
-            closeEmojiPicker();
-        } else {
-            openEmojiPicker();
-        }
-    });
-
-    console.log('Emoji picker initialized');
 }
