@@ -1,51 +1,60 @@
+My index.html:
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catch-up Messenger</title>
-
-    <!-- GLOBAL STYLES -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="pop-up.css">
     <link rel="stylesheet" href="chat.css">
-    <link rel="stylesheet" href="reply.css">
+    <link rel="stylesheet" href=""reply.css"> <!-- Added reply.css -->
     <link rel="stylesheet" href="header.css">
-
-    <!-- INPUT BAR -->
+      <!-- NEW: Message Input Bar -->
     <link rel="stylesheet" href="message.css">
-    <link rel="stylesheet" href="css/emoji.css"> <!-- AFTER message.css -->
-
-    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="emoji.css"> <!-- AFTER message.css -->
+    
+    
+    <!-- Font Awesome (Icons: emoji, paperclip, mic, send) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 <body>
-
     <div class="header">
         <div class="menu-icon">
-            <svg class="icon messages-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #749cbf; fill: #749cbf;">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <svg
+                class="icon messages-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                style="color: #749cbf; fill: #749cbf;"
+            >
+                <path
+                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
             </svg>
         </div>
         <div class="header-title">Messages</div>
     </div>
 
     <div class="stories-container" id="stories-container"></div>
+
     <div id="conversations-container"></div>
+
+    <!-- New Discussions Container (for Discord-like panel) -->
     <div id="discussions-container" class="discussions-container"></div>
+
     <button class="floating-button"></button>
+
     <div id="story-popup"></div>
+
     <div id="chat-container" class="chat-container"></div>
 
-    <!-- SCRIPTS -->
     <script src="story.js"></script>
     <script src="pop-up.js"></script>
-
-    <!-- MAIN CHAT (type="module") -->
-    <script type="module" src="test-chat.js"></script> <!-- RENAMED FROM test-chat.js -->
-
-    <!-- SUPPORT MODULES (only chat.js imports them) -->
-    <!-- wave-play.js, reply.js, header.js, message.js, emoji.js are imported inside chat.js -->
-
+    <script type="module" src="test-chat.js"></script>
+    <script type="module" src="wave-play.js"></script>
+    <!-- Note: reply.js is imported in chat.js, so no separate script tag is needed -->
 </body>
 </html>
