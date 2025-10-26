@@ -60,3 +60,32 @@
         max-height: 32px; /* Adjust for smaller screens */
     }
 }
+
+/* --------------------------------------------------------------- */
+/*  NEW: REPLY INDICATOR – tiny arrow that points into the bubble   */
+/* --------------------------------------------------------------- */
+.reply-section::before {
+    content: "";
+    position: absolute;
+    left: -4px;                     /* sit on top of the border line */
+    top: 12px;                      /* vertically center-ish */
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #06cf9c;   /* same colour as the line */
+}
+
+/* Sent-message colour for the arrow */
+.chat-message.sent .reply-section::before {
+    border-right-color: #128c7e;
+}
+
+/* --------------------------------------------------------------- */
+/*  OPTIONAL: make the reply block sit flush with the bubble edge   */
+/* --------------------------------------------------------------- */
+.reply-section {
+    margin-left: -14px;   /* pull it left so the line touches the bubble */
+    margin-right: -14px;
+    padding-left: 18px;   /* compensate for the pull */
+}
