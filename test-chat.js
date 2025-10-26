@@ -266,10 +266,10 @@ function openChat(conversation) {
             console.log('Initial scroll to bottom:', content.scrollHeight);
         }, 150);
 
-        // Initialize keyboard behavior and emoji picker after initial scroll
+        // Initialize keyboard behavior after initial scroll
         setTimeout(() => {
             initializeKeyboardHandling();
-            initializeEmojiPicker();
+            initializeEmojiPicker(); // <-- Initialize emoji picker
         }, 200);
 
         // ---- Open animation ----
