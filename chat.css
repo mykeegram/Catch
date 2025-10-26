@@ -1,3 +1,5 @@
+See my chat.css:
+
 /* chat.css */
 .chat-container {
     position: fixed;
@@ -21,7 +23,7 @@
     width: 100%;
     max-width: 480px;
     transition: transform 0.3s ease-in-out;
-    position: relative;
+    position: relative; /* Ensure transform works */
 }
 
 .header.slide-left {
@@ -32,7 +34,7 @@
     width: 100%;
     max-width: 480px;
     transition: transform 0.3s ease-in-out;
-    position: relative;
+    position: relative; /* Ensure transform works */
 }
 
 .stories-container.slide-left {
@@ -43,9 +45,9 @@
     width: 100%;
     max-width: 480px;
     transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* Temporary debug background */
     z-index: 900;
-    position: relative;
+    position: relative; /* Ensure transform works */
 }
 
 #conversations-container.slide-left {
@@ -89,14 +91,14 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background-color: #749cbf;
+    background-color: #749cbf; /* Matches conversation list color */
     color: #fff;
-    width: 20px;
-    height: 20px;
+    width: 20px; /* Matches .badge size */
+    height: 20px; /* Matches .badge size */
     border-radius: 50%;
-    font-size: 12px;
+    font-size: 12px; /* Matches .badge font-size */
     font-weight: 600;
-    border: 2px solid #f9f9f9;
+    border: 2px solid #f9f9f9; /* Matches sidebar background for clean look */
 }
 
 .avatar-container {
@@ -104,7 +106,7 @@
 }
 
 .badge-overlay {
-    display: none;
+    display: none; /* Hidden in normal view */
 }
 
 .badge {
@@ -128,20 +130,20 @@
 .discussions-container {
     position: fixed;
     top: 0;
-    left: 25%;
-    width: 75%;
-    min-width: 320px;
+    left: 25%;  /* Starts after the 25% sidebar */
+    width: 75%;  /* Takes 75% of the screen */
+    min-width: 320px;  /* Minimum width for usability */
     height: 100%;
-    background-color: #ffffff;
+    background-color: #ffffff;  /* White background */
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    transform: translateX(100%);
+    transform: translateX(100%);  /* Hidden initially */
     transition: transform 0.3s ease-in-out;
 }
 
 .discussions-container.open {
-    transform: translateX(0);
+    transform: translateX(0);  /* Slides into place */
 }
 
 .discussion-header {
@@ -284,13 +286,12 @@
     border-radius: 8px;
     position: relative;
     word-wrap: break-word;
-    overflow: visible !important; /* CRITICAL: Let reply border show */
-    z-index: 0;
 }
 
 .chat-message.received .message-bubble {
     background-color: #fff;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .chat-message.received .message-bubble::before {
@@ -320,6 +321,7 @@
 .chat-message.sent .message-bubble {
     background-color: #d9fdd3;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .chat-message.sent .message-bubble::before {
@@ -433,7 +435,7 @@
     width: 3px;
     background-color: #8696a0;
     border-radius: 2px;
-    transition: height 0.3s ease, background-color 0.3s ease;
+    transition: height 0.3s ease, background-color 0.3s ease; /* Added background-color transition */
 }
 
 .wave-bar:nth-child(1) { height: 8px; }
@@ -472,11 +474,8 @@
     min-width: 35px;
 }
 
-/* ============================================= */
-/* MOBILE & REPLY FIXES (MUST BE AT THE END)     */
-/* ============================================= */
 @media (max-width: 768px) {
-    /* Mobile Background */
+    /* ===== Mobile Background ===== */
     .chat-content {
         background-image: url("https://i.ibb.co/HfvQJj50/Screenshot-20250730-222749.jpg");
         background-repeat: no-repeat;
@@ -484,43 +483,44 @@
         background-size: cover;
         background-color: transparent;
     }
-
-    /* Mobile Bubble Colors */
-    .chat-message.sent .message-bubble,
+    .chat-message.sent .message-bubble {
+        background-color: rgba(217, 253, 211, 0.9);
+    }
+    .chat-message.received .message-bubble {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
     .chat-message.sent .message-bubble::before,
     .chat-message.sent .message-bubble::after {
         background-color: rgba(217, 253, 211, 0.9);
     }
-
-    .chat-message.received .message-bubble,
     .chat-message.received .message-bubble::before,
     .chat-message.received .message-bubble::after {
         background-color: rgba(255, 255, 255, 0.9);
     }
-
     .chat-message.sent .play-button {
         background-color: rgba(217, 253, 211, 0.9);
     }
-
     .chat-message.sent .play-button:hover {
         background-color: rgba(200, 236, 192, 0.9);
     }
 
-    /* Mobile Sidebar */
+    /* Mobile adjustments for discussions */
     #conversations-container.slide-left-quarter {
         width: 25%;
-        min-width: 80px;
+        min-width: 80px;  /* Adjusted for smaller screens */
     }
 
     .discussions-container {
         left: 25%;
         width: 75%;
-        min-width: 240px;
+        min-width: 240px;  /* Adjusted for mobile usability */
     }
 
     #conversations-container.slide-left-quarter .badge-overlay {
         font-size: 10px;
         width: 18px;
         height: 18px;
+        bottom: 0;
+        right: 0;
     }
 }
