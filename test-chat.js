@@ -1,9 +1,9 @@
 // chat.js
 import { initializeWavePlay } from './wave-play.js';
-import { createReplySection } from './reply.js';
+import { createReplySection } from './reply/reply.js';
 import { renderHeader } from './header.js';
-import { createMessageInput, initializeKeyboardHandling } from './message.js'; // <-- UPDATED IMPORT
-import { initializeEmojiPicker } from './emoji.js'; // ← NEW: EMOJI PICKER
+import { initializeEmojiPicker } from './emoji.js';
+import { createMessageInput, initializeKeyboardHandling } from './message.js';
 
 // -------------------------------------------------
 // Conversations data
@@ -137,7 +137,7 @@ function openDiscussion(conversation) {
             <div class="discussion-content" id="discussion-content">
                 <div class="empty-state"><p>No messages yet. Start the conversation!</p></div>
             </div>
-            `;
+        `;
 
         const header = discussions.querySelector(".app-chat-header");
         renderHeader(header, {
@@ -215,11 +215,13 @@ function openChat(conversation) {
             const bubble = document.createElement("div");
             bubble.className = "message-bubble";
 
+            // ---- Reply ----
             if (msg.reply) {
                 const replySec = createReplySection(msg.reply);
                 if (replySec) bubble.appendChild(replySec);
             }
 
+            // ---- Text / Audio ----
             if (msg.type === "audio") {
                 const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 bubble.innerHTML += `
@@ -237,6 +239,7 @@ function openChat(conversation) {
                 bubble.innerHTML += `<div class="message-text">${msg.text}</div>`;
             }
 
+            // ---- Time + Checkmarks ----
             bubble.innerHTML += `
                 <div class="message-time">
                     ${msg.time}
@@ -254,17 +257,8 @@ function openChat(conversation) {
         });
 
         initializeWavePlay();
-
-        // ---- Scroll to bottom ----
-        setTimeout(() => {
-            content.scrollTop = content.scrollHeight;
-        }, 150);
-
-        // ---- Initialize keyboard & emoji picker ----
-        setTimeout(() => {
-            initializeKeyboardHandling();
-            initializeEmojiPicker(); // ← NEW: EMOJI PICKER
-        }, 200);
+        initializeEmojiPicker();
+        initializeKeyboardHandling();
 
         // ---- Open animation ----
         chat.classList.add("open");
