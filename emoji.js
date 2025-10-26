@@ -28,7 +28,7 @@ export function initializeEmojiPicker() {
         document.body.appendChild(emojiPicker);
     }
 
-    // Toggle on click
+    // Toggle ONLY on smile button click
     emojiBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleEmojiPicker();
@@ -109,17 +109,5 @@ function scrollToBottom() {
     });
 }
 
-/**
- * Close when clicking outside
- */
-document.addEventListener('click', (e) => {
-    const picker = document.getElementById('emoji-picker');
-    if (
-        isEmojiPickerOpen &&
-        picker &&
-        !picker.contains(e.target) &&
-        !emojiBtn?.contains(e.target)
-    ) {
-        closeEmojiPicker();
-    }
-});
+/* REMOVED: Click outside to close */
+// No more global click listener
