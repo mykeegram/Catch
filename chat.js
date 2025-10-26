@@ -1,7 +1,9 @@
 // chat.js
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply/reply.js';
-import { renderHeader } from './header.js';          // <-- NEW
+import { renderHeader } from './header.js';
+import { initializeEmojiPicker } from './emoji.js';
+import { createMessageInput, initializeKeyboardHandling } from './message.js';
 
 // -------------------------------------------------
 // Conversations data
@@ -189,6 +191,7 @@ function openChat(conversation) {
                     <span class="date-badge">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
                 </div>
             </div>
+            ${createMessageInput()}
         `;
 
         const header = chat.querySelector(".app-chat-header");
@@ -254,6 +257,8 @@ function openChat(conversation) {
         });
 
         initializeWavePlay();
+        initializeEmojiPicker();
+        initializeKeyboardHandling();
 
         // ---- Open animation ----
         chat.classList.add("open");
