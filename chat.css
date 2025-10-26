@@ -21,7 +21,7 @@
     width: 100%;
     max-width: 480px;
     transition: transform 0.3s ease-in-out;
-    position: relative; /* Ensure transform works */
+    position: relative;
 }
 
 .header.slide-left {
@@ -32,7 +32,7 @@
     width: 100%;
     max-width: 480px;
     transition: transform 0.3s ease-in-out;
-    position: relative; /* Ensure transform works */
+    position: relative;
 }
 
 .stories-container.slide-left {
@@ -43,9 +43,9 @@
     width: 100%;
     max-width: 480px;
     transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
-    background-color: #f9f9f9; /* Temporary debug background */
+    background-color: #f9f9f9;
     z-index: 900;
-    position: relative; /* Ensure transform works */
+    position: relative;
 }
 
 #conversations-container.slide-left {
@@ -89,14 +89,14 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background-color: #749cbf; /* Matches conversation list color */
+    background-color: #749cbf;
     color: #fff;
-    width: 20px; /* Matches .badge size */
-    height: 20px; /* Matches .badge size */
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    font-size: 12px; /* Matches .badge font-size */
+    font-size: 12px;
     font-weight: 600;
-    border: 2px solid #f9f9f9; /* Matches sidebar background for clean look */
+    border: 2px solid #f9f9f9;
 }
 
 .avatar-container {
@@ -104,7 +104,7 @@
 }
 
 .badge-overlay {
-    display: none; /* Hidden in normal view */
+    display: none;
 }
 
 .badge {
@@ -128,20 +128,20 @@
 .discussions-container {
     position: fixed;
     top: 0;
-    left: 25%;  /* Starts after the 25% sidebar */
-    width: 75%;  /* Takes 75% of the screen */
-    min-width: 320px;  /* Minimum width for usability */
+    left: 25%;
+    width: 75%;
+    min-width: 320px;
     height: 100%;
-    background-color: #ffffff;  /* White background */
+    background-color: #ffffff;
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    transform: translateX(100%);  /* Hidden initially */
+    transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
 }
 
 .discussions-container.open {
-    transform: translateX(0);  /* Slides into place */
+    transform: translateX(0);
 }
 
 .discussion-header {
@@ -284,12 +284,13 @@
     border-radius: 8px;
     position: relative;
     word-wrap: break-word;
+    overflow: visible !important; /* CRITICAL: Let reply border show */
+    z-index: 0;
 }
 
 .chat-message.received .message-bubble {
     background-color: #fff;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    position: relative;
 }
 
 .chat-message.received .message-bubble::before {
@@ -319,7 +320,6 @@
 .chat-message.sent .message-bubble {
     background-color: #d9fdd3;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    position: relative;
 }
 
 .chat-message.sent .message-bubble::before {
@@ -433,7 +433,7 @@
     width: 3px;
     background-color: #8696a0;
     border-radius: 2px;
-    transition: height 0.3s ease, background-color 0.3s ease; /* Added background-color transition */
+    transition: height 0.3s ease, background-color 0.3s ease;
 }
 
 .wave-bar:nth-child(1) { height: 8px; }
@@ -472,8 +472,11 @@
     min-width: 35px;
 }
 
+/* ============================================= */
+/* MOBILE & REPLY FIXES (MUST BE AT THE END)     */
+/* ============================================= */
 @media (max-width: 768px) {
-    /* ===== Mobile Background ===== */
+    /* Mobile Background */
     .chat-content {
         background-image: url("https://i.ibb.co/HfvQJj50/Screenshot-20250730-222749.jpg");
         background-repeat: no-repeat;
@@ -481,44 +484,43 @@
         background-size: cover;
         background-color: transparent;
     }
-    .chat-message.sent .message-bubble {
-        background-color: rgba(217, 253, 211, 0.9);
-    }
-    .chat-message.received .message-bubble {
-        background-color: rgba(255, 255, 255, 0.9);
-    }
+
+    /* Mobile Bubble Colors */
+    .chat-message.sent .message-bubble,
     .chat-message.sent .message-bubble::before,
     .chat-message.sent .message-bubble::after {
         background-color: rgba(217, 253, 211, 0.9);
     }
+
+    .chat-message.received .message-bubble,
     .chat-message.received .message-bubble::before,
     .chat-message.received .message-bubble::after {
         background-color: rgba(255, 255, 255, 0.9);
     }
+
     .chat-message.sent .play-button {
         background-color: rgba(217, 253, 211, 0.9);
     }
+
     .chat-message.sent .play-button:hover {
         background-color: rgba(200, 236, 192, 0.9);
     }
 
-    /* Mobile adjustments for discussions */
+    /* Mobile Sidebar */
     #conversations-container.slide-left-quarter {
         width: 25%;
-        min-width: 80px;  /* Adjusted for smaller screens */
+        min-width: 80px;
     }
 
     .discussions-container {
         left: 25%;
         width: 75%;
-        min-width: 240px;  /* Adjusted for mobile usability */
+        min-width: 240px;
     }
 
     #conversations-container.slide-left-quarter .badge-overlay {
         font-size: 10px;
         width: 18px;
         height: 18px;
-        bottom: 0;
-        right: 0;
     }
 }
