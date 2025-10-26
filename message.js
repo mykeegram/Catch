@@ -1,16 +1,22 @@
-// message.js
+// js/message.js
 
 /**
  * Creates and returns the HTML string for the floating message input bar.
  * @returns {string} The HTML string for the chat input and microphone button.
  */
 export function createMessageInput() {
-    // NOTE: The main wrapper needs to be a separate container to float at the bottom
     return `
         <div class="chat-input-area"> 
             <div class="input-wrapper">
-                <div class="message-bubble input-bubble"> <div class="icon" id="emoji-btn"><i class="fa-regular fa-face-smile"></i></div>
-                    <div class="message-input" contenteditable="true" data-placeholder="Message" id="chat-input-div"></div>
+                <div class="message-bubble input-bubble"> 
+                    <!-- SMILE ICON WITH ID -->
+                    <div class="icon" id="emoji-btn">
+                        <i class="fa-regular fa-face-smile"></i>
+                    </div>
+                    <div class="message-input" 
+                         contenteditable="true" 
+                         data-placeholder="Message" 
+                         id="chat-input-div"></div>
                     <button class="attach-btn">
                         <i class="fa-solid fa-paperclip"></i>
                     </button>
@@ -47,14 +53,11 @@ export function initializeKeyboardHandling() {
     let wasAtBottom = false;
     let isKeyboardVisible = false;
 
-    // Check if user is at the bottom of the chat
     function isScrolledToBottom() {
-        const threshold = 50; // pixels from bottom
-        const isBottom = chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
-        return isBottom;
+        const threshold = 50;
+        return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
     }
 
-    // Scroll to bottom smoothly
     function scrollToBottom() {
         chatContent.scrollTo({
             top: chatContent.scrollHeight,
@@ -62,70 +65,48 @@ export function initializeKeyboardHandling() {
         });
     }
 
-    // When input is focused (keyboard about to appear)
     input.addEventListener('focus', () => {
         wasAtBottom = isScrolledToBottom();
-        console.log('Input focused, was at bottom:', wasAtBottom);
-        
-        // If user was at bottom, prepare to scroll when keyboard appears
         if (wasAtBottom) {
-            // Try multiple times to ensure scroll happens after keyboard
             setTimeout(scrollToBottom, 100);
             setTimeout(scrollToBottom, 300);
             setTimeout(scrollToBottom, 500);
         }
     });
 
-    // When input is clicked/touched
     input.addEventListener('touchstart', () => {
         wasAtBottom = isScrolledToBottom();
-        console.log('Input touched, was at bottom:', wasAtBottom);
     });
 
     input.addEventListener('click', () => {
         wasAtBottom = isScrolledToBottom();
-        console.log('Input clicked, was at bottom:', wasAtBottom);
     });
 
-    // Handle viewport resize (when keyboard appears/disappears)
     let lastHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     
     function handleViewportResize() {
         const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
         const heightDiff = lastHeight - currentHeight;
         
-        console.log('Viewport resize:', { lastHeight, currentHeight, heightDiff, wasAtBottom });
-        
-        // Keyboard appeared (viewport got smaller by more than 100px)
         if (heightDiff > 100 && wasAtBottom) {
             isKeyboardVisible = true;
-            console.log('Keyboard appeared, scrolling to bottom');
             scrollToBottom();
-            // Retry scroll to handle keyboard animation
             setTimeout(scrollToBottom, 200);
             setTimeout(scrollToBottom, 400);
-        }
-        // Keyboard disappeared (viewport got bigger)
-        else if (heightDiff < -100 && isKeyboardVisible) {
+        } else if (heightDiff < -100 && isKeyboardVisible) {
             isKeyboardVisible = false;
-            console.log('Keyboard disappeared');
         }
         
         lastHeight = currentHeight;
     }
 
-    // Use visualViewport API if available (better for mobile)
     if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', handleViewportResize);
-        console.log('Using visualViewport API');
     } else {
         window.addEventListener('resize', handleViewportResize);
-        console.log('Using window resize API');
     }
 
-    // Track scroll position changes
     chatContent.addEventListener('scroll', () => {
-        // Update wasAtBottom if user manually scrolls
         const atBottom = isScrolledToBottom();
         if (atBottom !== wasAtBottom && !isKeyboardVisible) {
             wasAtBottom = atBottom;
