@@ -1,11 +1,11 @@
 /* css/emoji.css */
 
-/* ---------- PICKER ---------- */
+/* ---------- EMOJI PICKER ---------- */
 #emoji-picker {
     position: fixed;
     left: 0; right: 0;
     bottom: 0;
-    height: 260px;                     /* <-- mobile keyboard height */
+    height: 260px;                     /* Mobile keyboard height */
     background: #f0f2f5;
     box-shadow: 0 -2px 12px rgba(0,0,0,.15);
     transform: translateY(100%);
@@ -15,28 +15,38 @@
     padding: 12px;
     box-sizing: border-box;
 
-    /* ---- YOUR CUSTOM DESIGN ---- */
-    border-radius: 0;                 /* no rounded corners */
+    /* YOUR DESIGN: NO BORDER RADIUS */
+    border-radius: 0 !important;
 }
 
-/* open state */
-#emoji-picker.open { transform: translateY(0); }
+/* Open state */
+#emoji-picker.open {
+    transform: translateY(0);
+}
 
-/* ---- NO HANDLE ---- */
-#emoji-picker::before { display: none; }
+/* NO GRAB HANDLE */
+#emoji-picker::before { display: none !important; }
 
-/* ---------- PUSH CHAT CONTENT ---------- */
-body.emoji-picker-active #chat-content {
-    padding-bottom: 260px;            /* same as picker height */
+/* ---------- PUSH CHAT + INPUT AREA UP TOGETHER ---------- */
+body.emoji-picker-active {
+    padding-bottom: 260px !important;   /* Same as picker height */
     transition: padding-bottom .28s cubic-bezier(.25,.8,.25,1);
 }
 
-/* keep the input bar **exactly** where it is */
-body.emoji-picker-active .chat-input-area {
-    transform: none !important;      /* never move / hide */
+/* Ensure chat content scrolls correctly */
+body.emoji-picker-active #chat-content {
+    padding-bottom: 0 !important;       /* Let body handle padding */
 }
 
-/* subtle backdrop */
+/* Keep input area FULLY VISIBLE & STYLED */
+body.emoji-picker-active .chat-input-area {
+    /* No transform, no hide — just moves with body padding */
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Subtle backdrop */
 body.emoji-picker-active::before {
     content: "";
     position: fixed;
