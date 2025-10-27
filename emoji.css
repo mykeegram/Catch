@@ -1,11 +1,13 @@
 /* css/emoji.css */
 
+/* ---------- EMOJI PICKER ---------- */
 #emoji-picker {
     height: 0;
     overflow: hidden;
     background: #f0f2f5;
-    transition: height .3s cubic-bezier(.25,.8,.25,1);
-    box-shadow: 0 -2px 10px rgba(0,0,0,.15);
+    transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                padding 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     padding: 0 12px;
     box-sizing: border-box;
@@ -14,20 +16,33 @@
     border-radius: 0 !important;
 }
 
+/* Open state */
 #emoji-picker.open {
-    height: 260px; /* Mobile keyboard height */
-    padding: 12px;
+    height: 260px;     /* Mobile keyboard height */
+    padding: 12px 12px;
 }
 
 /* NO GRAB HANDLE */
-#emoji-picker::before { display: none !important; }
+#emoji-picker::before {
+    display: none !important;
+}
 
-/* Optional dim */
+/* ---------- CHAT CONTENT PADDING (CRITICAL) ---------- */
+#chat-content {
+    transition: padding-bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    padding-bottom: 20px; /* fallback */
+}
+
+body.emoji-picker-active #chat-content {
+    padding-bottom: 80px !important; /* Keeps "Messiah" visible */
+}
+
+/* ---------- OPTIONAL DIM BACKDROP ---------- */
 body.emoji-picker-active::before {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.05);
+    background: rgba(0, 0, 0, 0.05);
     z-index: 999;
     pointer-events: none;
 }
