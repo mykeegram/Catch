@@ -1,11 +1,11 @@
 /* css/emoji.css */
 
-/* ---------- PICKER ---------- */
+/* ---------- EMOJI PICKER ---------- */
 #emoji-picker {
     position: fixed;
     left: 0; right: 0;
     bottom: 0;
-    height: 260px;                     /* mobile-keyboard height */
+    height: 260px;
     background: #f0f2f5;
     box-shadow: 0 -2px 10px rgba(0,0,0,.15);
     transform: translateY(100%);
@@ -15,23 +15,30 @@
     padding: 12px;
     box-sizing: border-box;
 
-    /* YOUR DESIGN – no rounded corners, no handle */
+    /* YOUR DESIGN */
     border-radius: 0 !important;
 }
 
-/* open state */
-#emoji-picker.open { transform: translateY(0); }
+/* Open */
+#emoji-picker.open {
+    transform: translateY(0);
+}
 
 /* NO GRAB HANDLE */
 #emoji-picker::before { display: none !important; }
 
-/* ---------- PUSH INPUT AREA UP ---------- */
-body.emoji-picker-active .chat-input-area {
-    transform: translateY(-260px);      /* must match picker height */
+/* ---------- PUSH ENTIRE CHAT + INPUT UP ---------- */
+body.emoji-picker-active #chat-container {
+    transform: translateY(-260px);
     transition: transform .3s cubic-bezier(.25,.8,.25,1);
 }
 
-/* optional dim backdrop */
+/* Keep chat content scrollable */
+body.emoji-picker-active #chat-content {
+    padding-bottom: 0 !important;
+}
+
+/* Optional dim */
 body.emoji-picker-active::before {
     content: "";
     position: fixed;
