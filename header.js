@@ -13,6 +13,7 @@ export function renderHeader(container, config) {
             type = "one-to-one"
         } = config;
 
+        // Cleanup previous render
         if (container._headerCleanup) {
             container._headerCleanup();
             container._headerCleanup = null;
@@ -87,8 +88,7 @@ export function renderHeader(container, config) {
         const wrapper   = container.querySelector(".dropdown-wrapper");
 
         const toggle = (e) => {
-            e.stopPropagation();
-            e.preventDefault();
+            e.stopPropagation(); // Critical: keep keyboard open
             const open = dropdown.getAttribute("aria-hidden") === "false";
             dropdown.setAttribute("aria-hidden", String(!open));
             moreBtn.setAttribute("aria-expanded", String(!open));
@@ -118,21 +118,26 @@ export function renderHeader(container, config) {
         dropdown.querySelectorAll(".dropdown-item").forEach(item => {
             item.addEventListener("click", (e) => {
                 e.stopPropagation();
-                e.preventDefault();
                 const action = item.textContent.trim();
                 toggle({ stopPropagation: () => {} });
                 onMore?.({ action, type });
             });
         });
 
+        // Back button: Let keyboard close
         backBtn?.addEventListener("click", () => {
-            onBack?.(); // Let keyboard close
+            onBack?.();
         });
 
-        // Make SVGs untappable
-        container.querySelectorAll('svg').forEach(svg => {
-            svg.style.pointerEvents = 'none';
-        });
+        // Inject CSS: Prevent SVGs from stealing taps
+        if (!document.getElementById('header-svg-pointer-fix')) {
+            const style = document.createElement('style');
+            style.id = 'header-svg-pointer-fix';
+            style.textContent = `
+                .app-chat-header svg { pointer-events: none !important; }
+            `;
+            document.head.appendChild(style);
+        }
 
         container._headerCleanup = () => {
             document.removeEventListener("click", closeOutside);
