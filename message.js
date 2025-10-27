@@ -1,7 +1,7 @@
 // js/message.js
 
 /**
- * Creates and returns the HTML string for the floating message input bar.
+ * Creates the floating message input bar.
  */
 export function createMessageInput() {
     return `
@@ -36,19 +36,18 @@ export function createMessageInput() {
 }
 
 /**
- * === KEYBOARD BEHAVIOR (100% WORKING) ===
- *  • 3-dot menu → keyboard stays open
- *  • Back button → keyboard closes
- *  • Outside chat → keyboard stays open
- *  • No flicker, no blur
+ * Keyboard handling – **NO flicker**.
+ *  • 3-dot → stays open
+ *  • Back button → closes
+ *  • Outside chat → stays open
  */
 export function initializeKeyboardHandling() {
-    const input = document.getElementById('chat-input-div');
-    const chatContent = document.getElementById('chat-content');
-    const chatContainer = document.getElementById('chat-container');
+    const input        = document.getElementById('chat-input-div');
+    const chatContent  = document.getElementById('chat-content');
+    const chatContainer= document.getElementById('chat-container');
 
     if (!input || !chatContent || !chatContainer) {
-        console.log('Keyboard handling: Missing elements');
+        console.log('Keyboard handling: missing elements');
         return;
     }
 
@@ -59,12 +58,11 @@ export function initializeKeyboardHandling() {
     const scrollToBottom = () => {
         chatContent.scrollTo({ top: chatContent.scrollHeight, behavior: 'smooth' });
     };
-
     const isScrolledToBottom = () => {
         return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < 50;
     };
 
-    // === FOCUS LOCK: Only allow blur on back button ===
+    // ---------- FOCUS ----------
     input.addEventListener('focus', () => {
         wasAtBottom = isScrolledToBottom();
         if (wasAtBottom) {
@@ -73,35 +71,36 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    // === GLOBAL CLICK: Re-focus unless back button ===
+    // ---------- GLOBAL CLICK ----------
     const handleGlobalClick = (e) => {
         if (document.activeElement !== input) return;
 
-        const isBackButton = e.target.closest('.back-button');
-        const is3DotArea = e.target.closest('.dropdown-wrapper');
+        const backBtn   = e.target.closest('.back-button');
+        const threeDot  = e.target.closest('.dropdown-wrapper');
 
-        if (isBackButton) {
+        // Back button → let keyboard close
+        if (backBtn) {
             allowBlur = true;
             return;
         }
 
-        if (is3DotArea) {
+        // 3-dot menu → keep keyboard, re-focus instantly
+        if (threeDot) {
             e.stopPropagation();
             setTimeout(() => input.focus(), 0);
             return;
         }
 
-        // Outside chat? Keep keyboard
+        // Outside chat → keep keyboard
         if (!chatContainer.contains(e.target)) {
             e.stopPropagation();
             setTimeout(() => input.focus(), 0);
         }
     };
-
     document.addEventListener('click', handleGlobalClick, true);
     document.addEventListener('touchstart', handleGlobalClick, true);
 
-    // === BLUR CONTROL: Block unless allowed ===
+    // ---------- BLUR CONTROL ----------
     input.addEventListener('blur', () => {
         if (!allowBlur) {
             setTimeout(() => input.focus(), 0);
@@ -110,12 +109,11 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    // === VIEWPORT RESIZE: Detect keyboard open/close ===
+    // ---------- VIEWPORT RESIZE ----------
     let lastHeight = window.visualViewport?.height || window.innerHeight;
-
     const handleResize = () => {
-        const currentHeight = window.visualViewport?.height || window.innerHeight;
-        const diff = lastHeight - currentHeight;
+        const cur = window.visualViewport?.height || window.innerHeight;
+        const diff = lastHeight - cur;
 
         if (diff > 100 && wasAtBottom) {
             isKeyboardVisible = true;
@@ -123,34 +121,27 @@ export function initializeKeyboardHandling() {
         } else if (diff < -100) {
             isKeyboardVisible = false;
         }
-        lastHeight = currentHeight;
+        lastHeight = cur;
     };
+    (window.visualViewport || window).addEventListener('resize', handleResize);
 
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', handleResize);
-    } else {
-        window.addEventListener('resize', handleResize);
-    }
-
+    // ---------- SCROLL ----------
     chatContent.addEventListener('scroll', () => {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
 
-    console.log('Keyboard lock: 3-dot keeps open, outside stays open, back closes');
+    console.log('Keyboard handling: flicker-free');
 }
 
 /**
- * Switches between Mic and Send Arrow based on input content.
+ * Mic ↔ Send icon switch
  */
 export function initializeSendMicSwitch() {
-    const input = document.getElementById('chat-input-div');
-    const micBtn = document.getElementById('mic-btn');
-    const micSVG = document.getElementById('micSVG');
+    const input   = document.getElementById('chat-input-div');
+    const micBtn  = document.getElementById('mic-btn');
+    const micSVG  = document.getElementById('micSVG');
 
-    if (!input || !micBtn || !micSVG) {
-        console.warn('Send/Mic switch: missing elements');
-        return;
-    }
+    if (!input || !micBtn || !micSVG) return;
 
     const arrowSVG = `
         <svg id="arrowSVG" xmlns="http://www.w3.org/2000/svg" viewBox="-15 0 150 122.88" width="21" height="21">
@@ -162,16 +153,14 @@ export function initializeSendMicSwitch() {
         </svg>
     `;
 
-    const updateIcon = () => {
+    const update = () => {
         const hasText = input.textContent.trim().length > 0;
         const arrow = document.getElementById('arrowSVG');
 
         if (hasText) {
             micSVG.style.display = 'none';
             micBtn.classList.add('sending');
-            if (!arrow) {
-                micBtn.insertAdjacentHTML('beforeend', arrowSVG);
-            }
+            if (!arrow) micBtn.insertAdjacentHTML('beforeend', arrowSVG);
         } else {
             micBtn.classList.remove('sending');
             if (arrow) arrow.remove();
@@ -179,14 +168,8 @@ export function initializeSendMicSwitch() {
         }
     };
 
-    input.addEventListener('input', updateIcon);
-    input.addEventListener('paste', () => setTimeout(updateIcon, 0));
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' || e.key === 'Delete') {
-            setTimeout(updateIcon, 0);
-        }
-    });
-
-    updateIcon();
-    console.log('Send/Mic icon switch initialized');
+    input.addEventListener('input', update);
+    input.addEventListener('paste', () => setTimeout(update, 0));
+    input.addEventListener('keydown', e => (e.key === 'Backspace' || e.key === 'Delete') && setTimeout(update, 0));
+    update();
 }
