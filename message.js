@@ -37,12 +37,19 @@ export function createMessageInput() {
 
 /**
  * Initializes keyboard handling for mobile viewport resize.
+ * 
+ * RULES:
+ *  • Tapping 3-dot menu → Keyboard stays open
+ *  • Tapping back button → Keyboard closes
+ *  • Tapping outside chat → Keyboard stays open
+ *  • Smooth scroll when keyboard opens
  */
 export function initializeKeyboardHandling() {
     const input = document.getElementById('chat-input-div');
     const chatContent = document.getElementById('chat-content');
-    
-    if (!input || !chatContent) {
+    const chatContainer = document.getElementById('chat-container');
+
+    if (!input || !chatContent || !chatContainer) {
         console.log('Keyboard handling: Missing elements');
         return;
     }
@@ -62,6 +69,41 @@ export function initializeKeyboardHandling() {
         });
     }
 
+    // === 1. KEEP KEYBOARD OPEN ON 3-DOT MENU ===
+    // This is handled in header.js — we just ensure no blur here
+
+    // === 2. PREVENT KEYBOARD CLOSE WHEN TAPPING OUTSIDE CHAT ===
+    const blockOutsideBlur = (e) => {
+        if (document.activeElement === input) {
+            const target = e.target;
+            const isInChat = chatContainer.contains(target);
+            const is3DotMenu = target.closest?.('.dropdown-wrapper');
+            const isBackButton = target.closest?.('.back-button');
+
+            // Allow back button to close keyboard
+            if (isBackButton) return;
+
+            // Allow 3-dot menu to stay open
+            if (is3DotMenu) {
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
+
+            // Block everything else outside chat
+            if (!isInChat) {
+                e.stopPropagation();
+                e.preventDefault();
+                // Re-focus to keep keyboard
+                setTimeout(() => input.focus(), 0);
+            }
+        }
+    };
+
+    document.addEventListener('click', blockOutsideBlur, true);
+    document.addEventListener('touchstart', blockOutsideBlur, true);
+
+    // === 3. SCROLL TO BOTTOM ON FOCUS ===
     input.addEventListener('focus', () => {
         wasAtBottom = isScrolledToBottom();
         if (wasAtBottom) {
@@ -79,12 +121,13 @@ export function initializeKeyboardHandling() {
         wasAtBottom = isScrolledToBottom();
     });
 
+    // === 4. DETECT KEYBOARD OPEN/CLOSE VIA VIEWPORT ===
     let lastHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    
+
     function handleViewportResize() {
         const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
         const heightDiff = lastHeight - currentHeight;
-        
+
         if (heightDiff > 100 && wasAtBottom) {
             isKeyboardVisible = true;
             scrollToBottom();
@@ -93,7 +136,7 @@ export function initializeKeyboardHandling() {
         } else if (heightDiff < -100 && isKeyboardVisible) {
             isKeyboardVisible = false;
         }
-        
+
         lastHeight = currentHeight;
     }
 
@@ -103,6 +146,7 @@ export function initializeKeyboardHandling() {
         window.addEventListener('resize', handleViewportResize);
     }
 
+    // === 5. TRACK SCROLL POSITION ===
     chatContent.addEventListener('scroll', () => {
         const atBottom = isScrolledToBottom();
         if (atBottom !== wasAtBottom && !isKeyboardVisible) {
@@ -110,7 +154,7 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    console.log('Keyboard handling initialized');
+    console.log('Keyboard handling initialized: 3-dot keeps open, outside taps ignored');
 }
 
 /**
@@ -161,7 +205,7 @@ export function initializeSendMicSwitch() {
         }
     });
 
-    updateIcon(); // Initial check
+    updateIcon();
 
     console.log('Send/Mic icon switch initialized');
 }
