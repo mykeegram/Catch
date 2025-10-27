@@ -36,10 +36,11 @@ export function createMessageInput() {
 }
 
 /**
- * Keyboard handling – WhatsApp-like, flicker-free.
- *  • 3-dot menu → keyboard stays open
+ * Keyboard handling – WhatsApp-like, flicker-free, clicks work.
+ *  • 3-dot menu → keyboard stays open, menu opens
  *  • Back button → keyboard closes
- *  • Outside chat → keyboard stays open
+ *  • Outside chat → keyboard stays open, clicks register
+ *  • Avatar/name → keyboard closes
  */
 export function initializeKeyboardHandling() {
     const input         = document.getElementById('chat-input-div');
@@ -53,7 +54,6 @@ export function initializeKeyboardHandling() {
 
     let wasAtBottom = false;
     let isKeyboardVisible = false;
-    let allowBlur = false;
 
     const scrollToBottom = () => {
         chatContent.scrollTo({ top: chatContent.scrollHeight, behavior: 'smooth' });
@@ -71,44 +71,38 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    // GLOBAL CLICK/TOUCH (NO FLICKER)
+    // GLOBAL INTERACTION
     const handleGlobalInteraction = (e) => {
         if (document.activeElement !== input) return;
 
         const backBtn  = e.target.closest('.back-button');
         const threeDot = e.target.closest('.dropdown-wrapper');
+        const avatarName = e.target.closest('.meta, .avatar-wrap');
 
-        if (backBtn) {
-            allowBlur = true;
+        // Back button or avatar/name → allow blur
+        if (backBtn || avatarName) {
+            input.blur();
             return;
         }
 
+        // 3-dot menu → keep keyboard, allow click
         if (threeDot) {
-            e.stopPropagation();
-            e.preventDefault(); // Block all native blur
-            input.focus(); // Immediate focus
-            return;
+            e.preventDefault(); // Prevent blur
+            input.focus();
+            return; // Let event propagate for menu toggle
         }
 
-        // Outside chat → keep keyboard
+        // Outside chat → keep keyboard, allow click
         if (!chatContainer.contains(e.target)) {
-            e.stopPropagation();
-            e.preventDefault();
+            e.preventDefault(); // Prevent blur
             input.focus();
+            // Allow propagation for outside clicks (e.g., conversation list)
+            return;
         }
     };
     document.addEventListener('click', handleGlobalInteraction, { capture: true, passive: false });
     document.addEventListener('touchstart', handleGlobalInteraction, { capture: true, passive: false });
     document.addEventListener('touchend', handleGlobalInteraction, { capture: true, passive: false });
-
-    // BLUR CONTROL
-    input.addEventListener('blur', () => {
-        if (!allowBlur) {
-            input.focus(); // Immediate re-focus
-        } else {
-            allowBlur = false;
-        }
-    });
 
     // VIEWPORT RESIZE
     let lastHeight = window.visualViewport?.height || window.innerHeight;
@@ -130,7 +124,7 @@ export function initializeKeyboardHandling() {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
 
-    console.log('Keyboard handling: WhatsApp-like, no flicker');
+    console.log('Keyboard handling: WhatsApp-like, clicks work');
 }
 
 /**
@@ -141,7 +135,10 @@ export function initializeSendMicSwitch() {
     const micBtn  = document.getElementById('mic-btn');
     const micSVG  = document.getElementById('micSVG');
 
-    if (!input || !micBtn || !micSVG) return;
+    if (!input || !micBtn || !micSVG) {
+        console.warn('Send/Mic switch: missing elements');
+        return;
+    }
 
     const arrowSVG = `
         <svg id="arrowSVG" xmlns="http://www.w3.org/2000/svg" viewBox="-15 0 150 122.88" width="21" height="21">
