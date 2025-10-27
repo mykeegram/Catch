@@ -88,22 +88,22 @@ export function renderHeader(container, config) {
         const wrapper   = container.querySelector(".dropdown-wrapper");
         const input     = document.getElementById('chat-input-div');
 
-        // TOGGLE (NO FLICKER)
+        // TOGGLE (NO FLICKER, CLICKS WORK)
         const toggle = (e) => {
             e.stopPropagation();
-            e.preventDefault(); // Block native blur
+            e.preventDefault(); // Prevent default to avoid blur
             const open = dropdown.getAttribute("aria-hidden") === "false";
             dropdown.setAttribute("aria-hidden", String(!open));
             moreBtn.setAttribute("aria-expanded", String(!open));
             dropdown.classList.toggle("show");
 
-            // Lock focus to prevent flicker
+            // Keep input focused to prevent flicker
             if (input && document.activeElement === input) {
                 input.focus(); // Immediate focus
             }
         };
         moreBtn.addEventListener("click", toggle);
-        moreBtn.addEventListener("touchstart", toggle, { passive: false }); // Mobile touch
+        moreBtn.addEventListener("touchstart", toggle, { passive: false });
 
         // CLOSE OUTSIDE
         const closeOutside = (e) => {
@@ -135,8 +135,11 @@ export function renderHeader(container, config) {
             });
         });
 
-        // BACK BUTTON (let keyboard close)
+        // BACK BUTTON (CLOSES KEYBOARD)
         backBtn?.addEventListener("click", () => {
+            if (input && document.activeElement === input) {
+                input.blur(); // Explicitly close keyboard
+            }
             onBack?.();
         });
 
