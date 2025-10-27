@@ -1,5 +1,8 @@
 // js/message.js
 
+/**
+ * Creates the floating message input bar.
+ */
 export function createMessageInput() {
     return `
         <div class="chat-input-area"> 
@@ -33,14 +36,20 @@ export function createMessageInput() {
 }
 
 /**
- * Keyboard handling – **ZERO flicker**.
+ * Keyboard handling – WhatsApp-like, flicker-free.
+ *  • 3-dot menu → keyboard stays open
+ *  • Back button → keyboard closes
+ *  • Outside chat → keyboard stays open
  */
 export function initializeKeyboardHandling() {
     const input         = document.getElementById('chat-input-div');
     const chatContent   = document.getElementById('chat-content');
     const chatContainer = document.getElementById('chat-container');
 
-    if (!input || !chatContent || !chatContainer) return;
+    if (!input || !chatContent || !chatContainer) {
+        console.log('Keyboard handling: missing elements');
+        return;
+    }
 
     let wasAtBottom = false;
     let isKeyboardVisible = false;
@@ -53,6 +62,7 @@ export function initializeKeyboardHandling() {
         return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < 50;
     };
 
+    // FOCUS
     input.addEventListener('focus', () => {
         wasAtBottom = isScrolledToBottom();
         if (wasAtBottom) {
@@ -61,8 +71,8 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    // ---------- GLOBAL CLICK ----------
-    const handleGlobalClick = (e) => {
+    // GLOBAL CLICK/TOUCH (NO FLICKER)
+    const handleGlobalInteraction = (e) => {
         if (document.activeElement !== input) return;
 
         const backBtn  = e.target.closest('.back-button');
@@ -75,29 +85,32 @@ export function initializeKeyboardHandling() {
 
         if (threeDot) {
             e.stopPropagation();
-            requestAnimationFrame(() => input.focus());
+            e.preventDefault(); // Block all native blur
+            input.focus(); // Immediate focus
             return;
         }
 
         // Outside chat → keep keyboard
         if (!chatContainer.contains(e.target)) {
             e.stopPropagation();
-            requestAnimationFrame(() => input.focus());
+            e.preventDefault();
+            input.focus();
         }
     };
-    document.addEventListener('click', handleGlobalClick, true);
-    document.addEventListener('touchstart', handleGlobalClick, true);
+    document.addEventListener('click', handleGlobalInteraction, { capture: true, passive: false });
+    document.addEventListener('touchstart', handleGlobalInteraction, { capture: true, passive: false });
+    document.addEventListener('touchend', handleGlobalInteraction, { capture: true, passive: false });
 
-    // ---------- BLUR ----------
+    // BLUR CONTROL
     input.addEventListener('blur', () => {
         if (!allowBlur) {
-            requestAnimationFrame(() => input.focus());
+            input.focus(); // Immediate re-focus
         } else {
             allowBlur = false;
         }
     });
 
-    // ---------- RESIZE ----------
+    // VIEWPORT RESIZE
     let lastHeight = window.visualViewport?.height || window.innerHeight;
     const handleResize = () => {
         const cur = window.visualViewport?.height || window.innerHeight;
@@ -112,13 +125,16 @@ export function initializeKeyboardHandling() {
     };
     (window.visualViewport || window).addEventListener('resize', handleResize);
 
+    // SCROLL
     chatContent.addEventListener('scroll', () => {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
+
+    console.log('Keyboard handling: WhatsApp-like, no flicker');
 }
 
 /**
- * Mic to Send switch
+ * Mic ↔ Send icon switch
  */
 export function initializeSendMicSwitch() {
     const input   = document.getElementById('chat-input-div');
