@@ -1,8 +1,5 @@
 // js/message.js
 
-/**
- * Creates the floating message input bar.
- */
 export function createMessageInput() {
     return `
         <div class="chat-input-area"> 
@@ -36,20 +33,14 @@ export function createMessageInput() {
 }
 
 /**
- * Keyboard handling – **NO flicker**.
- *  • 3-dot → stays open
- *  • Back button → closes
- *  • Outside chat → stays open
+ * Keyboard handling – **ZERO flicker**.
  */
 export function initializeKeyboardHandling() {
-    const input        = document.getElementById('chat-input-div');
-    const chatContent  = document.getElementById('chat-content');
-    const chatContainer= document.getElementById('chat-container');
+    const input         = document.getElementById('chat-input-div');
+    const chatContent   = document.getElementById('chat-content');
+    const chatContainer = document.getElementById('chat-container');
 
-    if (!input || !chatContent || !chatContainer) {
-        console.log('Keyboard handling: missing elements');
-        return;
-    }
+    if (!input || !chatContent || !chatContainer) return;
 
     let wasAtBottom = false;
     let isKeyboardVisible = false;
@@ -62,7 +53,6 @@ export function initializeKeyboardHandling() {
         return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < 50;
     };
 
-    // ---------- FOCUS ----------
     input.addEventListener('focus', () => {
         wasAtBottom = isScrolledToBottom();
         if (wasAtBottom) {
@@ -75,46 +65,43 @@ export function initializeKeyboardHandling() {
     const handleGlobalClick = (e) => {
         if (document.activeElement !== input) return;
 
-        const backBtn   = e.target.closest('.back-button');
-        const threeDot  = e.target.closest('.dropdown-wrapper');
+        const backBtn  = e.target.closest('.back-button');
+        const threeDot = e.target.closest('.dropdown-wrapper');
 
-        // Back button → let keyboard close
         if (backBtn) {
             allowBlur = true;
             return;
         }
 
-        // 3-dot menu → keep keyboard, re-focus instantly
         if (threeDot) {
             e.stopPropagation();
-            setTimeout(() => input.focus(), 0);
+            requestAnimationFrame(() => input.focus());
             return;
         }
 
         // Outside chat → keep keyboard
         if (!chatContainer.contains(e.target)) {
             e.stopPropagation();
-            setTimeout(() => input.focus(), 0);
+            requestAnimationFrame(() => input.focus());
         }
     };
     document.addEventListener('click', handleGlobalClick, true);
     document.addEventListener('touchstart', handleGlobalClick, true);
 
-    // ---------- BLUR CONTROL ----------
+    // ---------- BLUR ----------
     input.addEventListener('blur', () => {
         if (!allowBlur) {
-            setTimeout(() => input.focus(), 0);
+            requestAnimationFrame(() => input.focus());
         } else {
             allowBlur = false;
         }
     });
 
-    // ---------- VIEWPORT RESIZE ----------
+    // ---------- RESIZE ----------
     let lastHeight = window.visualViewport?.height || window.innerHeight;
     const handleResize = () => {
         const cur = window.visualViewport?.height || window.innerHeight;
         const diff = lastHeight - cur;
-
         if (diff > 100 && wasAtBottom) {
             isKeyboardVisible = true;
             scrollToBottom();
@@ -125,16 +112,13 @@ export function initializeKeyboardHandling() {
     };
     (window.visualViewport || window).addEventListener('resize', handleResize);
 
-    // ---------- SCROLL ----------
     chatContent.addEventListener('scroll', () => {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
-
-    console.log('Keyboard handling: flicker-free');
 }
 
 /**
- * Mic ↔ Send icon switch
+ * Mic to Send switch
  */
 export function initializeSendMicSwitch() {
     const input   = document.getElementById('chat-input-div');
@@ -156,14 +140,13 @@ export function initializeSendMicSwitch() {
     const update = () => {
         const hasText = input.textContent.trim().length > 0;
         const arrow = document.getElementById('arrowSVG');
-
-        if (hasText) {
+        if (hasText && !arrow) {
             micSVG.style.display = 'none';
             micBtn.classList.add('sending');
-            if (!arrow) micBtn.insertAdjacentHTML('beforeend', arrowSVG);
-        } else {
+            micBtn.insertAdjacentHTML('beforeend', arrowSVG);
+        } else if (!hasText && arrow) {
             micBtn.classList.remove('sending');
-            if (arrow) arrow.remove();
+            arrow.remove();
             micSVG.style.display = 'block';
         }
     };
