@@ -1,6 +1,5 @@
 // js/emoji.js
 
-let wasAtBottom = false;
 let isEmojiPickerOpen = false;
 let chatContent = null;
 let emojiBtn = null;
@@ -37,47 +36,22 @@ function toggleEmojiPicker() {
 function openEmojiPicker() {
     if (isEmojiPickerOpen) return;
 
-    // Remove keyboard
+    // Dismiss the on-screen keyboard
     if (inputDiv) inputDiv.blur();
 
-    wasAtBottom = isScrolledToBottom();
     isEmojiPickerOpen = true;
 
     const picker = document.getElementById('emoji-picker');
     picker.classList.add('open');
     document.body.classList.add('emoji-picker-active');
-
-    // Force scroll to bottom (like keyboard)
-    if (wasAtBottom) {
-        setTimeout(() => scrollToBottom(), 100);
-        setTimeout(() => scrollToBottom(), 250);
-        setTimeout(() => scrollToBottom(), 400);
-    }
 }
 
 function closeEmojiPicker() {
     if (!isEmojiPickerOpen) return;
 
     isEmojiPickerOpen = false;
+
     const picker = document.getElementById('emoji-picker');
     picker.classList.remove('open');
     document.body.classList.remove('emoji-picker-active');
-
-    setTimeout(() => {
-        if (wasAtBottom) scrollToBottom();
-    }, 350);
-}
-
-function isScrolledToBottom() {
-    if (!chatContent) return false;
-    const threshold = 100;
-    return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
-}
-
-function scrollToBottom() {
-    if (!chatContent) return;
-    chatContent.scrollTo({
-        top: chatContent.scrollHeight,
-        behavior: 'smooth'
-    });
 }
