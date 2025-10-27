@@ -36,11 +36,12 @@ export function createMessageInput() {
 }
 
 /**
- * Keyboard handling – WhatsApp-like, flicker-free, clicks work.
+ * Keyboard handling – WhatsApp-like, flicker-free, clicks and scrolling work.
  *  • 3-dot menu → keyboard stays open, menu opens
  *  • Back button → keyboard closes
  *  • Outside chat → keyboard stays open, clicks register
  *  • Avatar/name → keyboard closes
+ *  • Chat scrolling → smooth
  */
 export function initializeKeyboardHandling() {
     const input         = document.getElementById('chat-input-div');
@@ -75,8 +76,8 @@ export function initializeKeyboardHandling() {
     const handleGlobalInteraction = (e) => {
         if (document.activeElement !== input) return;
 
-        const backBtn  = e.target.closest('.back-button');
-        const threeDot = e.target.closest('.dropdown-wrapper');
+        const backBtn    = e.target.closest('.back-button');
+        const threeDot   = e.target.closest('.dropdown-wrapper');
         const avatarName = e.target.closest('.meta, .avatar-wrap');
 
         // Back button or avatar/name → allow blur
@@ -85,24 +86,16 @@ export function initializeKeyboardHandling() {
             return;
         }
 
-        // 3-dot menu → keep keyboard, allow click
-        if (threeDot) {
-            e.preventDefault(); // Prevent blur
-            input.focus();
-            return; // Let event propagate for menu toggle
-        }
-
-        // Outside chat → keep keyboard, allow click
-        if (!chatContainer.contains(e.target)) {
-            e.preventDefault(); // Prevent blur
-            input.focus();
-            // Allow propagation for outside clicks (e.g., conversation list)
-            return;
+        // 3-dot menu or outside chat → prevent blur, allow event
+        if (threeDot || !chatContainer.contains(e.target)) {
+            e.preventDefault(); // Prevent blur only
+            input.focus(); // Immediate focus
+            // Do NOT stop propagation to allow clicks/scrolling
         }
     };
-    document.addEventListener('click', handleGlobalInteraction, { capture: true, passive: false });
-    document.addEventListener('touchstart', handleGlobalInteraction, { capture: true, passive: false });
-    document.addEventListener('touchend', handleGlobalInteraction, { capture: true, passive: false });
+    document.addEventListener('click', handleGlobalInteraction, { capture: true, passive: true });
+    document.addEventListener('touchstart', handleGlobalInteraction, { capture: true, passive: true });
+    document.addEventListener('touchend', handleGlobalInteraction, { capture: true, passive: true });
 
     // VIEWPORT RESIZE
     let lastHeight = window.visualViewport?.height || window.innerHeight;
@@ -124,7 +117,7 @@ export function initializeKeyboardHandling() {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
 
-    console.log('Keyboard handling: WhatsApp-like, clicks work');
+    console.log('Keyboard handling: WhatsApp-like, scrolling works');
 }
 
 /**
