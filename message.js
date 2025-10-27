@@ -41,7 +41,7 @@ export function createMessageInput() {
  *  • Back button → keyboard closes
  *  • Outside chat → keyboard stays open, clicks register
  *  • Avatar/name → keyboard closes
- *  • Chat content tap → keyboard stays open
+ *  • Chat content (tap, long press, hold) → keyboard stays open
  *  • Chat scrolling → smooth
  */
 export function initializeKeyboardHandling() {
@@ -88,16 +88,32 @@ export function initializeKeyboardHandling() {
             return;
         }
 
-        // 3-dot menu or outside chat or chat content → keep keyboard
+        // 3-dot menu, outside chat, or chat content (tap/long press) → keep keyboard
         if (threeDot || !chatContainer.contains(e.target) || chatArea) {
             e.preventDefault(); // Prevent blur
             input.focus(); // Immediate focus
-            // Allow propagation for clicks/scrolling
+            // Allow propagation for clicks, long presses, scrolling
         }
     };
     document.addEventListener('click', handleGlobalInteraction, { capture: true, passive: true });
     document.addEventListener('touchstart', handleGlobalInteraction, { capture: true, passive: true });
     document.addEventListener('touchend', handleGlobalInteraction, { capture: true, passive: true });
+
+    // LONG PRESS HANDLING
+    let touchTimeout;
+    const handleLongPress = (e) => {
+        if (document.activeElement !== input) return;
+
+        const chatArea = e.target.closest('#chat-content');
+        if (chatArea) {
+            e.preventDefault(); // Prevent blur
+            input.focus(); // Keep keyboard open
+        }
+    };
+    document.addEventListener('touchstart', (e) => {
+        touchTimeout = setTimeout(() => handleLongPress(e), 500); // Detect long press after 500ms
+    }, { capture: true, passive: true });
+    document.addEventListener('touchend', () => clearTimeout(touchTimeout), { passive: true });
 
     // VIEWPORT RESIZE
     let lastHeight = window.visualViewport?.height || window.innerHeight;
@@ -119,7 +135,7 @@ export function initializeKeyboardHandling() {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
 
-    console.log('Keyboard handling: WhatsApp-like, chat taps keep keyboard');
+    console.log('Keyboard handling: WhatsApp-like, message interactions keep keyboard');
 }
 
 /**
