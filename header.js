@@ -10,10 +10,9 @@ export function renderHeader(container, config) {
             subtext = "Active now",
             onBack,
             onMore,
-            type = "one-to-one"  // "one-to-one" or "group"
+            type = "one-to-one"
         } = config;
 
-        // Cleanup previous render
         if (container._headerCleanup) {
             container._headerCleanup();
             container._headerCleanup = null;
@@ -21,7 +20,6 @@ export function renderHeader(container, config) {
         container.className = "app-chat-header";
         container.innerHTML = "";
 
-        // MENU DEFINITION
         const isGroup = type === "group";
         const menu = isGroup
             ? [
@@ -38,7 +36,6 @@ export function renderHeader(container, config) {
                   { label: "Delete Chat",        danger: true }
               ];
 
-        // Build dropdown HTML
         let dropdownHTML = "";
         menu.forEach(item => {
             if (item.divider) {
@@ -49,17 +46,12 @@ export function renderHeader(container, config) {
             }
         });
 
-        // MAIN TEMPLATE
         container.innerHTML = `
             <div class="left">
                 <button class="icon-btn back-button" aria-label="Back">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <line x1="4" y1="12" x2="20" y2="12"
-                              stroke="var(--header-icon-color)" stroke-width="2.2"
-                              stroke-linecap="round"/>
-                        <polyline points="10,6 4,12 10,18" fill="none"
-                                  stroke="var(--header-icon-color)" stroke-width="2.2"
-                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="4" y1="12" x2="20" y2="12" stroke="var(--header-icon-color)" stroke-width="2.2" stroke-linecap="round"/>
+                        <polyline points="10,6 4,12 10,18" fill="none" stroke="var(--header-icon-color)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
 
@@ -75,10 +67,7 @@ export function renderHeader(container, config) {
             </div>
 
             <div class="dropdown-wrapper">
-                <button class="icon-btn more-options"
-                        aria-label="More options"
-                        aria-haspopup="true"
-                        aria-expanded="false">
+                <button class="icon-btn more-options" aria-label="More options" aria-haspopup="true" aria-expanded="false">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <circle cx="12" cy="6"   r="1.6" fill="var(--header-icon-color)"/>
                         <circle cx="12" cy="12"  r="1.6" fill="var(--header-icon-color)"/>
@@ -92,23 +81,22 @@ export function renderHeader(container, config) {
             </div>
         `;
 
-        // DOM REFERENCES
         const backBtn   = container.querySelector(".back-button");
         const moreBtn   = container.querySelector(".more-options");
         const dropdown  = container.querySelector(".dropdown-menu");
         const wrapper   = container.querySelector(".dropdown-wrapper");
 
-        // TOGGLE DROPDOWN
         const toggle = (e) => {
             e.stopPropagation();
+            e.preventDefault();
             const open = dropdown.getAttribute("aria-hidden") === "false";
             dropdown.setAttribute("aria-hidden", String(!open));
             moreBtn.setAttribute("aria-expanded", String(!open));
             dropdown.classList.toggle("show");
         };
+
         moreBtn.addEventListener("click", toggle);
 
-        // CLOSE ON OUTSIDE CLICK
         const closeOutside = (e) => {
             if (!wrapper.contains(e.target)) {
                 dropdown.setAttribute("aria-hidden", "true");
@@ -118,7 +106,6 @@ export function renderHeader(container, config) {
         };
         document.addEventListener("click", closeOutside);
 
-        // CLOSE ON ESCAPE
         const closeEsc = (e) => {
             if (e.key === "Escape") {
                 dropdown.setAttribute("aria-hidden", "true");
@@ -128,19 +115,25 @@ export function renderHeader(container, config) {
         };
         document.addEventListener("keydown", closeEsc);
 
-        // MENU ITEM CLICK
         dropdown.querySelectorAll(".dropdown-item").forEach(item => {
-            item.addEventListener("click", () => {
+            item.addEventListener("click", (e) => {
+                e.stopPropagation();
+                e.preventDefault();
                 const action = item.textContent.trim();
                 toggle({ stopPropagation: () => {} });
                 onMore?.({ action, type });
             });
         });
 
-        // BACK BUTTON
-        backBtn?.addEventListener("click", onBack || (() => {}));
+        backBtn?.addEventListener("click", () => {
+            onBack?.(); // Let keyboard close
+        });
 
-        // CLEANUP
+        // Make SVGs untappable
+        container.querySelectorAll('svg').forEach(svg => {
+            svg.style.pointerEvents = 'none';
+        });
+
         container._headerCleanup = () => {
             document.removeEventListener("click", closeOutside);
             document.removeEventListener("keydown", closeEsc);
