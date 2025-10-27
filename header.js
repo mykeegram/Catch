@@ -13,7 +13,7 @@ export function renderHeader(container, config) {
             type = "one-to-one"
         } = config;
 
-        // Cleanup previous render
+        // ---------- CLEANUP ----------
         if (container._headerCleanup) {
             container._headerCleanup();
             container._headerCleanup = null;
@@ -21,6 +21,7 @@ export function renderHeader(container, config) {
         container.className = "app-chat-header";
         container.innerHTML = "";
 
+        // ---------- MENU ----------
         const isGroup = type === "group";
         const menu = isGroup
             ? [
@@ -47,12 +48,17 @@ export function renderHeader(container, config) {
             }
         });
 
+        // ---------- TEMPLATE ----------
         container.innerHTML = `
             <div class="left">
                 <button class="icon-btn back-button" aria-label="Back">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <line x1="4" y1="12" x2="20" y2="12" stroke="var(--header-icon-color)" stroke-width="2.2" stroke-linecap="round"/>
-                        <polyline points="10,6 4,12 10,18" fill="none" stroke="var(--header-icon-color)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="4" y1="12" x2="20" y2="12"
+                              stroke="var(--header-icon-color)" stroke-width="2.2"
+                              stroke-linecap="round"/>
+                        <polyline points="10,6 4,12 10,18" fill="none"
+                                  stroke="var(--header-icon-color)" stroke-width="2.2"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
 
@@ -68,7 +74,10 @@ export function renderHeader(container, config) {
             </div>
 
             <div class="dropdown-wrapper">
-                <button class="icon-btn more-options" aria-label="More options" aria-haspopup="true" aria-expanded="false">
+                <button class="icon-btn more-options"
+                        aria-label="More options"
+                        aria-haspopup="true"
+                        aria-expanded="false">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <circle cx="12" cy="6"   r="1.6" fill="var(--header-icon-color)"/>
                         <circle cx="12" cy="12"  r="1.6" fill="var(--header-icon-color)"/>
@@ -82,21 +91,32 @@ export function renderHeader(container, config) {
             </div>
         `;
 
+        // ---------- ELEMENTS ----------
         const backBtn   = container.querySelector(".back-button");
         const moreBtn   = container.querySelector(".more-options");
         const dropdown  = container.querySelector(".dropdown-menu");
         const wrapper   = container.querySelector(".dropdown-wrapper");
 
+        // ---------- TOGGLE ----------
         const toggle = (e) => {
-            e.stopPropagation(); // Critical: keep keyboard open
+            // Prevent ANY blur / keyboard hide
+            e.stopPropagation();
+            e.preventDefault();
+
             const open = dropdown.getAttribute("aria-hidden") === "false";
             dropdown.setAttribute("aria-hidden", String(!open));
             moreBtn.setAttribute("aria-expanded", String(!open));
             dropdown.classList.toggle("show");
-        };
 
+            // Keep the input focused (the real fix for flicker)
+            const input = document.getElementById('chat-input-div');
+            if (input && document.activeElement === input) {
+                setTimeout(() => input.focus(), 0);
+            }
+        };
         moreBtn.addEventListener("click", toggle);
 
+        // ---------- CLOSE OUTSIDE ----------
         const closeOutside = (e) => {
             if (!wrapper.contains(e.target)) {
                 dropdown.setAttribute("aria-hidden", "true");
@@ -106,6 +126,7 @@ export function renderHeader(container, config) {
         };
         document.addEventListener("click", closeOutside);
 
+        // ---------- ESC ----------
         const closeEsc = (e) => {
             if (e.key === "Escape") {
                 dropdown.setAttribute("aria-hidden", "true");
@@ -115,21 +136,22 @@ export function renderHeader(container, config) {
         };
         document.addEventListener("keydown", closeEsc);
 
+        // ---------- MENU ITEMS ----------
         dropdown.querySelectorAll(".dropdown-item").forEach(item => {
             item.addEventListener("click", (e) => {
                 e.stopPropagation();
                 const action = item.textContent.trim();
-                toggle({ stopPropagation: () => {} });
+                toggle({ stopPropagation: () => {}, preventDefault: () => {} });
                 onMore?.({ action, type });
             });
         });
 
-        // Back button: Let keyboard close
+        // ---------- BACK BUTTON (let keyboard close) ----------
         backBtn?.addEventListener("click", () => {
             onBack?.();
         });
 
-        // Inject CSS: Prevent SVGs from stealing taps
+        // ---------- INJECT CSS (SVGs must not steal taps) ----------
         if (!document.getElementById('header-svg-pointer-fix')) {
             const style = document.createElement('style');
             style.id = 'header-svg-pointer-fix';
@@ -139,6 +161,7 @@ export function renderHeader(container, config) {
             document.head.appendChild(style);
         }
 
+        // ---------- CLEANUP ----------
         container._headerCleanup = () => {
             document.removeEventListener("click", closeOutside);
             document.removeEventListener("keydown", closeEsc);
