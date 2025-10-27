@@ -16,6 +16,7 @@ export function initializeEmojiPicker() {
         return;
     }
 
+    // create container once
     let picker = document.getElementById('emoji-picker');
     if (!picker) {
         picker = document.createElement('div');
@@ -30,14 +31,16 @@ export function initializeEmojiPicker() {
     });
 }
 
+/* ------------------------------------------------- */
 function toggleEmojiPicker() {
     isEmojiPickerOpen ? closeEmojiPicker() : openEmojiPicker();
 }
 
+/* ------------------------------------------------- */
 function openEmojiPicker() {
     if (isEmojiPickerOpen) return;
 
-    // Remove keyboard focus
+    // 1. REMOVE KEYBOARD FOCUS
     if (inputDiv) inputDiv.blur();
 
     wasAtBottom = isScrolledToBottom();
@@ -47,14 +50,15 @@ function openEmojiPicker() {
     picker.classList.add('open');
     document.body.classList.add('emoji-picker-active');
 
-    // Push chat + input up (like keyboard)
+    // 2. SCROLL LIKE NATIVE KEYBOARD
     if (wasAtBottom) {
         setTimeout(scrollToBottom, 50);
-        setTimeout(scrollToBottom, 150);
-        setTimeout(scrollToBottom, 300);
+        setTimeout(scrollToBottom, 200);
+        setTimeout(scrollToBottom, 350);
     }
 }
 
+/* ------------------------------------------------- */
 function closeEmojiPicker() {
     if (!isEmojiPickerOpen) return;
 
@@ -63,17 +67,17 @@ function closeEmojiPicker() {
     picker.classList.remove('open');
     document.body.classList.remove('emoji-picker-active');
 
-    setTimeout(() => {
-        if (wasAtBottom) scrollToBottom();
-    }, 300);
+    setTimeout(() => { if (wasAtBottom) scrollToBottom(); }, 300);
 }
 
+/* ------------------------------------------------- */
 function isScrolledToBottom() {
     if (!chatContent) return false;
     const threshold = 80;
     return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
 }
 
+/* ------------------------------------------------- */
 function scrollToBottom() {
     if (!chatContent) return;
     chatContent.scrollTo({
