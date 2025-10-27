@@ -1,9 +1,13 @@
-// chat.js
+// test-chat.js
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
 import { renderHeader } from './header.js';
-import { createMessageInput, initializeKeyboardHandling } from './message.js'; // <-- UPDATED IMPORT
-import { initializeEmojiPicker } from './emoji.js'; // ← NEW: EMOJI PICKER
+import { 
+    createMessageInput, 
+    initializeKeyboardHandling,
+    initializeSendMicSwitch   // ← NEW: SEND/MIC SWITCH
+} from './message.js';
+import { initializeEmojiPicker } from './emoji.js'; // ← EMOJI PICKER
 
 // -------------------------------------------------
 // Conversations data
@@ -191,7 +195,7 @@ function openChat(conversation) {
                     <span class="date-badge">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
                 </div>
             </div>
-            ${createMessageInput()}
+            ${createMessageInput()}  <!-- INPUT BAR ADDED HERE -->
         `;
 
         const header = chat.querySelector(".app-chat-header");
@@ -260,10 +264,11 @@ function openChat(conversation) {
             content.scrollTop = content.scrollHeight;
         }, 150);
 
-        // ---- Initialize keyboard & emoji picker ----
+        // ---- Initialize ALL INPUT FEATURES AFTER DOM ----
         setTimeout(() => {
             initializeKeyboardHandling();
-            initializeEmojiPicker(); // ← NEW: EMOJI PICKER
+            initializeEmojiPicker();
+            initializeSendMicSwitch();  // ← NOW WORKS 100%
         }, 200);
 
         // ---- Open animation ----
