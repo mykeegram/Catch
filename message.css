@@ -17,6 +17,9 @@
 
 svg#micSVG {
     height: 26px;
+    width: 26px;
+    display: block;
+    margin: 0 auto;
 }
 
 /* ------------------------------------------------- */
@@ -116,11 +119,30 @@ svg#micSVG {
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    transition: transform 0.1s ease;
+    transition: background 0.2s ease, transform 0.1s ease;
     touch-action: none;
     z-index: 1001;
     align-self: flex-end;
     flex-shrink: 0;
+}
+
+/* SEND STATE: Green button */
+.mic-btn.sending {
+    background: #00a884 !important;
+}
+
+/* -------------------------------------------------
+   SVG ICONS: CENTERED & SIZED
+   ------------------------------------------------- */
+.mic-btn svg {
+    display: block;
+    margin: 0 auto;
+}
+
+#arrowSVG {
+    width: 21px;
+    height: 21px;
+    display: block;
 }
 
 /* -------------------------------------------------
@@ -138,3 +160,4 @@ svg#micSVG {
 body.emoji-picker-active #chat-content {
     padding-bottom: 80px !important;   /* "Messiah" stays visible */
 }
+
