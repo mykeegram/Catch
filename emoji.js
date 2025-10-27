@@ -2,38 +2,37 @@
 
 let wasAtBottom = false;
 let isEmojiPickerOpen = false;
-let chatContainer = null;
 let chatContent = null;
 let emojiBtn = null;
 let inputDiv = null;
+let inputArea = null;
 
 export function initializeEmojiPicker() {
-    chatContainer = document.getElementById('chat-container');
-    chatContent   = document.getElementById('chat-content');
-    emojiBtn      = document.getElementById('emoji-btn');
-    inputDiv      = document.getElementById('chat-input-div');
+    chatContent = document.getElementById('chat-content');
+    emojiBtn    = document.getElementById('emoji-btn');
+    inputDiv    = document.getElementById('chat-input-div');
+    inputArea   = document.querySelector('.chat-input-area');
 
-    if (!chatContainer || !chatContent || !emojiBtn) {
+    if (!chatContent || !emojiBtn || !inputArea) {
         console.warn('Emoji picker: missing required elements');
         return;
     }
 
-    // Create emoji picker container (inside chat-container)
+    // Create picker INSIDE .chat-input-area
     let picker = document.getElementById('emoji-picker');
     if (!picker) {
         picker = document.createElement('div');
         picker.id = 'emoji-picker';
         picker.className = 'emoji-picker';
-        chatContainer.appendChild(picker);
+        inputArea.appendChild(picker);
     }
 
-    // Toggle on emoji button click
     emojiBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleEmojiPicker();
     });
 
-    console.log('Emoji picker initialized');
+    console.log('Emoji picker initialized inside .chat-input-area');
 }
 
 /* ------------------------------------------------- */
@@ -45,7 +44,7 @@ function toggleEmojiPicker() {
 function openEmojiPicker() {
     if (isEmojiPickerOpen) return;
 
-    // 1. Remove keyboard focus
+    // Remove keyboard focus
     if (inputDiv) inputDiv.blur();
 
     wasAtBottom = isAtBottom();
@@ -53,11 +52,9 @@ function openEmojiPicker() {
 
     const picker = document.getElementById('emoji-picker');
     picker.classList.add('open');
-
-    // 2. Trigger layout push + padding
     document.body.classList.add('emoji-picker-active');
 
-    // 3. Scroll to bottom (like keyboard)
+    // Scroll like keyboard
     setTimeout(() => {
         if (wasAtBottom) scrollToBottom();
     }, 100);
