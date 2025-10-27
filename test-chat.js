@@ -5,9 +5,9 @@ import { renderHeader } from './header.js';
 import { 
     createMessageInput, 
     initializeKeyboardHandling,
-    initializeSendMicSwitch   // ← NEW: SEND/MIC SWITCH
+    initializeSendMicSwitch
 } from './message.js';
-import { initializeEmojiPicker } from './emoji.js'; // ← EMOJI PICKER
+import { initializeEmojiPicker } from './emoji.js';
 
 // -------------------------------------------------
 // Conversations data
@@ -36,12 +36,12 @@ const conversations = [
         badge: 0,
         avatar: "DT",
         isImage: false,
-        isGroup: true
+        isGroup: true  // ← Used to detect group
     }
 ];
 
 // -------------------------------------------------
-// Sample chat messages (with replies)
+// Sample chat messages
 // -------------------------------------------------
 const chatMessages = {
     Chizaram: [
@@ -76,7 +76,7 @@ function renderConversations() {
             const item = document.createElement("div");
             item.className = "conversation-item";
 
-            // ---- Avatar ----
+            // Avatar
             const avatarWrap = document.createElement("div");
             avatarWrap.className = "avatar-container";
 
@@ -101,7 +101,7 @@ function renderConversations() {
             avatarWrap.appendChild(avatarDiv);
             avatarWrap.appendChild(badgeOverlay);
 
-            // ---- Content ----
+            // Content
             const content = document.createElement("div");
             content.className = "conversation-content";
             content.innerHTML = `
@@ -111,7 +111,7 @@ function renderConversations() {
                 <div class="conversation-message">${conv.message}</div>
             `;
 
-            // ---- Right side ----
+            // Right side
             const right = document.createElement("div");
             right.className = "right-section";
             right.innerHTML = `
@@ -128,7 +128,7 @@ function renderConversations() {
 }
 
 // -------------------------------------------------
-// Open discussion (group) – uses .app-chat-header
+// Open discussion (GROUP)
 // -------------------------------------------------
 function openDiscussion(conversation) {
     try {
@@ -141,7 +141,7 @@ function openDiscussion(conversation) {
             <div class="discussion-content" id="discussion-content">
                 <div class="empty-state"><p>No messages yet. Start the conversation!</p></div>
             </div>
-            `;
+        `;
 
         const header = discussions.querySelector(".app-chat-header");
         renderHeader(header, {
@@ -149,7 +149,8 @@ function openDiscussion(conversation) {
             avatar: conversation.avatar,
             badge: conversation.badge,
             subtext: "Discussion group",
-            onBack: closeDiscussion
+            onBack: closeDiscussion,
+            type: "group"  // CORRECT MENU
         });
 
         convs.classList.add("slide-left-quarter");
@@ -180,7 +181,7 @@ function closeDiscussion() {
 }
 
 // -------------------------------------------------
-// Open chat – uses .app-chat-header
+// Open chat (1-ON-1)
 // -------------------------------------------------
 function openChat(conversation) {
     try {
@@ -195,7 +196,7 @@ function openChat(conversation) {
                     <span class="date-badge">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
                 </div>
             </div>
-            ${createMessageInput()}  <!-- INPUT BAR ADDED HERE -->
+            ${createMessageInput()}
         `;
 
         const header = chat.querySelector(".app-chat-header");
@@ -206,7 +207,8 @@ function openChat(conversation) {
                 : conversation.avatar,
             badge: conversation.badge,
             subtext: "last seen recently",
-            onBack: closeChat
+            onBack: closeChat,
+            type: "one-to-one"  // CORRECT MENU
         });
 
         const content = chat.querySelector("#chat-content");
@@ -259,19 +261,16 @@ function openChat(conversation) {
 
         initializeWavePlay();
 
-        // ---- Scroll to bottom ----
         setTimeout(() => {
             content.scrollTop = content.scrollHeight;
         }, 150);
 
-        // ---- Initialize ALL INPUT FEATURES AFTER DOM ----
         setTimeout(() => {
             initializeKeyboardHandling();
             initializeEmojiPicker();
-            initializeSendMicSwitch();  // ← NOW WORKS 100%
+            initializeSendMicSwitch();
         }, 200);
 
-        // ---- Open animation ----
         chat.classList.add("open");
         convs.classList.add("slide-left");
         document.querySelector(".header").classList.add("slide-left");
@@ -300,15 +299,19 @@ function closeChat() {
 }
 
 // -------------------------------------------------
-// Conversation click listeners
+// Conversation listeners
 // -------------------------------------------------
 function addConversationListeners() {
     try {
         const items = document.querySelectorAll(".conversation-item");
         items.forEach((el, i) => {
             el.addEventListener("click", () => {
-                if (conversations[i].isGroup) openDiscussion(conversations[i]);
-                else openChat(conversations[i]);
+                const conv = conversations[i];
+                if (conv.isGroup) {
+                    openDiscussion(conv);
+                } else {
+                    openChat(conv);
+                }
             });
         });
     } catch (e) { console.error(e); }
