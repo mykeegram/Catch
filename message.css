@@ -1,29 +1,35 @@
- /* message.css */
+/* message.css */
 
-/* Wrapper to hold the input fixed at the bottom of the chat/discussion container */
+/* -------------------------------------------------
+   .CHAT-INPUT-AREA – CONTAINS EMOJI PICKER
+   ------------------------------------------------- */
 .chat-input-area {
     width: 100%;
     padding: 3px 7px;
-    background-color: transparent; /* Ensures it is transparent over the background */
+    background-color: transparent;
     box-sizing: border-box;
-    flex-shrink: 0; /* Prevents it from shrinking when chat content overflows */
-    margin-top: auto; /* Pushes it to the bottom of the flex column (chat-container) */
+    flex-shrink: 0;
+    margin-top: auto;
+    position: relative;          /* REQUIRED: contain emoji picker */
+    overflow: hidden;            /* REQUIRED: hide collapsed picker */
+    z-index: 900;
 }
+
 svg#micSVG {
     height: 26px;
 }
 
-
+/* ------------------------------------------------- */
 .input-wrapper {
     display: flex;
-    align-items: flex-end; /* Align the mic button with the message bubble */
+    align-items: flex-end;
     gap: 8px;
     width: 100%;
     position: relative;
 }
 
+/* ------------------------------------------------- */
 .input-bubble {
-    /* Use the existing .message-bubble background/shadow styles but ensure no chat-specific padding/margin */
     background: #fff;
     display: flex;
     align-items: center;
@@ -32,18 +38,17 @@ svg#micSVG {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     border-radius: 30px;
     position: relative;
-    /* OVERRIDE: Ensure the new input bubble doesn't inherit chat message padding/min-width */
     max-width: none;
     min-width: 0;
 }
 
-/* IMPORTANT FIX: Remove the message-bubble chat tail if it was accidentally inherited */
+/* Remove chat bubble tails */
 .input-bubble::before,
 .input-bubble::after {
-    content: none !important; 
+    content: none !important;
 }
 
-
+/* ------------------------------------------------- */
 .input-bubble .icon {
     font-size: 20px;
     color: #555;
@@ -51,16 +56,17 @@ svg#micSVG {
     align-self: flex-end;
     flex-shrink: 0;
     position: relative;
-    top: 0; /* Align correctly */
+    top: 0;
 }
 
+/* ------------------------------------------------- */
 .message-input {
     flex: 1;
     border: none;
     outline: none;
-    padding: 8px;
-    font-size: 16px;
+    padding: 0;
     margin: 0 6px;
+    font-size: 16px;
     background: transparent;
     color: #000;
     white-space: pre-wrap;
@@ -68,14 +74,12 @@ svg#micSVG {
     word-break: break-word;
     min-height: 20px;
     max-height: 120px;
-    box-sizing: border-box;
     line-height: 1.4;
     overflow-y: auto;
-    /* Override: ensure it fits within the new input bubble */
-    padding: 0; 
-    caret-color: #749cbf; /* Blue caret like Telegram */
+    caret-color: #749cbf;
 }
 
+/* Placeholder */
 .message-input[contenteditable][data-placeholder]:empty::before {
     content: attr(data-placeholder);
     color: #999;
@@ -83,6 +87,7 @@ svg#micSVG {
     display: block;
 }
 
+/* ------------------------------------------------- */
 .attach-btn {
     background: none;
     border: none;
@@ -90,8 +95,8 @@ svg#micSVG {
     cursor: pointer;
     align-self: flex-end;
     flex-shrink: 0;
-    top: 0; /* Align correctly */
     position: relative;
+    top: 0;
 }
 
 .attach-btn i {
@@ -99,14 +104,14 @@ svg#micSVG {
     color: #555;
 }
 
+/* ------------------------------------------------- */
 .mic-btn {
     background: #749cbf;
     border: none;
     border-radius: 50%;
-    width: 48px; /* Adjusted size */
-    height: 48px; /* Adjusted size */
+    width: 48px;
+    height: 48px;
     display: flex;
-    position: relative;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -116,4 +121,20 @@ svg#micSVG {
     z-index: 1001;
     align-self: flex-end;
     flex-shrink: 0;
+}
+
+/* -------------------------------------------------
+   CHAT CONTENT – KEEP LAST MESSAGE VISIBLE
+   ------------------------------------------------- */
+#chat-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    padding-bottom: 20px;        /* fallback */
+    transition: padding-bottom 0.3s cubic-bezier(0.25,0.8,0.25,1);
+    box-sizing: border-box;
+}
+
+body.emoji-picker-active #chat-content {
+    padding-bottom: 80px !important;   /* "Messiah" stays visible */
 }
