@@ -96,22 +96,20 @@ export function renderHeader(container, config) {
         const moreBtn   = container.querySelector(".more-options");
         const dropdown  = container.querySelector(".dropdown-menu");
         const wrapper   = container.querySelector(".dropdown-wrapper");
+        const input     = document.getElementById('chat-input-div');
 
-        // ---------- TOGGLE ----------
+        // ---------- TOGGLE (NO FLICKER) ----------
         const toggle = (e) => {
-            // Prevent ANY blur / keyboard hide
             e.stopPropagation();
-            e.preventDefault();
-
+            e.preventDefault();               // <-- stops native blur
             const open = dropdown.getAttribute("aria-hidden") === "false";
             dropdown.setAttribute("aria-hidden", String(!open));
             moreBtn.setAttribute("aria-expanded", String(!open));
             dropdown.classList.toggle("show");
 
-            // Keep the input focused (the real fix for flicker)
-            const input = document.getElementById('chat-input-div');
+            // **Re-focus the input immediately** – eliminates flicker
             if (input && document.activeElement === input) {
-                setTimeout(() => input.focus(), 0);
+                requestAnimationFrame(() => input.focus());
             }
         };
         moreBtn.addEventListener("click", toggle);
@@ -146,12 +144,12 @@ export function renderHeader(container, config) {
             });
         });
 
-        // ---------- BACK BUTTON (let keyboard close) ----------
+        // ---------- BACK BUTTON ----------
         backBtn?.addEventListener("click", () => {
             onBack?.();
         });
 
-        // ---------- INJECT CSS (SVGs must not steal taps) ----------
+        // ---------- INJECT CSS ----------
         if (!document.getElementById('header-svg-pointer-fix')) {
             const style = document.createElement('style');
             style.id = 'header-svg-pointer-fix';
