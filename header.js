@@ -10,12 +10,10 @@ export function renderHeader(container, config) {
             subtext = "Active now",
             onBack,
             onMore,
-            type = "one-to-one"          // <-- NEW: "one-to-one" | "group"
+            type = "one-to-one"  // "one-to-one" or "group"
         } = config;
 
-        /* -------------------------------------------------
-           1. CLEANUP previous render (prevents leaks)
-           ------------------------------------------------- */
+        // Cleanup previous render
         if (container._headerCleanup) {
             container._headerCleanup();
             container._headerCleanup = null;
@@ -23,11 +21,8 @@ export function renderHeader(container, config) {
         container.className = "app-chat-header";
         container.innerHTML = "";
 
-        /* -------------------------------------------------
-           2. MENU DEFINITION (type-aware)
-           ------------------------------------------------- */
+        // MENU DEFINITION
         const isGroup = type === "group";
-
         const menu = isGroup
             ? [
                   { label: "Group Info",      danger: false },
@@ -54,9 +49,7 @@ export function renderHeader(container, config) {
             }
         });
 
-        /* -------------------------------------------------
-           3. MAIN TEMPLATE
-           ------------------------------------------------- */
+        // MAIN TEMPLATE
         container.innerHTML = `
             <div class="left">
                 <button class="icon-btn back-button" aria-label="Back">
@@ -99,17 +92,13 @@ export function renderHeader(container, config) {
             </div>
         `;
 
-        /* -------------------------------------------------
-           4. DOM REFERENCES
-           ------------------------------------------------- */
+        // DOM REFERENCES
         const backBtn   = container.querySelector(".back-button");
         const moreBtn   = container.querySelector(".more-options");
         const dropdown  = container.querySelector(".dropdown-menu");
         const wrapper   = container.querySelector(".dropdown-wrapper");
 
-        /* -------------------------------------------------
-           5. DROPDOWN TOGGLE
-           ------------------------------------------------- */
+        // TOGGLE DROPDOWN
         const toggle = (e) => {
             e.stopPropagation();
             const open = dropdown.getAttribute("aria-hidden") === "false";
@@ -119,9 +108,7 @@ export function renderHeader(container, config) {
         };
         moreBtn.addEventListener("click", toggle);
 
-        /* -------------------------------------------------
-           6. CLOSE ON OUTSIDE / ESC
-           ------------------------------------------------- */
+        // CLOSE ON OUTSIDE CLICK
         const closeOutside = (e) => {
             if (!wrapper.contains(e.target)) {
                 dropdown.setAttribute("aria-hidden", "true");
@@ -131,6 +118,7 @@ export function renderHeader(container, config) {
         };
         document.addEventListener("click", closeOutside);
 
+        // CLOSE ON ESCAPE
         const closeEsc = (e) => {
             if (e.key === "Escape") {
                 dropdown.setAttribute("aria-hidden", "true");
@@ -140,9 +128,7 @@ export function renderHeader(container, config) {
         };
         document.addEventListener("keydown", closeEsc);
 
-        /* -------------------------------------------------
-           7. MENU ITEM CLICK → CALL onMore({action, type})
-           ------------------------------------------------- */
+        // MENU ITEM CLICK
         dropdown.querySelectorAll(".dropdown-item").forEach(item => {
             item.addEventListener("click", () => {
                 const action = item.textContent.trim();
@@ -151,14 +137,10 @@ export function renderHeader(container, config) {
             });
         });
 
-        /* -------------------------------------------------
-           8. BACK BUTTON
-           ------------------------------------------------- */
+        // BACK BUTTON
         backBtn?.addEventListener("click", onBack || (() => {}));
 
-        /* -------------------------------------------------
-           9. CLEANUP (for re-renders)
-           ------------------------------------------------- */
+        // CLEANUP
         container._headerCleanup = () => {
             document.removeEventListener("click", closeOutside);
             document.removeEventListener("keydown", closeEsc);
