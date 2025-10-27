@@ -2,14 +2,12 @@
 
 /**
  * Creates and returns the HTML string for the floating message input bar.
- * @returns {string} The HTML string for the chat input and microphone button.
  */
 export function createMessageInput() {
     return `
         <div class="chat-input-area"> 
             <div class="input-wrapper">
                 <div class="message-bubble input-bubble"> 
-                    <!-- SMILE ICON WITH ID -->
                     <div class="icon" id="emoji-btn">
                         <i class="fa-regular fa-face-smile"></i>
                     </div>
@@ -38,8 +36,7 @@ export function createMessageInput() {
 }
 
 /**
- * Initializes keyboard handling for the message input.
- * Scrolls to bottom only if user is already at the bottom when keyboard appears.
+ * Initializes keyboard handling for mobile viewport resize.
  */
 export function initializeKeyboardHandling() {
     const input = document.getElementById('chat-input-div');
@@ -114,4 +111,57 @@ export function initializeKeyboardHandling() {
     });
 
     console.log('Keyboard handling initialized');
+}
+
+/**
+ * Switches between Mic and Send Arrow based on input content.
+ */
+export function initializeSendMicSwitch() {
+    const input = document.getElementById('chat-input-div');
+    const micBtn = document.getElementById('mic-btn');
+    const micSVG = document.getElementById('micSVG');
+
+    if (!input || !micBtn || !micSVG) {
+        console.warn('Send/Mic switch: missing elements');
+        return;
+    }
+
+    const arrowSVG = `
+        <svg id="arrowSVG" xmlns="http://www.w3.org/2000/svg" viewBox="-15 0 150 122.88" width="21" height="21">
+            <g transform="rotate(40, 61.28, 61.44) translate(-5, 0)">
+                <path style="fill: white; fill-rule: evenodd;" 
+                      d="M2.33,44.58,117.33.37a3.63,3.63,0,0,1,5,4.56l-44,115.61h0a3.63,3.63,0,0,1-6.67.28L53.93,84.14,89.12,33.77,38.85,68.86,2.06,51.24a3.63,3.63,0,0,1,.27-6.66Z">
+                </path>
+            </g>
+        </svg>
+    `;
+
+    function updateIcon() {
+        const hasText = input.textContent.trim().length > 0;
+        const arrow = document.getElementById('arrowSVG');
+
+        if (hasText) {
+            micSVG.style.display = 'none';
+            micBtn.classList.add('sending');
+            if (!arrow) {
+                micBtn.insertAdjacentHTML('beforeend', arrowSVG);
+            }
+        } else {
+            micBtn.classList.remove('sending');
+            if (arrow) arrow.remove();
+            micSVG.style.display = 'block';
+        }
+    }
+
+    input.addEventListener('input', updateIcon);
+    input.addEventListener('paste', () => setTimeout(updateIcon, 0));
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' || e.key === 'Delete') {
+            setTimeout(updateIcon, 0);
+        }
+    });
+
+    updateIcon(); // Initial check
+
+    console.log('Send/Mic icon switch initialized');
 }
