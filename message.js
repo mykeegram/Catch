@@ -41,6 +41,7 @@ export function createMessageInput() {
  *  • Back button → keyboard closes
  *  • Outside chat → keyboard stays open, clicks register
  *  • Avatar/name → keyboard closes
+ *  • Chat content tap → keyboard stays open
  *  • Chat scrolling → smooth
  */
 export function initializeKeyboardHandling() {
@@ -79,18 +80,19 @@ export function initializeKeyboardHandling() {
         const backBtn    = e.target.closest('.back-button');
         const threeDot   = e.target.closest('.dropdown-wrapper');
         const avatarName = e.target.closest('.meta, .avatar-wrap');
+        const chatArea   = e.target.closest('#chat-content');
 
-        // Back button or avatar/name → allow blur
+        // Back button or avatar/name → close keyboard
         if (backBtn || avatarName) {
             input.blur();
             return;
         }
 
-        // 3-dot menu or outside chat → prevent blur, allow event
-        if (threeDot || !chatContainer.contains(e.target)) {
-            e.preventDefault(); // Prevent blur only
+        // 3-dot menu or outside chat or chat content → keep keyboard
+        if (threeDot || !chatContainer.contains(e.target) || chatArea) {
+            e.preventDefault(); // Prevent blur
             input.focus(); // Immediate focus
-            // Do NOT stop propagation to allow clicks/scrolling
+            // Allow propagation for clicks/scrolling
         }
     };
     document.addEventListener('click', handleGlobalInteraction, { capture: true, passive: true });
@@ -117,7 +119,7 @@ export function initializeKeyboardHandling() {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
 
-    console.log('Keyboard handling: WhatsApp-like, scrolling works');
+    console.log('Keyboard handling: WhatsApp-like, chat taps keep keyboard');
 }
 
 /**
