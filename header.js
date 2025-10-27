@@ -91,15 +91,15 @@ export function renderHeader(container, config) {
         // TOGGLE (NO FLICKER, CLICKS WORK)
         const toggle = (e) => {
             e.stopPropagation();
-            e.preventDefault(); // Prevent default to avoid blur
+            e.preventDefault(); // Prevent blur
             const open = dropdown.getAttribute("aria-hidden") === "false";
             dropdown.setAttribute("aria-hidden", String(!open));
             moreBtn.setAttribute("aria-expanded", String(!open));
             dropdown.classList.toggle("show");
 
-            // Keep input focused to prevent flicker
+            // Keep input focused
             if (input && document.activeElement === input) {
-                input.focus(); // Immediate focus
+                input.focus();
             }
         };
         moreBtn.addEventListener("click", toggle);
@@ -135,10 +135,10 @@ export function renderHeader(container, config) {
             });
         });
 
-        // BACK BUTTON (CLOSES KEYBOARD)
+        // BACK BUTTON
         backBtn?.addEventListener("click", () => {
             if (input && document.activeElement === input) {
-                input.blur(); // Explicitly close keyboard
+                input.blur();
             }
             onBack?.();
         });
