@@ -20,18 +20,21 @@
 }
 
 /* open state */
-#emoji-picker.open { transform: translateY(0); }
-
-/* NO GRAB HANDLE */
-#emoji-picker::before { display: none !important; }
-
-/* ---------- PUSH INPUT AREA UP ---------- */
-body.emoji-picker-active .chat-input-area {
-    transform: translateY(-260px);      /* must match picker height */
-    transition: transform .3s cubic-bezier(.25,.8,.25,1);
+#emoji-picker.open { 
+    transform: translateY(0); 
 }
 
-/* optional dim backdrop */
+/* NO GRAB HANDLE */
+#emoji-picker::before { 
+    display: none !important; 
+}
+
+/* ---------- INPUT AREA NO LONGER PUSHED ---------- */
+/* The whole block that translated .chat-input-area is removed.
+   The input area now stays in its normal place. */
+
+/* OPTIONAL: keep a tiny backdrop only if you still want a visual cue.
+   If you don’t need it, delete the block below. */
 body.emoji-picker-active::before {
     content: "";
     position: fixed;
@@ -40,4 +43,3 @@ body.emoji-picker-active::before {
     z-index: 999;
     pointer-events: none;
 }
-
