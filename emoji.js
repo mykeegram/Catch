@@ -2,27 +2,28 @@
 
 let wasAtBottom = false;
 let isEmojiPickerOpen = false;
-let chatContent = null;
+let chatContainer = null;
 let emojiBtn = null;
 let inputDiv = null;
 
 export function initializeEmojiPicker() {
-    chatContent = document.getElementById('chat-content');
-    emojiBtn    = document.getElementById('emoji-btn');
-    inputDiv    = document.getElementById('chat-input-div');
+    chatContainer = document.getElementById('chat-container');
+    emojiBtn = document.getElementById('emoji-btn');
+    inputDiv = document.getElementById('chat-input-div');
 
-    if (!chatContent || !emojiBtn) {
+    if (!chatContainer || !emojiBtn) {
         console.warn('Emoji picker: missing elements');
         return;
     }
 
-    // create container once
+    // Create picker once
     let picker = document.getElementById('emoji-picker');
     if (!picker) {
         picker = document.createElement('div');
         picker.id = 'emoji-picker';
         picker.className = 'emoji-picker';
-        document.body.appendChild(picker);
+        // Insert INSIDE chat-container, AFTER input area
+        chatContainer.appendChild(picker);
     }
 
     emojiBtn.addEventListener('click', e => {
@@ -31,57 +32,52 @@ export function initializeEmojiPicker() {
     });
 }
 
-/* ------------------------------------------------- */
 function toggleEmojiPicker() {
     isEmojiPickerOpen ? closeEmojiPicker() : openEmojiPicker();
 }
 
-/* ------------------------------------------------- */
 function openEmojiPicker() {
     if (isEmojiPickerOpen) return;
 
-    // 1. REMOVE KEYBOARD FOCUS
+    // Remove keyboard focus
     if (inputDiv) inputDiv.blur();
 
-    wasAtBottom = isScrolledToBottom();
+    wasAtBottom = isAtBottom();
     isEmojiPickerOpen = true;
 
     const picker = document.getElementById('emoji-picker');
     picker.classList.add('open');
-    document.body.classList.add('emoji-picker-active');
 
-    // 2. SCROLL LIKE NATIVE KEYBOARD
-    if (wasAtBottom) {
-        setTimeout(scrollToBottom, 50);
-        setTimeout(scrollToBottom, 200);
-        setTimeout(scrollToBottom, 350);
-    }
+    // Let layout engine handle scroll (like keyboard)
+    setTimeout(() => {
+        if (wasAtBottom) scrollToBottom();
+    }, 100);
 }
 
-/* ------------------------------------------------- */
 function closeEmojiPicker() {
     if (!isEmojiPickerOpen) return;
 
     isEmojiPickerOpen = false;
     const picker = document.getElementById('emoji-picker');
     picker.classList.remove('open');
-    document.body.classList.remove('emoji-picker-active');
 
-    setTimeout(() => { if (wasAtBottom) scrollToBottom(); }, 300);
+    setTimeout(() => {
+        if (wasAtBottom) scrollToBottom();
+    }, 300);
 }
 
-/* ------------------------------------------------- */
-function isScrolledToBottom() {
-    if (!chatContent) return false;
-    const threshold = 80;
-    return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < threshold;
+function isAtBottom() {
+    const content = document.getElementById('chat-content');
+    if (!content) return false;
+    const threshold = 100;
+    return content.scrollHeight - content.scrollTop - content.clientHeight < threshold;
 }
 
-/* ------------------------------------------------- */
 function scrollToBottom() {
-    if (!chatContent) return;
-    chatContent.scrollTo({
-        top: chatContent.scrollHeight,
+    const content = document.getElementById('chat-content');
+    if (!content) return;
+    content.scrollTo({
+        top: content.scrollHeight,
         behavior: 'smooth'
     });
 }
