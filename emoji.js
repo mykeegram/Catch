@@ -18,7 +18,7 @@ export function initializeEmojiPicker() {
         return;
     }
 
-    // Create picker INSIDE .chat-input-area
+    // Create picker inside .chat-input-area
     let picker = document.getElementById('emoji-picker');
     if (!picker) {
         picker = document.createElement('div');
@@ -27,12 +27,20 @@ export function initializeEmojiPicker() {
         inputArea.appendChild(picker);
     }
 
+    // Toggle on emoji button
     emojiBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleEmojiPicker();
     });
 
-    console.log('Emoji picker initialized inside .chat-input-area');
+    // CLOSE PICKER WHEN INPUT IS FOCUSED
+    inputDiv.addEventListener('focus', () => {
+        if (isEmojiPickerOpen) {
+            closeEmojiPicker();
+        }
+    });
+
+    console.log('Emoji picker initialized (inside .chat-input-area)');
 }
 
 /* ------------------------------------------------- */
@@ -44,7 +52,7 @@ function toggleEmojiPicker() {
 function openEmojiPicker() {
     if (isEmojiPickerOpen) return;
 
-    // Remove keyboard focus
+    // Remove keyboard focus (optional, but safe)
     if (inputDiv) inputDiv.blur();
 
     wasAtBottom = isAtBottom();
@@ -54,7 +62,6 @@ function openEmojiPicker() {
     picker.classList.add('open');
     document.body.classList.add('emoji-picker-active');
 
-    // Scroll like keyboard
     setTimeout(() => {
         if (wasAtBottom) scrollToBottom();
     }, 100);
