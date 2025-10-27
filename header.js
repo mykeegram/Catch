@@ -10,10 +10,12 @@ export function renderHeader(container, config) {
             subtext = "Active now",
             onBack,
             onMore,
-            type = "one-to-one" // "one-to-one" or "group"
+            type = "one-to-one"          // <-- NEW: "one-to-one" | "group"
         } = config;
 
-        // Cleanup previous
+        /* -------------------------------------------------
+           1. CLEANUP previous render (prevents leaks)
+           ------------------------------------------------- */
         if (container._headerCleanup) {
             container._headerCleanup();
             container._headerCleanup = null;
@@ -21,35 +23,40 @@ export function renderHeader(container, config) {
         container.className = "app-chat-header";
         container.innerHTML = "";
 
-        // ==== MENU ITEMS BASED ON TYPE ====
+        /* -------------------------------------------------
+           2. MENU DEFINITION (type-aware)
+           ------------------------------------------------- */
         const isGroup = type === "group";
-        const menuItems = isGroup
+
+        const menu = isGroup
             ? [
-                  { label: "Group Info", danger: false },
+                  { label: "Group Info",      danger: false },
                   { label: "View as Message", danger: false },
                   { divider: true },
-                  { label: "Leave Group", danger: true }
+                  { label: "Leave Group",     danger: true }
               ]
             : [
-                  { label: "View Profile", danger: false },
+                  { label: "View Profile",       danger: false },
                   { label: "Mute Notifications", danger: false },
-                  { label: "Block User", danger: false },
+                  { label: "Block User",         danger: false },
                   { divider: true },
-                  { label: "Delete Chat", danger: true }
+                  { label: "Delete Chat",        danger: true }
               ];
 
         // Build dropdown HTML
-        let dropdownHTML = '';
-        menuItems.forEach(item => {
+        let dropdownHTML = "";
+        menu.forEach(item => {
             if (item.divider) {
                 dropdownHTML += `<hr class="dropdown-divider">`;
             } else {
-                const dangerClass = item.danger ? 'text-danger' : '';
-                dropdownHTML += `<button class="dropdown-item ${dangerClass}" role="menuitem">${item.label}</button>`;
+                const danger = item.danger ? " text-danger" : "";
+                dropdownHTML += `<button class="dropdown-item${danger}" role="menuitem">${item.label}</button>`;
             }
         });
 
-        // ---- HTML TEMPLATE ----
+        /* -------------------------------------------------
+           3. MAIN TEMPLATE
+           ------------------------------------------------- */
         container.innerHTML = `
             <div class="left">
                 <button class="icon-btn back-button" aria-label="Back">
@@ -65,17 +72,20 @@ export function renderHeader(container, config) {
 
                 <div class="avatar-wrap">
                     <div class="avatar">${avatar}</div>
-                    ${badge > 0 ? `<div class="badge" title="${badge} new message(s)">${badge}</div>` : ''}
+                    ${badge > 0 ? `<div class="badge" title="${badge} new message(s)">${badge}</div>` : ""}
                 </div>
             </div>
 
-            <div class="meta" role="group" aria-label="${isGroup ? 'Group' : 'Contact'} info">
+            <div class="meta" role="group" aria-label="${isGroup ? "Group" : "Contact"} info">
                 <div class="name">${title}</div>
                 <div class="sub">${subtext}</div>
             </div>
 
             <div class="dropdown-wrapper">
-                <button class="icon-btn more-options" aria-label="More options" aria-haspopup="true" aria-expanded="false">
+                <button class="icon-btn more-options"
+                        aria-label="More options"
+                        aria-haspopup="true"
+                        aria-expanded="false">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <circle cx="12" cy="6"   r="1.6" fill="var(--header-icon-color)"/>
                         <circle cx="12" cy="12"  r="1.6" fill="var(--header-icon-color)"/>
@@ -89,63 +99,73 @@ export function renderHeader(container, config) {
             </div>
         `;
 
-        // ---- DOM REFERENCES ----
-        const backBtn = container.querySelector(".back-button");
-        const moreBtn = container.querySelector(".more-options");
-        const dropdown = container.querySelector(".dropdown-menu");
-        const wrapper = container.querySelector(".dropdown-wrapper");
+        /* -------------------------------------------------
+           4. DOM REFERENCES
+           ------------------------------------------------- */
+        const backBtn   = container.querySelector(".back-button");
+        const moreBtn   = container.querySelector(".more-options");
+        const dropdown  = container.querySelector(".dropdown-menu");
+        const wrapper   = container.querySelector(".dropdown-wrapper");
 
-        // ---- TOGGLE DROPDOWN ----
-        const toggleDropdown = (e) => {
+        /* -------------------------------------------------
+           5. DROPDOWN TOGGLE
+           ------------------------------------------------- */
+        const toggle = (e) => {
             e.stopPropagation();
-            const isOpen = dropdown.getAttribute("aria-hidden") === "false";
-            dropdown.setAttribute("aria-hidden", String(!isOpen));
-            moreBtn.setAttribute("aria-expanded", String(!isOpen));
+            const open = dropdown.getAttribute("aria-hidden") === "false";
+            dropdown.setAttribute("aria-hidden", String(!open));
+            moreBtn.setAttribute("aria-expanded", String(!open));
             dropdown.classList.toggle("show");
         };
+        moreBtn.addEventListener("click", toggle);
 
-        moreBtn.addEventListener("click", toggleDropdown);
-
-        // Close on outside click
-        const closeOnClickOutside = (e) => {
+        /* -------------------------------------------------
+           6. CLOSE ON OUTSIDE / ESC
+           ------------------------------------------------- */
+        const closeOutside = (e) => {
             if (!wrapper.contains(e.target)) {
                 dropdown.setAttribute("aria-hidden", "true");
                 moreBtn.setAttribute("aria-expanded", "false");
                 dropdown.classList.remove("show");
             }
         };
-        document.addEventListener("click", closeOnClickOutside);
+        document.addEventListener("click", closeOutside);
 
-        // Close on Escape
-        const closeOnEsc = (e) => {
+        const closeEsc = (e) => {
             if (e.key === "Escape") {
                 dropdown.setAttribute("aria-hidden", "true");
                 moreBtn.setAttribute("aria-expanded", "false");
                 dropdown.classList.remove("show");
             }
         };
-        document.addEventListener("keydown", closeOnEsc);
+        document.addEventListener("keydown", closeEsc);
 
-        // ---- MENU ITEM CLICKS ----
+        /* -------------------------------------------------
+           7. MENU ITEM CLICK → CALL onMore({action, type})
+           ------------------------------------------------- */
         dropdown.querySelectorAll(".dropdown-item").forEach(item => {
             item.addEventListener("click", () => {
                 const action = item.textContent.trim();
-                toggleDropdown({ stopPropagation: () => {} });
-                if (onMore) onMore({ action, type });
+                toggle({ stopPropagation: () => {} });
+                onMore?.({ action, type });
             });
         });
 
-        // ---- BACK BUTTON ----
+        /* -------------------------------------------------
+           8. BACK BUTTON
+           ------------------------------------------------- */
         backBtn?.addEventListener("click", onBack || (() => {}));
 
-        // ---- CLEANUP ----
+        /* -------------------------------------------------
+           9. CLEANUP (for re-renders)
+           ------------------------------------------------- */
         container._headerCleanup = () => {
-            document.removeEventListener("click", closeOnClickOutside);
-            document.removeEventListener("keydown", closeOnEsc);
-            moreBtn?.removeEventListener("click", toggleDropdown);
+            document.removeEventListener("click", closeOutside);
+            document.removeEventListener("keydown", closeEsc);
+            moreBtn?.removeEventListener("click", toggle);
         };
 
-    } catch (error) {
-        console.error("Error rendering header:", error);
+    } catch (err) {
+        console.error("renderHeader error:", err);
     }
 }
