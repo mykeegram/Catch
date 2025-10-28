@@ -6,14 +6,14 @@ export function renderHeader(container, config) {
         const {
             title = "Chat",
             avatar = "U",
-            badge = 0UVW,
+            badge = 0,
             subtext = "Active now",
             onBack,
             onMore,
             type = "one-to-one"
         } = config;
 
-        // Cleanup
+        // Cleanup previous render
         if (container._headerCleanup) {
             container._headerCleanup();
             container._headerCleanup = null;
@@ -43,7 +43,7 @@ export function renderHeader(container, config) {
                 dropdownHTML += `<hr class="dropdown-divider">`;
             } else {
                 const danger = item.danger ? " text-danger" : "";
-                dropdownHTML += `<button class="dropdown-item${danger}" role="menuitem">${_ESCAPE(item.label)}</button>`;
+                dropdownHTML += `<button class="dropdown-item${danger}" role="menuitem">${item.label}</button>`;
             }
         });
 
@@ -88,17 +88,18 @@ export function renderHeader(container, config) {
         const wrapper   = container.querySelector(".dropdown-wrapper");
         const input     = document.getElementById('chat-input-div');
 
-        // TOGGLE (NO BLUR)
+        // TOGGLE (NO FLICKER, CLICKS WORK)
         const toggle = (e) => {
             e.stopPropagation();
-            e.preventDefault();               // block blur
+            e.preventDefault(); // Prevent blur
             const open = dropdown.getAttribute("aria-hidden") === "false";
             dropdown.setAttribute("aria-hidden", String(!open));
             moreBtn.setAttribute("aria-expanded", String(!open));
             dropdown.classList.toggle("show");
 
+            // Keep input focused
             if (input && document.activeElement === input) {
-                requestAnimationFrame(() => input.focus());
+                input.focus();
             }
         };
         moreBtn.addEventListener("click", toggle);
@@ -134,9 +135,11 @@ export function renderHeader(container, config) {
             });
         });
 
-        // BACK BUTTON – close keyboard
+        // BACK BUTTON
         backBtn?.addEventListener("click", () => {
-            input?.blur();
+            if (input && document.activeElement === input) {
+                input.blur();
+            }
             onBack?.();
         });
 
@@ -144,7 +147,9 @@ export function renderHeader(container, config) {
         if (!document.getElementById('header-svg-pointer-fix')) {
             const style = document.createElement('style');
             style.id = 'header-svg-pointer-fix';
-            style.textContent = `.app-chat-header svg { pointer-events: none !important; }`;
+            style.textContent = `
+                .app-chat-header svg { pointer-events: none !important; }
+            `;
             document.head.appendChild(style);
         }
 
