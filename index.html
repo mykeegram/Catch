@@ -15,7 +15,10 @@
     <link rel="stylesheet" href="message.css">
     <link rel="stylesheet" href="emoji.css">
 
-    <!-- 3. REPLY.CSS — MUST BE LAST TO WIN SPECIFICITY -->
+    <!-- 3. IMAGE.CSS — NEW, BEFORE reply.css -->
+    <link rel="stylesheet" href="image.css">
+
+    <!-- 4. REPLY.CSS — STILL LAST TO WIN SPECIFICITY -->
     <link rel="stylesheet" href="reply.css">
 
     <!-- Font Awesome (Icons) -->
@@ -54,8 +57,10 @@
     <!-- Scripts -->
     <script src="story.js"></script>
     <script src="pop-up.js"></script>
+
+    <!-- MODULES -->
     <script type="module" src="test-chat.js"></script>
     <script type="module" src="wave-play.js"></script>
-    <!-- reply.js is imported inside test-chat.js -->
+    <!-- image.js & reply.js imported inside test-chat.js -->
 </body>
 </html>
