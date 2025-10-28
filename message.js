@@ -1,4 +1,5 @@
 // js/message.js
+
 export function createMessageInput() {
     return `
         <div class="chat-input-area"> 
@@ -18,6 +19,8 @@ export function createMessageInput() {
                 <div class="recording-overlay" id="recording-overlay"></div>
                 <button class="mic-btn" id="mic-btn">
                     <svg id="micSVG" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                         <g id="SVGRepo_iconCarrier">
                             <path d="M7.25 7C7.25 4.37665 9.37665 2.25 12 2.25C14.6234 2.25 16.75 4.37665 16.75 7V11C16.75 13.6234 14.6234 15.75 12 15.75C9.37665 15.75 7.25 13.6234 7.25 11V7Z" fill="#ffffff"></path>
                             <path d="M5.75 10C5.75 9.58579 5.41421 9.25 5 9.25C4.58579 9.25 4.25 9.58579 4.25 10V11C4.25 15.0272 7.3217 18.3369 11.25 18.7142V21C11.25 21.4142 11.5858 21.75 12 21.75C12.4142 21.75 12.75 21.4142 12.75 21V18.7142C16.6783 18.3369 19.75 15.0272 19.75 11V10C19.75 9.58579 19.4142 9.25 19 9.25C18.5858 9.25 18.25 9.58579 18.25 10V11C18.25 14.4518 15.4518 17.25 12 17.25C8.54822 17.25 5.75 14.4518 5.75 11V10Z" fill="#ffffff"></path>
@@ -29,12 +32,13 @@ export function createMessageInput() {
     `;
 }
 
-/* ==============================================================
-   KEYBOARD LOCK – WhatsApp-exact
-   • 3-dot, outside chat, **any tap/long-press in #chat-content** → keep open
-   • back / avatar → close
-   • smooth scroll
-   ============================================================== */
+/**
+ * KEYBOARD LOCK: WhatsApp-Perfect
+ *  • 3-dot → stays open
+ *  • Back → closes
+ *  • Outside → stays open
+ *  • Tapping, long-pressing, holding messages → keyboard stays open (NO BLUR)
+ */
 export function initializeKeyboardHandling() {
     const input         = document.getElementById('chat-input-div');
     const chatContent   = document.getElementById('chat-content');
@@ -45,8 +49,12 @@ export function initializeKeyboardHandling() {
     let wasAtBottom = false;
     let isKeyboardVisible = false;
 
-    const scrollToBottom = () => chatContent.scrollTo({ top: chatContent.scrollHeight, behavior: 'smooth' });
-    const isScrolledToBottom = () => chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < 50;
+    const scrollToBottom = () => {
+        chatContent.scrollTo({ top: chatContent.scrollHeight, behavior: 'smooth' });
+    };
+    const isScrolledToBottom = () => {
+        return chatContent.scrollHeight - chatContent.scrollTop - chatContent.clientHeight < 50;
+    };
 
     input.addEventListener('focus', () => {
         wasAtBottom = isScrolledToBottom();
@@ -56,81 +64,96 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    /* -----------------------------------------------------------
-       GLOBAL HANDLER – prevents blur on EVERY interaction inside chat
-       ----------------------------------------------------------- */
-    const keepKeyboard = (e) => {
+    // === 3-DOT & MESSAGE LOCK: SAME LOGIC ===
+    const lockKeyboard = (e) => {
         if (document.activeElement !== input) return;
+        e.preventDefault();
+        input.focus(); // Immediate — no flicker
+    };
 
-        const backBtn    = e.target.closest('.back-button');
-        const avatarName = e.target.closest('.meta, .avatar-wrap');
+    // 3-dot menu
+    const threeDot = document.querySelector('.dropdown-wrapper');
+    if (threeDot) {
+        threeDot.addEventListener('touchstart', lockKeyboard, { passive: false });
+        threeDot.addEventListener('click', lockKeyboard);
+    }
 
-        // Only close on explicit actions
-        if (backBtn || avatarName) {
-            input.blur();
-            return;
+    // === MESSAGES: TAP, LONG PRESS, HOLD ===
+    chatContent.addEventListener('touchstart', (e) => {
+        if (document.activeElement !== input) return;
+        const message = e.target.closest('.message'); // adjust selector if needed
+        if (message || chatContent.contains(e.target)) {
+            lockKeyboard(e);
         }
+    }, { passive: false });
 
-        // **ANY** interaction in chat content (tap, long-press, hold)
-        if (chatContainer.contains(e.target)) {
-            e.preventDefault();                 // block blur
-            requestAnimationFrame(() => input.focus()); // lock focus
+    chatContent.addEventListener('click', (e) => {
+        if (document.activeElement !== input) return;
+        const message = e.target.closest('.message');
+        if (message || chatContent.contains(e.target)) {
+            lockKeyboard(e);
+        }
+    });
+
+    // === OUTSIDE CHAT: Keep keyboard ===
+    document.addEventListener('click', (e) => {
+        if (document.activeElement !== input) return;
+        if (!chatContainer.contains(e.target)) {
+            lockKeyboard(e);
+        }
+    });
+
+    // === BACK BUTTON & AVATAR: Close keyboard ===
+    const closeKeyboard = () => {
+        if (document.activeElement === input) {
+            input.blur();
         }
     };
 
-    // Capture **all** possible events
-    ['click', 'touchstart', 'touchend', 'mousedown', 'pointerdown'].forEach(ev => {
-        document.addEventListener(ev, keepKeyboard, { capture: true, passive: false });
-    });
+    document.querySelector('.back-button')?.addEventListener('click', closeKeyboard);
+    document.querySelector('.meta, .avatar-wrap')?.addEventListener('click', closeKeyboard);
 
-    // Long-press detection (extra safety)
-    let longPressTimer;
-    document.addEventListener('touchstart', (e) => {
-        if (document.activeElement !== input) return;
-        if (chatContainer.contains(e.target)) {
-            longPressTimer = setTimeout(() => {
-                e.preventDefault();
-                requestAnimationFrame(() => input.focus());
-            }, 300);
-        }
-    }, { passive: false });
-    document.addEventListener('touchend', () => clearTimeout(longPressTimer));
-
-    // Viewport resize (keyboard show/hide)
+    // === RESIZE & SCROLL ===
     let lastHeight = window.visualViewport?.height || window.innerHeight;
-    const onResize = () => {
+    const handleResize = () => {
         const cur = window.visualViewport?.height || window.innerHeight;
         const diff = lastHeight - cur;
         if (diff > 100 && wasAtBottom) {
             isKeyboardVisible = true;
             scrollToBottom();
-        } else if (diff < -100) isKeyboardVisible = false;
+        } else if (diff < -100) {
+            isKeyboardVisible = false;
+        }
         lastHeight = cur;
     };
-    (window.visualViewport || window).addEventListener('resize', onResize);
+    (window.visualViewport || window).addEventListener('resize', handleResize);
 
-    // Scroll tracking
     chatContent.addEventListener('scroll', () => {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
 
-    console.log('Keyboard lock: message interactions keep it open');
+    console.log('Keyboard LOCK: 3-dot + messages = WhatsApp perfect');
 }
 
-/* Mic to Send switch */
+/**
+ * Mic to Send switch
+ */
 export function initializeSendMicSwitch() {
-    const input  = document.getElementById('chat-input-div');
-    const micBtn = document.getElementById('mic-btn');
-    const micSVG = document.getElementById('micSVG');
+    const input   = document.getElementById('chat-input-div');
+    const micBtn  = document.getElementById('mic-btn');
+    const micSVG  = document.getElementById('micSVG');
+
     if (!input || !micBtn || !micSVG) return;
 
-    const arrowSVG = `<svg id="arrowSVG" xmlns="http://www.w3.org/2000/svg" viewBox="-15 0 150 122.88" width="21" height="21">
-        <g transform="rotate(40, 61.28, 61.44) translate(-5, 0)">
-            <path style="fill: white; fill-rule: evenodd;" 
-                  d="M2.33,44.58,117.33.37a3.63,3.63,0,0,1,5,4.56l-44,115.61h0a3.63,3.63,0,0,1-6.67.28L53.93,84.14,89.12,33.77,38.85,68.86,2.06,51.24a3.63,3.63,0,0,1,.27-6.66Z">
-            </path>
-        </g>
-    </svg>`;
+    const arrowSVG = `
+        <svg id="arrowSVG" xmlns="http://www.w3.org/2000/svg" viewBox="-15 0 150 122.88" width="21" height="21">
+            <g transform="rotate(40, 61.28, 61.44) translate(-5, 0)">
+                <path style="fill: white; fill-rule: evenodd;" 
+                      d="M2.33,44.58,117.33.37a3.63,3.63,0,0,1,5,4.56l-44,115.61h0a3.63,3.63,0,0,1-6.67.28L53.93,84.14,89.12,33.77,38.85,68.86,2.06,51.24a3.63,3.63,0,0,1,.27-6.66Z">
+                </path>
+            </g>
+        </svg>
+    `;
 
     const update = () => {
         const hasText = input.textContent.trim().length > 0;
