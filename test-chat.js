@@ -1,6 +1,6 @@
 // test-chat.js
-import { initializeWavePlay } from 'wave/wave-play.js';
-import { createReplySection } from 'reply/reply.js';
+import { initializeWavePlay } from './wave-play.js';
+import { createReplySection } from './reply.js';
 import { renderHeader } from './header.js';
 import { 
     createMessageInput, 
