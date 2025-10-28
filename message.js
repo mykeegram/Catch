@@ -33,11 +33,7 @@ export function createMessageInput() {
 }
 
 /**
- * KEYBOARD LOCK: WhatsApp-Perfect
- *  • 3-dot → stays open
- *  • Back → closes
- *  • Outside → stays open
- *  • Tapping, long-pressing, holding messages → keyboard stays open (NO BLUR)
+ * KEYBOARD LOCK + SMOOTH SCROLL (WhatsApp-Perfect)
  */
 export function initializeKeyboardHandling() {
     const input         = document.getElementById('chat-input-div');
@@ -64,11 +60,11 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    // === 3-DOT & MESSAGE LOCK: SAME LOGIC ===
+    // === LOCK KEYBOARD: 3-Dot & Messages ===
     const lockKeyboard = (e) => {
         if (document.activeElement !== input) return;
-        e.preventDefault();
-        input.focus(); // Immediate — no flicker
+        e.preventDefault();  // Stop blur
+        input.focus();       // Lock focus
     };
 
     // 3-dot menu
@@ -78,22 +74,35 @@ export function initializeKeyboardHandling() {
         threeDot.addEventListener('click', lockKeyboard);
     }
 
-    // === MESSAGES: TAP, LONG PRESS, HOLD ===
-    chatContent.addEventListener('touchstart', (e) => {
-        if (document.activeElement !== input) return;
-        const message = e.target.closest('.message'); // adjust selector if needed
-        if (message || chatContent.contains(e.target)) {
-            lockKeyboard(e);
-        }
-    }, { passive: false });
+    // === MESSAGES: Tap / Long Press / Hold ===
+    // Use `pointerdown` + `pointerup` to catch all gestures without blocking scroll
+    let isLongPress = false;
 
-    chatContent.addEventListener('click', (e) => {
+    chatContent.addEventListener('pointerdown', (e) => {
         if (document.activeElement !== input) return;
+
         const message = e.target.closest('.message');
         if (message || chatContent.contains(e.target)) {
-            lockKeyboard(e);
+            isLongPress = false;
+            lockKeyboard(e); // Prevent blur on touch start
+
+            // Detect long press
+            setTimeout(() => {
+                if (isLongPress === false) {
+                    isLongPress = true;
+                    lockKeyboard(e);
+                }
+            }, 300);
         }
+    }, { passive: false }); // Only here — needed to preventDefault
+
+    chatContent.addEventListener('pointerup', (e) => {
+        if (document.activeElement !== input) return;
+        isLongPress = true; // Mark as handled
     });
+
+    // === ALLOW SCROLLING: Do NOT block touchmove ===
+    chatContent.addEventListener('touchmove', () => {}, { passive: true });
 
     // === OUTSIDE CHAT: Keep keyboard ===
     document.addEventListener('click', (e) => {
@@ -103,13 +112,12 @@ export function initializeKeyboardHandling() {
         }
     });
 
-    // === BACK BUTTON & AVATAR: Close keyboard ===
+    // === BACK & AVATAR: Close keyboard ===
     const closeKeyboard = () => {
         if (document.activeElement === input) {
             input.blur();
         }
     };
-
     document.querySelector('.back-button')?.addEventListener('click', closeKeyboard);
     document.querySelector('.meta, .avatar-wrap')?.addEventListener('click', closeKeyboard);
 
@@ -132,7 +140,7 @@ export function initializeKeyboardHandling() {
         if (!isKeyboardVisible) wasAtBottom = isScrolledToBottom();
     });
 
-    console.log('Keyboard LOCK: 3-dot + messages = WhatsApp perfect');
+    console.log('Keyboard LOCK + SMOOTH SCROLL: Final');
 }
 
 /**
@@ -174,3 +182,4 @@ export function initializeSendMicSwitch() {
     input.addEventListener('keydown', e => (e.key === 'Backspace' || e.key === 'Delete') && setTimeout(update, 0));
     update();
 }
+  
