@@ -7,19 +7,19 @@ export function createImageSection(src, alt = "Chat image") {
     img.style.cursor = "pointer";
     img.onerror = () => console.error(`Image load error: ${src}`);
 
-    // ---- CLICK → OPEN S-IMAGE VIEWER ----
+    // Click → Open full-screen viewer with accurate index
     img.addEventListener("click", (e) => {
         e.stopPropagation();
 
         const chatContent = document.querySelector("#chat-content");
         if (!chatContent) return;
 
-        // 1. Collect **ALL** images in the current chat
-        const allImageEls = Array.from(chatContent.querySelectorAll(".message-image"));
-        const allImages = allImageEls.map(el => {
-            const msgDiv = el.closest(".chat-message");
-            const timeEl = msgDiv?.querySelector(".message-time");
-            const replyEl = msgDiv?.querySelector(".reply-section");
+        // Collect all images in the current chat
+        const allImageElements = Array.from(chatContent.querySelectorAll(".message-image"));
+        const allImages = allImageElements.map((el) => {
+            const messageDiv = el.closest(".chat-message");
+            const timeEl = messageDiv?.querySelector(".message-time");
+            const replyEl = messageDiv?.querySelector(".reply-section");
 
             return {
                 url: el.src,
@@ -29,24 +29,21 @@ export function createImageSection(src, alt = "Chat image") {
             };
         });
 
-        const startIndex = allImages.findIndex(i => i.url === src);
+        // Find the index of the clicked image
+        const startIndex = allImages.findIndex(img => img.url === src);
         if (startIndex === -1) return;
 
-        // 2. Determine **sender name** based on message direction
-        const messageDiv = img.closest(".chat-message");
-        const isSent = messageDiv?.classList.contains("sent");
-        const senderName = isSent ? "Catch-up Messenger" : "Chizaram";
+        // Get sender name from chat header
+        const senderName = document.querySelector(".app-chat-header .conversation-name")?.textContent || "User";
 
-        // 3. Open viewer (lazy import)
-        import('./s-image.js')
-            .then(mod => {
-                mod.openImageViewer({
-                    images: allImages,
-                    startIndex,
-                    senderName
-                });
-            })
-            .catch(err => console.error("Failed to load s-image.js:", err));
+        // Dynamically import the viewer (lazy load)
+        import('./s-image.js').then(mod => {
+            mod.openImageViewer({
+                images: allImages,
+                startIndex,
+                senderName
+            });
+        }).catch(err => console.error("Failed to load image viewer:", err));
     });
 
     return img;
