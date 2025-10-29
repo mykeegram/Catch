@@ -370,3 +370,4 @@ function addConversationListeners() {
 document.addEventListener("DOMContentLoaded", () => {
     try { renderConversations(); } catch (e) { console.error(e); }
 });
+
