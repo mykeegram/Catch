@@ -5,23 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catch-up Messenger</title>
 
+    <!-- 1. Core layout -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="pop-up.css">
     <link rel="stylesheet" href="chat.css">
     <link rel="stylesheet" href="header.css">
 
+    <!-- 2. Message Input + Emoji -->
     <link rel="stylesheet" href="message.css">
     <link rel="stylesheet" href="emoji.css">
 
+    <!-- 3. IMAGE.CSS -->
     <link rel="stylesheet" href="image.css">
-    <link rel="stylesheet" href="pop-m.css"> 
-    
+
+    <!-- 4. S-IMAGE.CSS (Viewer) -->
+    <link rel="stylesheet" href="s-image.css">
+
+    <!-- 5. REPLY.CSS — STILL LAST TO WIN SPECIFICITY -->
     <link rel="stylesheet" href="reply.css">
 
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
+    <!-- Header -->
     <div class="header">
         <div class="menu-icon">
             <svg class="icon messages-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #749cbf; fill: #749cbf;">
@@ -31,23 +39,30 @@
         <div class="header-title">Messages</div>
     </div>
 
+    <!-- Stories -->
     <div class="stories-container" id="stories-container"></div>
 
+    <!-- Conversations List -->
     <div id="conversations-container"></div>
 
+    <!-- Discussions Panel -->
     <div id="discussions-container" class="discussions-container"></div>
 
+    <!-- Floating Action Button -->
     <button class="floating-button"></button>
 
+    <!-- Story Popup -->
     <div id="story-popup"></div>
 
+    <!-- Chat View -->
     <div id="chat-container" class="chat-container"></div>
 
+    <!-- Scripts -->
     <script src="story.js"></script>
     <script src="pop-up.js"></script>
 
-    <script type="module" src="chat.js"></script>
+    <!-- MODULES -->
+    <script type="module" src="test-chat.js"></script>
     <script type="module" src="wave-play.js"></script>
-    </body>
+</body>
 </html>
-
