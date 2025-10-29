@@ -11,11 +11,56 @@ import { initializeEmojiPicker } from './emoji.js';
 import { createImageSection } from './image.js';
 
 // -------------------------------------------------
-// Conversations & Messages
+// Conversations data
 // -------------------------------------------------
-const conversations = [/* ... same as before ... */];
+const conversations = [
+    {
+        name: "Chizaram",
+        message: "Yo! Chizaram's in",
+        time: "Wed",
+        badge: 1,
+        avatar: "C",
+        isImage: false
+    },
+    {
+        name: "VaVia",
+        message: "Hey there! How are you?",
+        time: "Tue",
+        badge: 2,
+        avatar: "https://i.ibb.co/C5b875C6/Screenshot-20250904-050841.jpg",
+        isImage: true
+    },
+    {
+        name: "Donald Trump",
+        message: "Discussion group",
+        time: "Mon",
+        badge: 0,
+        avatar: "DT",
+        isImage: false,
+        isGroup: true
+    }
+];
 
-const chatMessages = { /* ... same as before ... */ };
+const chatMessages = {
+    Chizaram: [
+        { type: "text", text: "U fit give me your WhatsApp number", sender: "received", time: "Wed 2:01 PM",
+          reply: { name: "Jackson Dave", text: "Afa" } },
+        { type: "text", text: "Mykee Blogger", sender: "received", time: "Wed 10:40 AM" },
+        { type: "image", url: "https://i.ibb.co/C5b875C6/Screenshot-20250904-050841.jpg", sender: "received", time: "Wed 10:42 AM" },
+        { type: "text", text: "Here you go: +234 123 456 7890", sender: "sent", time: "Wed 2:05 PM",
+          reply: { name: "Mykee Blogger", text: "U fit give me your WhatsApp number" } },
+        { type: "text", text: "Who be this", sender: "sent", time: "Wed 10:56 AM" },
+        { type: "audio", duration: "0:08", sender: "sent", time: "Wed 10:57 AM" },
+        { type: "text", text: "Messiah", sender: "received", time: "Wed 10:58 AM" },
+        { type: "image", url: "https://i.ibb.co/C5b875C6/Screenshot-20250904-050841.jpg", sender: "sent", time: "Wed 10:59 AM" }
+    ],
+    VaVia: [
+        { type: "text", text: "Hey there! How are you?", sender: "received", time: "Tue 3:15 PM" },
+        { type: "audio", duration: "0:08", sender: "sent", time: "Tue 3:16 PM" },
+        { type: "text", text: "I'm good, you?", sender: "sent", time: "Tue 3:17 PM" }
+    ],
+    "Donald Trump": []
+};
 
 // -------------------------------------------------
 // Global Image Overlay State
@@ -24,9 +69,9 @@ let imageOverlay = null;
 let overlayImages = [];
 let currentOverlayIndex = 0;
 
-// -------------------------------------------------
-// Initialize Image Overlay
-// -------------------------------------------------
+// =================================================
+// IMAGE OVERLAY: Initialize once
+// =================================================
 function initializeImageOverlay() {
     if (imageOverlay) return;
 
@@ -83,7 +128,6 @@ function initializeImageOverlay() {
         document.body.classList.remove('no-scroll');
     }
 
-    // Touch swipe
     container.addEventListener('touchstart', e => {
         touchStartX = e.changedTouches[0].screenX;
     }, { passive: true });
@@ -96,7 +140,6 @@ function initializeImageOverlay() {
         }
     }, { passive: true });
 
-    // Buttons
     prevBtn.addEventListener('click', showPrev);
     nextBtn.addEventListener('click', showNext);
     closeBtn.addEventListener('click', closeOverlay);
@@ -104,7 +147,6 @@ function initializeImageOverlay() {
         if (e.target === imageOverlay) closeOverlay();
     });
 
-    // Keyboard
     document.addEventListener('keydown', e => {
         if (!imageOverlay.classList.contains('active')) return;
         if (e.key === 'ArrowLeft') showPrev();
@@ -112,7 +154,6 @@ function initializeImageOverlay() {
         if (e.key === 'Escape') closeOverlay();
     });
 
-    // Prevent all image download attempts
     function blockImageDownload(el) {
         el.addEventListener('contextmenu', e => e.preventDefault());
         el.addEventListener('dragstart', e => e.preventDefault());
@@ -123,9 +164,139 @@ function initializeImageOverlay() {
     blockImageDownload(overlayImg);
 }
 
-// -------------------------------------------------
-// Open Chat (Updated Image Handling)
-// -------------------------------------------------
+// =================================================
+// RENDER CONVERSATIONS
+// =================================================
+function renderConversations() {
+    try {
+        const container = document.getElementById("conversations-container");
+        if (!container) throw new Error("Conversations container not found");
+        container.innerHTML = "";
+
+        conversations.forEach(conv => {
+            const item = document.createElement("div");
+            item.className = "conversation-item";
+
+            const avatarWrap = document.createElement("div");
+            avatarWrap.className = "avatar-container";
+
+            const avatarDiv = document.createElement("div");
+            avatarDiv.className = "avatar";
+
+            if (conv.isImage) {
+                const img = document.createElement("img");
+                img.src = conv.avatar;
+                img.alt = conv.name;
+                img.onerror = () => console.error(`Avatar load error: ${conv.name}`);
+                avatarDiv.appendChild(img);
+            } else {
+                avatarDiv.textContent = conv.avatar;
+            }
+
+            const badgeOverlay = document.createElement("div");
+            badgeOverlay.className = "badge-overlay";
+            badgeOverlay.textContent = conv.badge;
+            if (conv.badge === 0) badgeOverlay.style.display = "none";
+
+            avatarWrap.appendChild(avatarDiv);
+            avatarWrap.appendChild(badgeOverlay);
+
+            const content = document.createElement("div");
+            content.className = "conversation-content";
+            content.innerHTML = `
+                <div class="conversation-header">
+                    <span class="conversation-name">${conv.name}</span>
+                </div>
+                <div class="conversation-message">${conv.message}</div>
+            `;
+
+            const right = document.createElement("div");
+            right.className = "right-section";
+            right.innerHTML = `
+                <span class="conversation-time">${conv.time}</span>
+                <div class="badge">${conv.badge > 0 ? conv.badge : ""}</div>
+            `;
+
+            item.append(avatarWrap, content, right);
+            container.appendChild(item);
+        });
+
+        addConversationListeners();
+    } catch (e) { console.error(e); }
+}
+
+// =================================================
+// CONVERSATION LISTENERS
+// =================================================
+function addConversationListeners() {
+    try {
+        const items = document.querySelectorAll(".conversation-item");
+        items.forEach((el, i) => {
+            el.addEventListener("click", () => {
+                const conv = conversations[i];
+                if (conv.isGroup) {
+                    openDiscussion(conv);
+                } else {
+                    openChat(conv);
+                }
+            });
+        });
+    } catch (e) { console.error(e); }
+}
+
+// =================================================
+// OPEN DISCUSSION (GROUP)
+// =================================================
+function openDiscussion(conversation) {
+    try {
+        const discussions = document.getElementById("discussions-container");
+        const convs = document.getElementById("conversations-container");
+        if (!discussions || !convs) throw new Error("Missing containers");
+
+        discussions.innerHTML = `
+            <header class="app-chat-header" role="banner" aria-label="Discussion header"></header>
+            <div class="discussion-content" id="discussion-content">
+                <div class="empty-state"><p>No messages yet. Start the conversation!</p></div>
+            </div>
+        `;
+
+        const header = discussions.querySelector(".app-chat-header");
+        renderHeader(header, {
+            title: conversation.name,
+            avatar: conversation.avatar,
+            badge: conversation.badge,
+            subtext: "Discussion group",
+            onBack: closeDiscussion,
+            type: "group"
+        });
+
+        convs.classList.add("slide-left-quarter");
+        discussions.classList.add("open");
+        document.querySelector(".header").classList.add("slide-left");
+        document.querySelector(".stories-container").classList.add("slide-left");
+        document.querySelector(".floating-button").classList.add("hidden");
+    } catch (e) { console.error(e); }
+}
+
+function closeDiscussion() {
+    try {
+        const discussions = document.getElementById("discussions-container");
+        const convs = document.getElementById("conversations-container");
+        if (!convs) throw new Error("Conversations container missing");
+
+        discussions.classList.remove("open");
+        convs.classList.remove("slide-left-quarter");
+        document.querySelector(".header").classList.remove("slide-left");
+        document.querySelector(".stories-container").classList.remove("slide-left");
+        document.querySelector(".floating-button").classList.remove("hidden");
+
+        setTimeout(() => { discussions.innerHTML = ""; }, 300);
+    } catch (e) { console.error(e); }
+}
+
+// =================================================
+// OPEN CHAT (1-ON-1)
+// =================================================
 function openChat(conversation) {
     try {
         const chat = document.getElementById("chat-container");
@@ -157,7 +328,7 @@ function openChat(conversation) {
         const content = chat.querySelector("#chat-content");
         const msgs = chatMessages[conversation.name] || [];
 
-        overlayImages = []; // Reset overlay list
+        overlayImages = [];
 
         msgs.forEach((msg, index) => {
             const msgDiv = document.createElement("div");
@@ -177,7 +348,6 @@ function openChat(conversation) {
                 const senderName = msg.sender === "sent" ? "You" : conversation.name;
                 const imgEl = createImageSection(msg.url, "Chat image", senderName, msg.time);
 
-                // Add to overlay list
                 overlayImages.push({
                     src: msg.url,
                     sender: senderName,
@@ -186,12 +356,12 @@ function openChat(conversation) {
 
                 imgEl.addEventListener('click', () => {
                     initializeImageOverlay();
-                    updateOverlay(overlayImages.length - 1);
+                    currentOverlayIndex = overlayImages.length - 1;
+                    updateOverlay(currentOverlayIndex);
                     imageOverlay.classList.add('active');
                     document.body.classList.add('no-scroll');
                 });
 
-                // Prevent download
                 imgEl.addEventListener('contextmenu', e => e.preventDefault());
                 imgEl.addEventListener('dragstart', e => e.preventDefault());
 
@@ -249,14 +419,29 @@ function openChat(conversation) {
     } catch (e) { console.error(e); }
 }
 
-// -------------------------------------------------
-// Rest of your functions (renderConversations, etc.)
-// -------------------------------------------------
-// ... (keep all other functions unchanged: closeChat, openDiscussion, etc.)
+function closeChat() {
+    try {
+        const chat = document.getElementById("chat-container");
+        const convs = document.getElementById("conversations-container");
+        if (!convs) throw new Error("Conversations container missing");
 
-// -------------------------------------------------
-// Init
-// -------------------------------------------------
+        chat.classList.remove("open");
+        convs.classList.remove("slide-left");
+        document.querySelector(".header").classList.remove("slide-left");
+        document.querySelector(".stories-container").classList.remove("slide-left");
+        document.querySelector(".floating-button").classList.remove("hidden");
+
+        setTimeout(() => { chat.innerHTML = ""; }, 300);
+    } catch (e) { console.error(e); }
+}
+
+// =================================================
+// INIT — NOW SAFE
+// =================================================
 document.addEventListener("DOMContentLoaded", () => {
-    try { renderConversations(); } catch (e) { console.error(e); }
+    try { 
+        renderConversations(); 
+    } catch (e) { 
+        console.error(e); 
+    }
 });
