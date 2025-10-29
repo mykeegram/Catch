@@ -3,6 +3,7 @@ export function createImageSection(src, alt = "Chat image") {
     img.src = src;
     img.alt = alt;
     img.className = "message-image";
+    img.style.cursor = "pointer";
     img.onerror = () => console.error(`Image load error: ${src}`);
     return img;
 }
