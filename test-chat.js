@@ -1,4 +1,4 @@
-// chat.js
+// test-chat.js
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
 import { renderHeader } from './header.js';
@@ -9,7 +9,6 @@ import {
 } from './message.js';
 import { initializeEmojiPicker } from './emoji.js';
 import { createImageSection } from './image.js';
-import { initializeImageClickListeners } from './pop-m.js'; // NEW IMPORT
 
 // -------------------------------------------------
 // Conversations data
@@ -38,7 +37,7 @@ const conversations = [
         badge: 0,
         avatar: "DT",
         isImage: false,
-        isGroup: true  // ← Used to detect group
+        isGroup: true
     }
 ];
 
@@ -79,7 +78,6 @@ function renderConversations() {
             const item = document.createElement("div");
             item.className = "conversation-item";
 
-            // Avatar
             const avatarWrap = document.createElement("div");
             avatarWrap.className = "avatar-container";
 
@@ -104,7 +102,6 @@ function renderConversations() {
             avatarWrap.appendChild(avatarDiv);
             avatarWrap.appendChild(badgeOverlay);
 
-            // Content
             const content = document.createElement("div");
             content.className = "conversation-content";
             content.innerHTML = `
@@ -114,7 +111,6 @@ function renderConversations() {
                 <div class="conversation-message">${conv.message}</div>
             `;
 
-            // Right side
             const right = document.createElement("div");
             right.className = "right-section";
             right.innerHTML = `
@@ -153,7 +149,7 @@ function openDiscussion(conversation) {
             badge: conversation.badge,
             subtext: "Discussion group",
             onBack: closeDiscussion,
-            type: "group"  // CORRECT MENU
+            type: "group"
         });
 
         convs.classList.add("slide-left-quarter");
@@ -211,7 +207,7 @@ function openChat(conversation) {
             badge: conversation.badge,
             subtext: "last seen recently",
             onBack: closeChat,
-            type: "one-to-one"  // CORRECT MENU
+            type: "one-to-one"
         });
 
         const content = chat.querySelector("#chat-content");
@@ -231,9 +227,13 @@ function openChat(conversation) {
                 if (replySec) bubble.appendChild(replySec);
             }
 
+            // === IMAGE: JUST APPEND THE <img> FROM image.js ===
             if (msg.type === "image") {
-                bubble.appendChild(createImageSection(msg.url, msg.alt));
-            } else if (msg.type === "audio") {
+                const img = createImageSection(msg.url, msg.alt);
+                bubble.appendChild(img); // ← Click handler is in image.js
+            } 
+            // === AUDIO ===
+            else if (msg.type === "audio") {
                 const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 bubble.innerHTML += `
                     <div class="audio-controls">
@@ -246,10 +246,13 @@ function openChat(conversation) {
                         <span class="audio-duration">${msg.duration}</span>
                     </div>
                 `;
-            } else {
+            } 
+            // === TEXT ===
+            else {
                 bubble.innerHTML += `<div class="message-text">${msg.text}</div>`;
             }
 
+            // === TIME + CHECKS ===
             bubble.innerHTML += `
                 <div class="message-time">
                     ${msg.time}
@@ -267,7 +270,6 @@ function openChat(conversation) {
         });
 
         initializeWavePlay();
-        initializeImageClickListeners(); // NEW: Initialize click handlers for images
 
         setTimeout(() => {
             content.scrollTop = content.scrollHeight;
@@ -331,4 +333,3 @@ function addConversationListeners() {
 document.addEventListener("DOMContentLoaded", () => {
     try { renderConversations(); } catch (e) { console.error(e); }
 });
-
