@@ -1,4 +1,4 @@
-// test-chat.js
+// chat.js
 import { initializeWavePlay } from './wave-play.js';
 import { createReplySection } from './reply.js';
 import { renderHeader } from './header.js';
@@ -9,6 +9,7 @@ import {
 } from './message.js';
 import { initializeEmojiPicker } from './emoji.js';
 import { createImageSection } from './image.js';
+import { initializeImageClickListeners } from './pop-m.js'; // NEW IMPORT
 
 // -------------------------------------------------
 // Conversations data
@@ -266,6 +267,7 @@ function openChat(conversation) {
         });
 
         initializeWavePlay();
+        initializeImageClickListeners(); // NEW: Initialize click handlers for images
 
         setTimeout(() => {
             content.scrollTop = content.scrollHeight;
@@ -329,3 +331,4 @@ function addConversationListeners() {
 document.addEventListener("DOMContentLoaded", () => {
     try { renderConversations(); } catch (e) { console.error(e); }
 });
+
