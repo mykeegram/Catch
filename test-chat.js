@@ -37,7 +37,7 @@ const conversations = [
         badge: 0,
         avatar: "DT",
         isImage: false,
-        isGroup: true
+        isGroup: true  // ← Used to detect group
     }
 ];
 
@@ -78,6 +78,7 @@ function renderConversations() {
             const item = document.createElement("div");
             item.className = "conversation-item";
 
+            // Avatar
             const avatarWrap = document.createElement("div");
             avatarWrap.className = "avatar-container";
 
@@ -102,6 +103,7 @@ function renderConversations() {
             avatarWrap.appendChild(avatarDiv);
             avatarWrap.appendChild(badgeOverlay);
 
+            // Content
             const content = document.createElement("div");
             content.className = "conversation-content";
             content.innerHTML = `
@@ -111,6 +113,7 @@ function renderConversations() {
                 <div class="conversation-message">${conv.message}</div>
             `;
 
+            // Right side
             const right = document.createElement("div");
             right.className = "right-section";
             right.innerHTML = `
@@ -149,7 +152,7 @@ function openDiscussion(conversation) {
             badge: conversation.badge,
             subtext: "Discussion group",
             onBack: closeDiscussion,
-            type: "group"
+            type: "group"  // CORRECT MENU
         });
 
         convs.classList.add("slide-left-quarter");
@@ -207,7 +210,7 @@ function openChat(conversation) {
             badge: conversation.badge,
             subtext: "last seen recently",
             onBack: closeChat,
-            type: "one-to-one"
+            type: "one-to-one"  // CORRECT MENU
         });
 
         const content = chat.querySelector("#chat-content");
@@ -227,13 +230,9 @@ function openChat(conversation) {
                 if (replySec) bubble.appendChild(replySec);
             }
 
-            // === IMAGE: JUST APPEND THE <img> FROM image.js ===
             if (msg.type === "image") {
-                const img = createImageSection(msg.url, msg.alt);
-                bubble.appendChild(img); // ← Click handler is in image.js
-            } 
-            // === AUDIO ===
-            else if (msg.type === "audio") {
+                bubble.appendChild(createImageSection(msg.url, msg.alt));
+            } else if (msg.type === "audio") {
                 const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 bubble.innerHTML += `
                     <div class="audio-controls">
@@ -246,13 +245,10 @@ function openChat(conversation) {
                         <span class="audio-duration">${msg.duration}</span>
                     </div>
                 `;
-            } 
-            // === TEXT ===
-            else {
+            } else {
                 bubble.innerHTML += `<div class="message-text">${msg.text}</div>`;
             }
 
-            // === TIME + CHECKS ===
             bubble.innerHTML += `
                 <div class="message-time">
                     ${msg.time}
