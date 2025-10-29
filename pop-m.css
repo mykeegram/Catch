@@ -1,0 +1,41 @@
+/* pop-m.css */
+
+.image-popup-overlay {
+    /* Full screen black overlay */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1); /* Pure black background */
+    z-index: 1000; /* Ensure it's on top of everything */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Initially hidden */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.image-popup-overlay.open {
+    /* Show the overlay */
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-image {
+    /* Image inside the overlay */
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain; /* Ensure the full image is visible, not cropped */
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.image-popup-overlay.open .popup-image {
+    /* Slight zoom-in effect when open */
+    transform: scale(1);
+}
+
