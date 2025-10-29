@@ -3,12 +3,20 @@
     padding: 8px 6px 6px 6px;
 }
 
+
 .message-image {
-    width: 100%;
-    max-width: 250px;
-    height: 260px;
-    object-fit: cover;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+    max-width: 100%;
+    border-radius: 8px;
     display: block;
-    border-radius: 4px;
-    margin-bottom: 4px;
+}
+
+/* Disable long-press menu on images */
+.message-image {
+    -webkit-touch-callout: none;
 }
