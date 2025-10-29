@@ -7,20 +7,18 @@ export function createImageSection(src, alt = "Chat image") {
     img.style.cursor = "pointer";
     img.onerror = () => console.error(`Image load error: ${src}`);
 
-    // Click → Open full-screen viewer with accurate index
+    // === CLICK TO OPEN FULL VIEWER ===
     img.addEventListener("click", (e) => {
         e.stopPropagation();
 
-        const chatContent = document.querySelector("#chat-content");
+        const chatContent = document.getElementById("chat-content");
         if (!chatContent) return;
 
-        // Collect all images in the current chat
-        const allImageElements = Array.from(chatContent.querySelectorAll(".message-image"));
-        const allImages = allImageElements.map((el) => {
-            const messageDiv = el.closest(".chat-message");
-            const timeEl = messageDiv?.querySelector(".message-time");
-            const replyEl = messageDiv?.querySelector(".reply-section");
-
+        const allImgEls = Array.from(chatContent.querySelectorAll(".message-image"));
+        const images = allImgEls.map(el => {
+            const msgDiv = el.closest(".chat-message");
+            const timeEl = msgDiv?.querySelector(".message-time");
+            const replyEl = msgDiv?.querySelector(".reply-section");
             return {
                 url: el.src,
                 alt: el.alt,
@@ -29,21 +27,23 @@ export function createImageSection(src, alt = "Chat image") {
             };
         });
 
-        // Find the index of the clicked image
-        const startIndex = allImages.findIndex(img => img.url === src);
-        if (startIndex === -1) return;
+        const startIdx = images.findIndex(i => i.url === src);
+        if (startIdx === -1) return;
 
-        // Get sender name from chat header
-        const senderName = document.querySelector(".app-chat-header .conversation-name")?.textContent || "User";
+        const convName = document.querySelector(".app-chat-header .conversation-name")?.textContent || "User";
+        const senderName = img.closest(".chat-message")?.classList.contains("sent")
+            ? "Catch-up Messenger"
+            : convName;
 
-        // Dynamically import the viewer (lazy load)
-        import('./s-image.js').then(mod => {
-            mod.openImageViewer({
-                images: allImages,
-                startIndex,
-                senderName
-            });
-        }).catch(err => console.error("Failed to load image viewer:", err));
+        import('./s-image.js')
+            .then(mod => {
+                mod.openImageViewer({
+                    images,
+                    startIndex: startIdx,
+                    senderName
+                });
+            })
+            .catch(err => console.error("Failed to load viewer:", err));
     });
 
     return img;
