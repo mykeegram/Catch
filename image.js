@@ -5,21 +5,32 @@ export function createImageSection(src, alt = "Chat image") {
     img.alt = alt;
     img.className = "message-image";
     img.style.cursor = "pointer";
+    img.draggable = false; // Prevent drag
     img.onerror = () => console.error(`Image load error: ${src}`);
 
-    // === CLICK TO OPEN FULL VIEWER ===
+    // === DISABLE CONTEXT MENU (right-click / long-press) ===
+    img.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        return false;
+    });
+
+    // === CLICK / TAP → OPEN VIEWER ONLY ===
     img.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
+
+        // Prevent double-tap zoom on mobile
+        if (e.detail > 1) return;
 
         const chatContent = document.getElementById("chat-content");
         if (!chatContent) {
-            showErrorToast("Chat content not found");
+            showErrorToast("Chat not loaded");
             return;
         }
 
         const allImgEls = Array.from(chatContent.querySelectorAll(".message-image"));
         if (allImgEls.length === 0) {
-            showErrorToast("No images in chat");
+            showErrorToast("No images found");
             return;
         }
 
@@ -37,7 +48,7 @@ export function createImageSection(src, alt = "Chat image") {
 
         const startIdx = images.findIndex(i => i.url === src);
         if (startIdx === -1) {
-            showErrorToast("Image not found in list");
+            showErrorToast("Image not in list");
             return;
         }
 
@@ -46,7 +57,6 @@ export function createImageSection(src, alt = "Chat image") {
             ? "Catch-up Messenger"
             : convName;
 
-        // === DYNAMIC IMPORT WITH ERROR HANDLING ===
         import('./s-image.js')
             .then(mod => {
                 try {
@@ -56,22 +66,21 @@ export function createImageSection(src, alt = "Chat image") {
                         senderName
                     });
                 } catch (err) {
-                    console.error("Viewer failed to open:", err);
-                    showErrorToast("Failed to open image viewer");
+                    console.error("Viewer error:", err);
+                    showErrorToast("Viewer failed");
                 }
             })
             .catch(err => {
-                console.error("Failed to load s-image.js:", err);
-                showErrorToast("Image viewer module not loaded");
+                console.error("Module load failed:", err);
+                showErrorToast("Viewer not available");
             });
     });
 
     return img;
 }
 
-// === ERROR TOAST (Visual Feedback) ===
+// === TOAST FOR ERRORS ===
 function showErrorToast(message) {
-    // Remove any existing toast
     const existing = document.querySelector(".error-toast");
     if (existing) existing.remove();
 
@@ -95,12 +104,10 @@ function showErrorToast(message) {
     `;
 
     document.body.appendChild(toast);
-
-    // Auto-remove after animation
     toast.addEventListener("animationend", () => toast.remove());
 }
 
-// Add toast animation
+// Inject animation
 const style = document.createElement("style");
 style.textContent = `
     @keyframes toastFade {
