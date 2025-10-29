@@ -2,7 +2,7 @@
 let viewer = null;
 
 export function openImageViewer({ images, startIndex, senderName }) {
-    if (viewer) return; // prevent double-open
+    if (viewer) return;
 
     const viewerHTML = `
         <div class="s-image-viewer" id="sImageViewer">
@@ -44,7 +44,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
     document.body.insertAdjacentHTML('beforeend', viewerHTML);
     viewer = document.getElementById('sImageViewer');
 
-    // === State ===
     let currentIndex = startIndex;
     let scale = 1, posX = 0, posY = 0;
     let isDragging = false, isPinching = false, isZooming = false;
@@ -58,7 +57,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
     const counterEl = document.getElementById('sPhotoCounter');
     const timestampEl = document.getElementById('sTimestamp');
 
-    // === Build Slides ===
     images.forEach(img => {
         const slide = document.createElement('div');
         slide.className = 's-image-slide';
@@ -70,7 +68,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
         slider.appendChild(slide);
     });
 
-    // === Core Functions ===
     function updateDisplay() {
         const img = images[currentIndex];
         captionEl.textContent = img.caption || '';
@@ -117,11 +114,9 @@ export function openImageViewer({ images, startIndex, senderName }) {
         }
     }
 
-    // === Navigation ===
     document.getElementById('sPrevBtn').onclick = (e) => { e.stopPropagation(); if (currentIndex > 0) { currentIndex--; updateDisplay(); } };
     document.getElementById('sNextBtn').onclick = (e) => { e.stopPropagation(); if (currentIndex < images.length - 1) { currentIndex++; updateDisplay(); } };
 
-    // === Menu ===
     const menuBtn = document.getElementById('sMenuBtn');
     const menu = document.getElementById('sDropdownMenu');
     menuBtn.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('active'); };
@@ -129,8 +124,8 @@ export function openImageViewer({ images, startIndex, senderName }) {
     document.getElementById('sShareBtn').onclick = () => { shareImage(images[currentIndex].url); menu.classList.remove('active'); };
     document.getElementById('sDeleteBtn').onclick = () => { if (confirm('Delete this image?')) { alert('Deleted'); closeViewer(); } };
 
-    // === Close ===
-    document.getElementById('sCloseBtn').onclick = closeViewer;
+    // Close on X
+    document.getElementById('sCloseBtn').addEventListener('click', closeViewer);
     viewer.addEventListener('click', (e) => {
         if (e.target === viewer && scale <= 1.01) closeViewer();
     });
@@ -142,7 +137,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
         document.removeEventListener('keydown', handleKey);
     }
 
-    // === Keyboard ===
     function handleKey(e) {
         if (e.key === 'Escape') closeViewer();
         if (e.key === 'ArrowLeft') { if (currentIndex > 0) { currentIndex--; updateDisplay(); } }
@@ -150,7 +144,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
     }
     document.addEventListener('keydown', handleKey);
 
-    // === Touch & Zoom (same logic as your sample) ===
     let startX = 0, prevTranslate = 0, currentTranslate = 0;
     let lastScale = 1, lastPosX = 0, lastPosY = 0;
 
@@ -222,7 +215,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
         return Math.hypot(dx, dy);
     }
 
-    // === Double-tap zoom ===
     let lastTap = 0;
     wrapper.addEventListener('click', (e) => {
         const now = Date.now();
@@ -245,7 +237,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
         if (scale <= 1.01) toggleControls();
     });
 
-    // === Helper Functions ===
     function downloadImage(url) {
         const a = document.createElement('a');
         a.href = url;
@@ -267,7 +258,6 @@ export function openImageViewer({ images, startIndex, senderName }) {
         return div.innerHTML;
     }
 
-    // === Init ===
     updateDisplay();
     showControls();
 }
