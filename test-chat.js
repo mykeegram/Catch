@@ -229,37 +229,7 @@ function openChat(conversation) {
 
             if (msg.type === "image") {
                 const imageSection = createImageSection(msg.url, msg.alt);
-                // === CLICK TO OPEN FULL VIEWER ===
-                imageSection.addEventListener("click", (e) => {
-                    e.stopPropagation();
-
-                    const chatContent = document.getElementById("chat-content");
-                    const allImgEls = Array.from(chatContent.querySelectorAll(".message-image"));
-                    const images = allImgEls.map(el => {
-                        const msgDiv = el.closest(".chat-message");
-                        const timeEl = msgDiv?.querySelector(".message-time");
-                        const replyEl = msgDiv?.querySelector(".reply-section");
-                        return {
-                            url: el.src,
-                            alt: el.alt,
-                            time: timeEl?.textContent.trim() || "",
-                            caption: replyEl?.textContent.trim() || ""
-                        };
-                    });
-
-                    const startIdx = images.findIndex(i => i.url === msg.url);
-                    const convName = document.querySelector(".app-chat-header .conversation-name")?.textContent || "User";
-                    const senderName = msg.sender === "sent" ? "Catch-up Messenger" : convName;
-
-                    import('./s-image.js').then(mod => {
-                        mod.openImageViewer({
-                            images,
-                            startIndex: startIdx,
-                            senderName
-                        });
-                    }).catch(err => console.error("Failed to load viewer:", err));
-                });
-                bubble.appendChild(imageSection);
+                bubble.appendChild(imageSection); // Click handler is inside image.js
             } else if (msg.type === "audio") {
                 const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 bubble.innerHTML += `
