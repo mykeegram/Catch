@@ -231,9 +231,7 @@ function openChat(conversation) {
             }
 
             if (msg.type === "image") {
-                const imgSection = createImageSection(msg.url, msg.alt);
-                imgSection.addEventListener('click', () => openImagePreview(msg.url));
-                bubble.appendChild(imgSection);
+                bubble.appendChild(createImageSection(msg.url, msg.alt));
             } else if (msg.type === "audio") {
                 const bars = Array.from({ length: 28 }, () => '<div class="wave-bar"></div>').join('');
                 bubble.innerHTML += `
@@ -307,45 +305,6 @@ function closeChat() {
 }
 
 // -------------------------------------------------
-// Image preview popup
-// -------------------------------------------------
-function openImagePreview(src) {
-    try {
-        const overlay = document.createElement("div");
-        overlay.className = "image-preview-overlay";
-        overlay.innerHTML = `
-            <button class="image-preview-close" aria-label="Close preview">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-            </button>
-            <img src="${src}" alt="Preview" class="image-preview-img">
-        `;
-        
-        document.body.appendChild(overlay);
-        
-        // Close on button click
-        overlay.querySelector(".image-preview-close").addEventListener("click", () => {
-            closeImagePreview(overlay);
-        });
-        
-        // Close on overlay click (but not on image)
-        overlay.addEventListener("click", (e) => {
-            if (e.target === overlay) {
-                closeImagePreview(overlay);
-            }
-        });
-        
-        setTimeout(() => overlay.classList.add("active"), 10);
-    } catch (e) { console.error(e); }
-}
-
-function closeImagePreview(overlay) {
-    overlay.classList.remove("active");
-    setTimeout(() => overlay.remove(), 300);
-}
-
-// -------------------------------------------------
 // Conversation listeners
 // -------------------------------------------------
 function addConversationListeners() {
@@ -370,4 +329,3 @@ function addConversationListeners() {
 document.addEventListener("DOMContentLoaded", () => {
     try { renderConversations(); } catch (e) { console.error(e); }
 });
-
